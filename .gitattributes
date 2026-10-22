@@ -1,0 +1,10 @@
+# Texto sempre com LF, também em clones no Windows (os scripts e a skill foram escritos assim)
+* text=auto eol=lf
+
+# Binários
+*.skill binary
+*.zip binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.webp binary

@@ -1,0 +1,21 @@
+{
+  "name": "construtor-panorama",
+  "version": "1.0.0",
+  "description": "Ajustes visuais, temas de época, páginas do construtor e telas de configuração de uma loja da Panorama Sistemas, pelo admin da própria loja: prévia no site e o seu \"sim\" antes de cada gravação, backup antes de trocar e um perfil privado da loja no seu computador.",
+  "author": {
+    "name": "Profit Brand Digital",
+    "url": "https://github.com/guilhermeeberspachermkt-hub"
+  },
+  "homepage": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas",
+  "repository": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas",
+  "license": "MIT",
+  "keywords": [
+    "panorama-sistemas",
+    "loja-virtual",
+    "e-commerce",
+    "css",
+    "temas-de-epoca",
+    "construtor",
+    "pt-BR"
+  ]
+}

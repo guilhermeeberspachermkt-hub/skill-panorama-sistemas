@@ -1,0 +1,33 @@
+# Caches de Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/
+
+# Configuração local do Claude Code de quem trabalha no repositório
+.claude/settings.local.json
+
+# Pacotes gerados: o .skill vai para a página Releases, não para o repositório
+*.skill
+*.zip
+
+# Dados de loja nunca entram aqui (o perfil e os backups ficam fora do repositório)
+panorama-lojas/
+backups/
+trabalho/
