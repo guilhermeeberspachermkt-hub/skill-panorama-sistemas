@@ -60,7 +60,11 @@ instalada não perder nada numa atualização.
   mudar e receber um passo a passo de cliques, mas não para mandar uma prévia nem gravar pelo caminho da
   skill. O pacote `beautifulsoup4` (`python -m pip install beautifulsoup4`) só serve ao script que compara
   páginas do construtor (`verificar_paridade.py`); para ajustes visuais e temas, não precisa. O Node.js é
-  opcional: ele confere o código JavaScript antes de gravar, e sem ele os scripts avisam.
+  opcional: ele confere o código JavaScript antes de gravar, e sem ele os scripts avisam. Com o Node 22 (ou
+  mais novo) e o Google Chrome instalados, o Claude tira os prints e as medidas da prévia num Chrome próprio,
+  que não usa a sua sessão: nas cópias salvas das páginas, sem rede, em segundos, e no site só para a
+  conferência final, uma página por vez e com pausa entre elas (para o CDN da loja não bloquear o seu
+  computador). O pacote `pillow` (opcional) monta os quadros de comparação e mede o foco de teclado.
 
 Não precisa conferir nada disso sozinho: na primeira vez, o Claude confere e diz o que falta (veja "O primeiro
 uso").
@@ -185,6 +189,7 @@ O que vale a pena você saber:
 | `references/primeiro-uso.md` | A configuração inicial: o que o Claude confere, as sete perguntas, o resumo e o "pronto". |
 | `references/reconhecimento-da-loja.md` | O reconhecimento da loja, só de leitura, passo a passo. |
 | `assets/perfil-da-loja.md` | O modelo do perfil da loja. |
+| `assets/prints-chave.txt`, `assets/plano-revisao.mjs` | Os modelos da lista de prints de uma prévia e do plano de revisão da versão escolhida. |
 | `references/ajustes-visuais.md` | Ajustes visuais por CSS, do diagnóstico até ir ao ar e à volta. |
 | `references/catalogo-tema-base.md` | As partes do tema da família `/dist` (`loja.css` + `bundle.js`: menu, card, selo, barras...), as partes da plataforma comuns às famílias medidas, e o que já deu errado em cada uma. No topo, a tabela de qual catálogo usar em cada família. |
 | `references/catalogo-modelo-1.md` | As partes do tema da família `modelo-N` (medido no `modelo-1`), com a mesma numeração de seções. |
@@ -198,7 +203,7 @@ O que vale a pena você saber:
 | `references/gravacao-construtor.md` | Como o Claude grava uma página do construtor e confere a gravação. |
 | `references/gravacao-arquivo-e-head.md` | Como o Claude grava os arquivos CSS/JS e a configuração da loja, e como você grava à mão. |
 | `references/ferramentas-de-navegador.md` | Limites da ferramenta de navegador, para o Claude não confundir com defeito do site. |
-| `scripts/` | Os scripts de prévia (`gerar_previa.py`), de montagem e conferência de um CSS de tema (`montar_tema.py`), de validação (`validar_pagina.py`) e de conferência (`verificar_paridade.py`) das páginas do construtor, e as funções usadas no admin (`injetar.js`). |
+| `scripts/` | Os scripts de prévia (`gerar_previa.py`), de montagem e conferência de um CSS de tema (`montar_tema.py`), de validação (`validar_pagina.py`) e de conferência (`verificar_paridade.py`) das páginas do construtor, e as funções usadas no admin (`injetar.js`). Os de prints e medidas num Chrome próprio (`salvar_copia.mjs`, `shot.mjs`, `rodada.mjs`, `larguras.mjs`, `rev.mjs` e os que eles carregam na página) e os de conferir os prints (`pares.py`, `comparar_prints.py`). Cada um mostra o uso com `--help`. |
 
 ## Limites conhecidos
 

@@ -830,8 +830,11 @@ mesma origem, com `<base href="https://www.SUA-LOJA.com.br/">` no começo do `<h
 depois por XHR (as vitrines) vem com o User-Agent do navegador, de computador. Para esses pedaços, use o
 jeito 1 ou 2.
 
-4. **Render local de uma cópia** servida em `127.0.0.1` (`ferramentas-de-navegador.md`, 4): a cópia salva
-   do HTML de celular (ou de computador), aberta no navegador que você controla. Serve para comparar
+4. **Cópia salva com o HTML de celular**: `salvar_copia.mjs --celular` (ou uma linha `--celular` na lista)
+   salva a página como o servidor manda para o celular, e `shot.mjs --copia ... --celular` /
+   `rodada.mjs --offline` a abrem a 375px, sem rede (`previa.md`, "Iterar offline, confirmar no ar"). Sem os
+   scripts, o **render local de uma cópia** servida em `127.0.0.1` (`ferramentas-de-navegador.md`, 4): a cópia
+   salva do HTML de celular (ou de computador), aberta no navegador que você controla. Serve para comparar
    direções de uma proposta de estilo (`criterios-de-design.md`, 4) e medir larguras sem tocar no site no ar
    nem nas abas da pessoa. As vitrines por XHR podem não vir, e a cópia é de uma data: o print vai rotulado
    como render local.

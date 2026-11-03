@@ -109,6 +109,9 @@ for c in python python3 node curl; do
 done
 python -I -c "import bs4; print('beautifulsoup4', bs4.__version__)" 2>/dev/null \
   || echo 'beautifulsoup4: não instalado'
+python -I -c "import PIL; print('Pillow', PIL.__version__)" 2>/dev/null || echo 'Pillow: não instalado'
+# o Chrome dos scripts de Chrome (Node 22+): "Trava agora" no fim quer dizer que ele achou o Node e o módulo
+node scripts/cdp.mjs 2>&1 | tail -1
 ```
 
 No PowerShell, os mesmos programas respondem a `--version` (`python --version`, `node --version`,
@@ -119,7 +122,8 @@ mensagem de "Python não foi encontrado" em vez da versão (visto no Git Bash, 2
 | Programa | Para que a skill usa | Sem ele |
 |---|---|---|
 | **Python 3** | gerar o favorito de prévia (`gerar_previa.py`); montar e conferir um CSS antes da prévia e da gravação (`montar_tema.py`); validar e comparar páginas do construtor (`validar_pagina.py`, `verificar_paridade.py`); alguns trechos do reconhecimento (a ordem da cascata, 2e; os atributos do `<head>`, 2f; juntar um backup em pedaços, snippet E) | dá para conversar, explicar, escrever o CSS e o JS, ler o site e o admin e passar listas de cliques. Não dá para mandar prévia nem gravar pelo caminho da skill: as conferências que pegam o erro antes de ele ir ao ar são esses scripts. Diga isso antes da primeira prévia |
-| **Node.js** (opcional) | conferir a sintaxe de um JS (`node --check`) dentro de `gerar_previa.py` e `montar_tema.py`, e o `--compactar-js` | tudo funciona; um JS fica sem a conferência de sintaxe, e os scripts avisam. Numa mudança com JS (uma barra, uma contagem), recomende o Node: um erro de sintaxe num JS da loja para tudo o que vem depois dele no mesmo arquivo (`mapa-do-admin.md`, 3) |
+| **Node.js** (opcional) | conferir a sintaxe de um JS (`node --check`) dentro de `gerar_previa.py` e `montar_tema.py`, e o `--compactar-js`; com a versão 22 ou mais nova e o Chrome instalado, os scripts de Chrome (`shot.mjs`, `rodada.mjs`, `salvar_copia.mjs`, `larguras.mjs`, `rev.mjs`): prints e medidas num Chrome próprio, no ar com o ritmo das visitas e nas cópias sem rede | tudo funciona; um JS fica sem a conferência de sintaxe, e os scripts avisam. Numa mudança com JS (uma barra, uma contagem), recomende o Node: um erro de sintaxe num JS da loja para tudo o que vem depois dele no mesmo arquivo (`mapa-do-admin.md`, 3). Sem Node 22, prints e medidas saem pela ferramenta de navegador, mais devagar (`previa.md`, "Iterar offline, confirmar no ar") |
+| **Pillow** (um pacote do Python, opcional) | `pares.py` (o foco de teclado medido pelos pixels) e `comparar_prints.py` (o quadro de prints lado a lado) | o foco se confere pelo contorno computado e pelo print, e os prints vão um a um. Instalar (`python -m pip install pillow`) baixa um pacote: peça o OK dela antes |
 | **beautifulsoup4** (um pacote do Python) | só `verificar_paridade.py`, que compara páginas do construtor | ajustes visuais e temas não precisam. Instalar (`python -m pip install beautifulsoup4`) baixa um pacote da internet: peça o OK dela antes, ou deixe que ela instale |
 | **curl** | ler o site público, baixar o backup de um Arquivo, conferir no ar (1e) | o site se lê pela ferramenta de navegador (snippet A do reconhecimento) ou, sem ela, pelo código da página que a pessoa manda (1e, "Sem rede até o site"); o que ficar sem ler entra no resumo como "não lido" |
 

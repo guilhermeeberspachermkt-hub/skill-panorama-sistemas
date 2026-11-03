@@ -278,10 +278,16 @@ Se não houver ferramenta de navegador conectada, nada disto se aplica: siga o m
   Devolva só `{bytes, confere}`: o filtro de saída bloqueia o que parece base64 (seção 1).
 - **O clipboard é da máquina, não da sessão.** Numa colagem vieram 17 caracteres de outra coisa, porque a
   pessoa copiou algo enquanto a gravação corria. Só a conferência do sha256 dentro da página pega isso.
+- **Cópias salvas num Chrome sem rede** (o caminho preferido, com Node 22 e o Chrome instalados):
+  `scripts/salvar_copia.mjs` salva a página como ela ficou depois dos scripts, com as folhas na ordem da
+  cascata e as fotos, e `shot.mjs --copia` / `rodada.mjs --offline` abrem a cópia num Chrome próprio, sem rede,
+  em segundos (`previa.md`, "Iterar offline, confirmar no ar"). Medido em 2026-11-03 num site de teste local:
+  a ordem das folhas, o `id` dos `<style>`, as fotos e o HTML que chegou por XHR saíram iguais na cópia. Os
+  scripts da página não rodam na cópia.
 - **Render local de uma cópia**, para comparar direções e medir larguras sem tocar no site no ar, no admin nem
-  nas abas da pessoa. Medido em 2026-10-21: cópias salvas das páginas, servidas em `127.0.0.1` e abertas no
-  painel de navegador do aplicativo, também por agentes auxiliares; com a extensão do Chrome, não medido. O
-  caminho:
+  nas abas da pessoa, quando os scripts acima não rodam. Medido em 2026-10-21: cópias salvas das páginas,
+  servidas em `127.0.0.1` e abertas no painel de navegador do aplicativo, também por agentes auxiliares; com a
+  extensão do Chrome, não medido. O caminho:
   1. salve as cópias (`curl`, ou as da pasta do reconhecimento) numa pasta só delas, separada da pasta do
      perfil com os backups;
   2. em cada cópia, ponha `<base href="https://www.SUA-LOJA.com.br/">` no começo do `<head>`, para imagens, CSS

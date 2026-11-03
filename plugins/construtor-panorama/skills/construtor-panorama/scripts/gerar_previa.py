@@ -728,7 +728,8 @@ def main():
         "av.textContent=NOME+' ligada \\u2014 clique no favorito de novo para desligar';"
         "av.style.cssText='position:fixed;left:8px;bottom:8px;z-index:2147483647;background:#111;color:#fff;"
         "font:600 12px/1.3 system-ui,sans-serif;padding:6px 10px;border-radius:6px;border:1px solid #444;"
-        "pointer-events:none;opacity:.92';d.body.appendChild(av);")
+        "pointer-events:none;opacity:.92;box-sizing:border-box;max-width:calc(100vw - 16px)';"
+        "d.body.appendChild(av);")
     # o teste das classes roda ANTES do --js: classe que o próprio --js põe não entra aqui
     classes = ("var CS=" + json.dumps(a.classe_body) + ";for(var q=0;q<CS.length;q++){"
                "if(!d.body.classList.contains(CS[q])){alert(NOME+': '+(CS[q]==='isMobile'?'esta página não é a "

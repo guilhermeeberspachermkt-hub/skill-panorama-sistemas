@@ -58,7 +58,10 @@ passar, e cola para ele o que o admin mostra. As regras de segurança são as me
   conversar, receber o CSS e uma lista de cliques, mas não dá para receber a prévia nem gravar pelo caminho da
   skill. No Windows, marque "Add python.exe to PATH" na primeira tela da instalação.
 - **Node.js** (recomendado, em nodejs.org): confere o JavaScript antes de gravar. Sem ele tudo funciona, e os
-  scripts avisam que pularam essa conferência.
+  scripts avisam que pularam essa conferência. Com a versão 22 ou mais nova e o **Google Chrome** instalado, o
+  Claude também tira os prints e as medidas da prévia num Chrome próprio, que não usa o seu login: em cópias
+  salvas das páginas, sem rede, e no site só para a conferência final, uma página por vez e com pausa entre
+  elas, para o CDN da loja (como o Cloudflare) não bloquear o seu computador.
 - **git** (em git-scm.com): o Claude Code usa o git para baixar a skill pelo marketplace. Se a instalação
   reclamar de git, instale-o e tente de novo.
 
@@ -185,6 +188,9 @@ botão de comprar verde"), ele faz essa configuração antes, do mesmo jeito.
   de vez em quando; se trocar de computador, leve a pasta junto.
 - **Prints:** a ferramenta de navegador guarda cópias dos prints que tira, na pasta dela. Um print pode mostrar
   dados da tela do admin.
+- **Os scripts de prints** (com o Node 22 e o Chrome) visitam só o site público da loja, nunca o admin, num
+  Chrome sem o seu login. Eles guardam o cache dessas visitas na pasta temporária do sistema
+  (`panorama-visitas`) e as cópias salvas das páginas na pasta de trabalho do perfil da loja.
 - **A skill não manda nada para lugar nenhum:** não tem servidor próprio nem coleta de uso. Ela lê o site e o
   admin da sua loja, grava no admin só o que você aprovar e guarda arquivos no seu computador. Enquanto
   trabalha, deixa no navegador, na aba do admin, um pacote com as funções de conferência (e, às vezes, alguma

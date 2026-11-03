@@ -16,6 +16,127 @@ dela e dizer que aprova. O caminho é sempre o mesmo:
 - A prévia não custa nada, não sai da aba de quem olha e some ao recarregar.
 - Ela também pega o erro mais comum, que é a pessoa ter imaginado outra coisa. Isso só aparece quando ela vê.
 
+## Fluxo em dois tempos: rascunho rápido, opinião, revisão profunda
+
+**Quando.** Pedido visual grande: muda fundo ou cor de várias regiões, mais de um tipo de página, ou a
+linguagem visual do site (uma proposta de estilo, `criterios-de-design.md`, 4; um tema de época novo; "fundo
+escuro no produto e nas listas"). Um ajuste pontual (a cor de um botão) segue direto pelo caminho de sempre.
+
+**Por quê.** Medido numa loja (2026-11-03): um pedido de fundo escuro no produto, nas listas e nas vitrines levou
+~4h40 até a primeira prévia, ~89% dele em agentes (três direções completas, dois juízes, duas rodadas de revisão
+adversarial, a segunda sem nada obrigatório) e em rodadas de 21 prints no site real, com pausas por causa do
+CDN. A primeira opinião da pessoa foi sobre a parte mais polida. Um rascunho de 45 minutos teria trazido essa
+opinião ~3 horas antes. O que a pessoa vai mudar, você só sabe depois que ela vê.
+
+**Tempo 1: o rascunho rápido.** Meta: a pessoa com os prints e o favorito em ~45 minutos.
+
+1. **Uma direção, a que você recomenda.** Se o pedido tem duas ou três leituras boas, as outras vão só como
+   esboço: dois prints cada (computador a 1920 e celular), sem a régua completa e sem revisão
+   (`criterios-de-design.md`, 4).
+2. **De 6 a 8 prints-chave**, nos lugares onde a mudança mais aparece, mais uma página que não deve mudar. O
+   modelo é `assets/prints-chave.txt`: copie para a pasta `trabalho/` do perfil e troque os caminhos pelos do
+   perfil ("Páginas de conferência").
+3. **Itere offline** ("Iterar offline, confirmar no ar", abaixo): `salvar_copia.mjs` uma vez com a lista, e
+   `rodada.mjs --offline` a cada versão do CSS, em segundos e sem visitar o site.
+4. **O mínimo do rascunho**, antes de mandar:
+   - o CSS entrou na posição da cascata que o arquivo vai ter (a linha `css depoisDe ...` de cada print);
+   - nenhuma mensagem de console nova;
+   - `rodada.mjs --medir`: nenhum texto abaixo do mínimo nas regiões que mudaram (ou o que sobrou, listado na
+     mensagem);
+   - a página de controle igual à de hoje, e o celular com o HTML de celular (`--celular`, `isMobile`).
+5. **Confirme no ar uma vez**: a mesma lista, sem `--offline` (8 cargas, uns 3 minutos com as pausas). Os prints
+   que vão para a pessoa saem daqui.
+6. **O favorito** (`gerar_previa.py`, do mesmo CSS) e a mensagem do rascunho.
+
+| Etapa do rascunho | Meta |
+|---|---|
+| perfil, `quemPinta` das regiões principais e o CSS da direção | 15–20 min |
+| `salvar_copia.mjs` (uma carga por página e aparelho; 5 na lista modelo) | ~2 min |
+| iterar offline (`rodada.mjs --offline`, segundos por rodada) | ~15 min |
+| confirmar no ar (`rodada.mjs`, a mesma lista) | ~3 min |
+| favorito e mensagem | ~5 min |
+
+**A mensagem do rascunho pede opinião, não "aprovado".** São as partes de "Mandar para a pessoa" (abaixo), com
+duas trocas: a parte 2 diz que é um rascunho, para ela dizer se o caminho é esse; e a mensagem fecha com uma
+pergunta aberta sobre o que ela mudaria, e a lista do que você ainda não conferiu (os estados, as larguras do
+meio, as telas que ninguém abre, a data de corte). Os prints do rascunho levam "rascunho" no nome e na
+legenda.
+
+**Tempo 2: a opinião da pessoa.** Um ajuste pedido volta ao tempo 1, offline e em segundos. "Gostei" e
+"pode ser essa" escolhem a direção; não são o "aprovado" de gravar ("Aprovação, gravação e conferência",
+abaixo).
+
+**Tempo 3: a revisão profunda, só da versão que a pessoa gostou.** Aqui entra tudo o que o rascunho deixou de
+fora, e só aqui:
+
+- os estados: hover e foco com Tab de verdade (`rev.mjs`, e `pares.py` para medir o indicador de foco pelos
+  pixels), menus, gavetas e avisos (num tema que muda cor, os de `temas-sazonais.md`, 12, passo 10);
+- o celular de verdade e a matriz inteira de larguras (`larguras.mjs`; `ajustes-visuais.md`, 4.1);
+- a data de corte: o site na data em que a campanha acaba e no dia seguinte (`--relogio`);
+- a cor colada no admin: descrições com cor e fundo escritos no HTML (`__R.inline` do `rev.js`; o campo
+  `corColada` do `medir_cores.js`);
+- os testes de "nada mudou" e o escopo (`ajustes-visuais.md`, 4.1; `escopo.js`);
+- depois, "Conferir você mesmo antes de mandar" e a mensagem com o "aprovado" (abaixo).
+
+**Revisão adversarial** (um agente que procura defeito de propósito): no máximo uma rodada, e no tempo 3. Uma
+segunda rodada só quando a primeira achou algo obrigatório, e só sobre o que mudou para corrigir. Obrigatório
+é o que bloqueia o "aprovado": texto abaixo do mínimo de contraste ou sumido, seletor vazando para outra página
+ou região, conteúdo ligado sem a pessoa escolher, rolagem lateral a mais, ou uma regra desta skill quebrada. O
+resto vai para a pessoa como opção.
+
+## Ritmo das visitas ao site
+
+Um CDN que limita pedidos (o Cloudflare, numa loja medida) bloqueia quem carrega páginas demais, e já devolveu o
+erro 1015 ("You are being rate limited") a uma rodada de prints. O bloqueio pega o computador inteiro (os
+agentes, a sua aba e a da pessoa) por minutos. Toda visita ao site no ar, por script ou pela ferramenta de
+navegador, segue estas regras:
+
+- **Um Chrome por vez, e um só agente visita o site por vez.** Os outros agentes trabalham nas cópias
+  (abaixo). No briefing de um agente, diga se ele visita o site ou só as cópias.
+- **De 5 a 6 segundos entre uma carga e a próxima.**
+- **O mesmo perfil do Chrome em todas as visitas**, para o cache dele: CSS, JS, fontes e fotos não são baixados
+  de novo a cada print.
+- **Num 1015, espere 6 minutos e tente uma vez.** Se vier de novo, pare as visitas e conte à pessoa.
+- **Um desafio de "verifique se você é humano"**: pare e conte à pessoa. Não se contorna.
+
+Os scripts de visita (`shot.mjs`, `rodada.mjs`, `salvar_copia.mjs`, `larguras.mjs`, `rev.mjs`) já fazem isso
+sozinhos, pelo `scripts/cdp.mjs`: uma trava na pasta `panorama-visitas` da pasta temporária do sistema
+(respeitada por todos os scripts e por todos os agentes que os usam; `node scripts/cdp.mjs` mostra quem está
+com ela), 6 s de pausa (`PAUSA_VISITAS`, de 5 a 60), o perfil compartilhado `panorama-visitas/perfil` e a espera
+de 6 minutos num 1015 (código de saída 15 no segundo; 16 num desafio). Uma carga do site é uma carga, venha do
+script ou da ferramenta de navegador: com a ferramenta, siga as mesmas regras à mão. Na cópia, nada disso conta:
+ela não visita o site.
+
+## Iterar offline, confirmar no ar
+
+Mudar o CSS e ver o resultado é o laço que mais se repete numa prévia, e no site no ar cada volta custa
+cargas e pausas (uma rodada de 21 prints levava de 6 a 10 minutos). Numa cópia salva, aberta num Chrome sem
+rede, a mesma rodada leva segundos.
+
+1. **Salve as cópias uma vez**, com a lista dos prints:
+   `node scripts/salvar_copia.mjs --lista prints.txt --site https://www.SUA-LOJA.com.br --saida copias`.
+   É uma carga por página e aparelho. A cópia (MHTML) guarda o DOM de depois que os scripts da página rodaram
+   (vitrines e carrosséis montados), as folhas na mesma ordem da cascata, e as fotos e fontes já carregadas.
+2. **Itere nas cópias**: `node scripts/rodada.mjs --lista prints.txt --offline copias --saida r1 --css
+   proposta.css --depois-de "seu-tema.css" --medir`. Um print avulso: `shot.mjs --copia`. As larguras:
+   `larguras.mjs --lista prints.txt --offline copias`. A revisão de estados: `rev.mjs plano.mjs --copia ...`.
+3. **Confirme no ar** só no fim, com a mesma lista e o mesmo CSS, sem `--offline`: os prints para a pessoa.
+4. **Simule a gravação no ar** antes do "aprovado", quando a mudança é um arquivo inteiro: `--replace
+   "seu-tema.css=>seu-tema-v2-publicar.css"` faz o Chrome do script receber o arquivo novo no lugar do que
+   está no ar, como se já estivesse gravado (só naquele Chrome). É a prova de que a versão de publicar dá o que
+   a prévia mostrou.
+
+**O que a cópia não tem**, e por isso vai para a confirmação no ar: os scripts da página não rodam nela (menu
+aberto por clique, contagem andando, um JS de tema seu; um `setTimeout` da página não dispara, então o que você
+roda na cópia é síncrono), o que chega depois da carga, e o que muda com a data. Ela é de um dia e de um
+aparelho: a cópia de computador não serve para o celular. O hover de CSS funciona; o Tab anda pelos links, mas
+um `<button>` ficou fora dele na cópia (medido num site de teste local, 2026-11-03): a revisão do foco de
+teclado (`rev.mjs` com `tab`) vale no ar. Print de cópia que for para a pessoa leva "cópia de AAAA-MM-DD" no
+nome e na legenda (`ferramentas-de-navegador.md`, seção 5).
+
+**Sem Node 22 ou sem Chrome no computador** (no chat do Claude, por exemplo), os scripts não rodam: o
+rascunho segue pela ferramenta de navegador, com a mesma lista de prints e o mesmo ritmo de visitas.
+
 ## Qual prévia para qual mudança
 
 | A mudança é… | A prévia é… | Como |
@@ -251,6 +372,10 @@ python -I scripts/gerar_previa.py --css skin-natal-v1.css --depois-de "<arquivo 
 
 ## Conferir você mesmo antes de mandar
 
+Esta é a conferência de antes do "aprovado". Num pedido visual grande, ela é o tempo 3 ("Fluxo em dois
+tempos", acima) e roda só na versão que a pessoa gostou; o rascunho tem o mínimo de lá. As medidas abaixo
+também saem pelos scripts, no Chrome deles (`rodada.mjs --medir`, `larguras.mjs`, `rev.mjs`), com o mesmo CSS.
+
 Rode o `.js` na página, na sua aba, e verifique:
 
 - **Desktop, na largura exata** (as da matriz de `ajustes-visuais.md`, 4.1). Se a aba que a ferramenta abre vem estreita (`ferramentas-de-navegador.md`, seção 2):
@@ -320,10 +445,11 @@ recomenda. Feche com uma pergunta fechada que nomeia uma só: "Posso preparar a 
 faz" não é escolha ("Não conta", abaixo).
 
 - **Para escolher, um par por opção basta:** o computador a 1920 (ou na configuração de quem aprova) e o celular
-  de verdade. A matriz inteira em cada opção custa caro e quase tudo vai para o lixo.
+  de verdade. A matriz inteira em cada opção custa caro e quase tudo vai para o lixo. A opção que você
+  recomenda vai com os prints-chave do rascunho; as outras, com o par ("Fluxo em dois tempos", acima).
 - **A opção escolhida ganha a matriz inteira antes do "aprovado"** (`ajustes-visuais.md`, 4.1): as larguras,
   o foco de teclado, o contraste, o `quemPinta` e o `elementFromPoint` da caixa nova. "Gostei da A" é escolha,
-  não aprovação: prepare a versão da A, confira, mande os prints dela e só então pergunte.
+  não aprovação: prepare a versão da A, confira (o tempo 3), mande os prints dela e só então pergunte.
 - **A mensagem diz o que ainda não foi conferido** em cada opção (por exemplo "a opção B só foi vista a 1920 e
   no celular"), na parte do que a prévia não mostra (abaixo).
 

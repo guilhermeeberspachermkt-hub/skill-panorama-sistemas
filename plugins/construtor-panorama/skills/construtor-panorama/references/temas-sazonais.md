@@ -1097,9 +1097,19 @@ desenham, inclusive em telas que ninguém abre na revisão. O roteiro abaixo foi
 `modelo-1` (2026-10, até a prévia; não foi ao ar). O que está marcado "nas duas famílias medidas" apareceu
 também na loja da família `/dist`; o resto, meça na sua.
 
-Antes de escrever, combine a paleta com a pessoa (fundo da página, superfície dos cartões, linha, texto,
-texto secundário, títulos, link, campos e a cor da marca) e meça o contraste de cada par
-(`criterios-de-design.md`, 2; `contraste`, `medir-no-navegador.md`, 8). Uma cor de marca escura costuma
+**Em dois tempos** (`previa.md`, "Fluxo em dois tempos"). No rascunho rápido entram a paleta, os passos 1 a 3
+(quem pinta o branco, a cor do texto no `#area-body` e a camada padrão), a varredura das páginas dos
+prints-chave (`rodada.mjs --medir`) e, na mensagem, o que já se sabe dos passos 6 e 7 (arte clara nas imagens,
+endereços de outro sistema que continuam claros). Os passos 4, 5 e 8 a 10 (os estados, todas as telas, o
+tamanho, "sem a classe" e o que abre por cima da página) são da revisão profunda, só da versão que a pessoa
+gostou.
+
+Antes de escrever, defina a paleta (fundo da página, superfície dos cartões, linha, texto, texto secundário,
+títulos, link, campos e a cor da marca) e meça o contraste de cada par. Se a pessoa já deu cores ou um guia de
+marca, a paleta parte deles; se não, num pedido grande ela vai no rascunho como proposta sua, nomeada na
+mensagem ("o que eu decidi sem você ter pedido", `previa.md`, "Mandar para a pessoa"), e a pessoa a corrige na
+opinião dela, sem uma ida e volta antes do primeiro print. O contraste se mede como em
+`criterios-de-design.md`, 2 (`contraste`, `medir-no-navegador.md`, 8). Uma cor de marca escura costuma
 servir como fundo de botão ou selo com texto branco, e não como texto ou link sobre o fundo escuro (numa
 loja: 2,1:1 como link, 8,9:1 como fundo de botão com texto branco).
 

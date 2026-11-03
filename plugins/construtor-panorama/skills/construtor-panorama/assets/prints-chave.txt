@@ -1,0 +1,28 @@
+# prints-chave.txt - a lista de prints do RASCUNHO RÁPIDO (references/previa.md, "Fluxo em dois tempos"):
+# 6 a 8 prints que mostram a mudança onde ela mais aparece, mais uma página que não deve mudar.
+# Copie para a pasta trabalho/ do perfil da loja, troque os caminhos pelos do perfil ("Páginas de conferência")
+# e apague ou troque as linhas que a mudança não toca (um ajuste no cabeçalho pede home e lista, não produto).
+#
+# Formato: nome | caminho (junta com --site) ou URL | opções do shot.mjs (node scripts/shot.mjs --help)
+# O número antes do primeiro "-" é o que o --so usa (--so 03,04 refaz só esses dois).
+# A MESMA lista serve aos três passos:
+#   1. node scripts/salvar_copia.mjs --lista prints.txt --site https://www.SUA-LOJA.com.br --saida copias
+#      (uma visita por página e aparelho; aqui, 5 visitas)
+#   2. node scripts/rodada.mjs --lista prints.txt --offline copias --saida r1 --css proposta.css --depois-de "seu-tema.css"
+#      (sem rede, segundos por rodada: itere o CSS aqui)
+#   3. node scripts/rodada.mjs --lista prints.txt --site https://www.SUA-LOJA.com.br --saida final --css ... (no ar,
+#      uma vez, para confirmar; com --replace no lugar de --css, simula a gravação do arquivo inteiro)
+#
+# Rolagem: --scroll-y N (px) serve em qualquer tema. Com o seletor do catálogo da família, o print cai sempre no
+# mesmo lugar: ex. na família /dist, --scroll-to ".product-tabs-header" --offset -10 (o meio do produto) e
+# --scroll-to ".category-information" --offset -20 (o topo da lista); confira no catalogo-tema-base.md.
+# Box ou barra fixos no pé da tela: sem --clip-h (print da janela), senão o que é position:fixed sai do lugar.
+
+01-produto-1920-topo     | /CAMINHO-DE-UM-PRODUTO.html             | --largura 1920 --altura 1080 --rolar --hide-avisos --clip-h 1080
+02-produto-1920-meio     | /CAMINHO-DE-UM-PRODUTO.html             | --largura 1920 --altura 1080 --rolar --hide-avisos --scroll-y 1000 --clip-h 1080
+03-produto-celular-topo  | /CAMINHO-DE-UM-PRODUTO.html             | --celular --rolar --hide-avisos --clip-h 812
+04-produto-celular-meio  | /CAMINHO-DE-UM-PRODUTO.html             | --celular --rolar --hide-avisos --scroll-y 1400 --clip-h 812
+05-lista-1920            | /CAMINHO-DE-UMA-CATEGORIA               | --largura 1920 --altura 1080 --rolar --hide-avisos --scroll-y 300 --clip-h 1080
+06-lista-celular         | /CAMINHO-DE-UMA-CATEGORIA               | --celular --rolar --hide-avisos --scroll-y 300 --clip-h 812
+07-lista-1366            | /CAMINHO-DE-UMA-CATEGORIA               | --largura 1366 --altura 768 --rolar --hide-avisos --clip-h 768
+08-controle-1920         | /CAMINHO-DE-UMA-PAGINA-QUE-NAO-DEVE-MUDAR | --largura 1920 --altura 1080 --hide-avisos --clip-h 1080

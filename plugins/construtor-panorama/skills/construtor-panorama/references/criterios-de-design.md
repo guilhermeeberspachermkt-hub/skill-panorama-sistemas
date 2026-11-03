@@ -107,6 +107,10 @@ cara do site", ou quer uma variante de um tema já aprovado que mexe na tipograf
 cards, nas setas, no menu ou no preço. Não é um ajuste pontual (uma cor, um botão): é uma linguagem visual
 nova, e há mais de uma resposta boa. Por isso você mostra opções, e ela escolhe.
 
+**Em dois tempos** (`previa.md`, "Fluxo em dois tempos"): primeiro um rascunho rápido, com uma direção
+desenvolvida e as outras em esboço, para a pessoa dar a opinião dela em ~45 minutos; depois, a síntese e a
+revisão profunda, só da versão que ela gostou. O tempo vai para a versão escolhida, não para as três.
+
 **O que fica fixo antes de desenhar:**
 
 - **A marca**: cores, fontes e logo, medidos e confirmados com ela (seção 1).
@@ -115,8 +119,11 @@ nova, e há mais de uma resposta boa. Por isso você mostra opções, e ela esco
 - **O conteúdo** (seção 3): nenhuma direção liga selo de %, texto novo, contagem maior ou cor fora da marca.
   Se uma direção pede um deles, ele entra desligado e aparece só como opção, num print rotulado.
 
-**Duas ou três direções.** Cada uma com uma tese de uma frase e a lista do que ela muda. As três de uma loja
-(2026-10), como exemplo do tipo de diferença, não para copiar:
+**Uma direção recomendada; as outras, em esboço.** Cada direção tem uma tese de uma frase e a lista do que ela
+muda. No rascunho, só a que você recomenda é desenvolvida (os 6 a 8 prints-chave e o favorito); uma segunda e uma
+terceira, se o pedido tem mesmo outras leituras boas, vão como esboço: o CSS mínimo que mostra a tese e dois
+prints cada (computador a 1920 e celular), sem revisão. As três de uma loja (2026-10), como exemplo do tipo de
+diferença, não para copiar:
 
 | Direção | Tese | O que muda |
 |---|---|---|
@@ -127,12 +134,14 @@ nova, e há mais de uma resposta boa. Por isso você mostra opções, e ela esco
 Cada direção é um conjunto de seções próprio, com o mesmo escopo das outras (`ajustes-visuais.md`, 0 e 2.3):
 no modo de época, preso à classe do tema; no modo permanente ("mais moderno" ou "mudar a cara do site" fora
 de uma campanha), sem classe nenhuma (não invente uma: `ajustes-visuais.md`, 0) e escopado por aparelho,
-tipo de página e região. Renderizado nas mesmas páginas e larguras das outras (a matriz de
-`ajustes-visuais.md`, 4.1), com o conteúdo desligado.
-Onde renderizar: a prévia na sua aba, ou um render local de cópias do HTML (`ajustes-visuais.md`, 4.2;
-`ferramentas-de-navegador.md`, 4), que compara direções sem tocar no site no ar nem nas abas da pessoa.
+tipo de página e região. Renderizado nas mesmas páginas, larguras e rolagem das outras (a mesma lista de
+prints), com o conteúdo desligado. Onde renderizar: nas cópias salvas, sem rede (`rodada.mjs --offline`;
+`previa.md`, "Iterar offline, confirmar no ar"), que comparam direções em segundos sem tocar no site no ar nem
+nas abas da pessoa; o quadro lado a lado sai do `scripts/comparar_prints.py`.
 
-**A régua.** Dê a cada direção uma nota de 1 a 10 em cada critério, com uma linha de motivo:
+**A régua.** Ela serve para você escolher qual direção recomendar e para a pessoa ver por que: dê a cada direção
+uma nota de 1 a 10 em cada critério, com uma linha de motivo, a partir dos prints e das medidas que você já tem
+(no rascunho, sem juiz nem rodada extra para isso):
 
 | Critério | A pergunta |
 |---|---|
@@ -146,9 +155,10 @@ Numa loja (2026-10), as notas da avaliação foram: a direção de varejo levou 
 editorial, 9 em marca e 7 em força; a de brilho, 9 em robustez e 5 em força. Nenhuma ganhou em tudo, e é por
 isso que a pessoa precisa ver as três.
 
-**A síntese.** A versão que você recomenda é uma direção com enxertos nomeados ("a editorial, com a faixa de
-benefícios da de varejo": restilizar uma faixa que já existe; texto novo nela é conteúdo e vai para
-"Decisões da pessoa", desligado). Ela vem com duas listas obrigatórias:
+**A síntese** vem depois da opinião da pessoa (o tempo 2): é a direção que ela gostou, com os enxertos que ela
+pediu ou aceitou, nomeados ("a editorial, com a faixa de benefícios da de varejo": restilizar uma faixa que já
+existe; texto novo nela é conteúdo e vai para "Decisões da pessoa", desligado). Ela vem com duas listas
+obrigatórias:
 
 1. **O que mudou em relação ao que a pessoa já viu ou aprovou.** Visto numa loja: a síntese deixou só a home
    em preto puro, e o resto continuou no cinza escuro que a pessoa tinha aprovado. Nomeie cada mudança e
@@ -157,17 +167,48 @@ benefícios da de varejo": restilizar uma faixa que já existe; texto novo nela 
    é calculado: `temas-sazonais.md`, 8), um texto decorativo repetido (onde: seção 3), uma contagem maior ou
    com segundos (seção 2), uma cor fora da marca.
 
-**Mostre as opções, não só a vencedora.** Mande um conjunto de prints de cada direção e da síntese, nas mesmas
-páginas, larguras e rolagem, com o nome da opção no arquivo e na legenda, e a linha da régua de cada uma. Ela
-escolhe: a síntese, uma direção pura ou a mistura que ela pedir. Gosto é dela. A aprovação nomeia uma versão
-só (`previa.md`, "Aprovação, gravação e conferência"). Visto numa loja: só os prints da vencedora foram
-mandados, e a pessoa não viu as outras duas para comparar.
+**Mostre as opções, não só a vencedora.** Mande os prints de cada direção (a recomendada com os prints-chave, as
+outras com o par de esboço), nas mesmas páginas, larguras e rolagem, com o nome da opção no arquivo e na legenda,
+e a linha da régua de cada uma. Ela escolhe: a recomendada, outra direção ou a mistura que ela pedir. Gosto é
+dela. A aprovação nomeia uma versão só, e vem depois da revisão profunda (`previa.md`, "Aprovação, gravação e
+conferência"). Visto numa loja: só os prints da vencedora foram mandados, e a pessoa não viu as outras duas
+para comparar.
 
 **Agentes auxiliares** (subagentes que geram, avaliam ou revisam direções) trabalham só com cópias locais e
 renders locais: nunca no admin, nunca nas abas da pessoa, e não gravam nada. O que eles entregam é rascunho.
 Confira contra o perfil da loja e contra as regras da skill antes de mostrar. Visto numa loja (2026-10): a
 síntese de um agente veio com o selo de % ligado, desligado só depois da revisão, e mandava limpar o cache
 de uma CDN que a loja não tem (o perfil dizia que não havia CDN identificada).
+
+- **Quantos.** No rascunho, nenhum é preciso; no máximo um, para o esboço de uma direção alternativa. No tempo
+  3, no máximo uma rodada de revisão adversarial, e uma segunda só quando a primeira achou algo obrigatório
+  (`previa.md`, "Fluxo em dois tempos"). Juiz que compara direções completas não entra: a régua é sua, e a
+  escolha, da pessoa.
+- **O briefing** diz: a pasta das cópias e a lista de prints; os scripts a usar (`shot.mjs`, `rodada.mjs
+  --offline`, `medir_cores.js`, `rev.mjs`, `pares.py`, `escopo.js`, com a linha de uso de cada um, que o
+  `--help` mostra); se o agente pode visitar o site no ar (um só por vez: `previa.md`, "Ritmo das visitas ao
+  site") ou só as cópias; e o formato do relatório, abaixo.
+- **O relatório de um agente** tem duas partes:
+  1. um arquivo JSON na pasta de trabalho, com esta forma:
+     ```json
+     {
+       "tarefa": "revisão adversarial da direção editorial, produto e listas",
+       "veredito": "ok | corrigir | bloqueia",
+       "obrigatorios": [
+         { "onde": "produto, 1366, .product-summary .prices", "o_que": "preço riscado some no fundo escuro",
+           "medida": "1,9:1 (mínimo 4,5:1)", "evidencia": "r3/medidas/11-produto-1366.json",
+           "correcao": "body.sua-classe .product-summary .price-from{color:#b8b8b8}" }
+       ],
+       "opcionais": [ { "onde": "...", "o_que": "...", "evidencia": "..." } ],
+       "nao_conferido": ["sacola com produto", "celular a 340px"],
+       "arquivos": ["r3/prints", "r3/resumo.json"]
+     }
+     ```
+  2. na resposta, um resumo de até 10 linhas: o veredito, quantos obrigatórios e opcionais, os três mais graves
+     em uma linha cada, e o caminho do JSON. As medidas e os prints ficam nos arquivos que o JSON aponta.
+
+  Você lê o resumo, abre o JSON só no que vai decidir, e confere cada obrigatório no print ou na medida antes
+  de levar à pessoa.
 
 **Depois da escolha**, o caminho é o de sempre, nesta ordem: a versão que vai para o admin montada por script
 (`montar_tema.py --publicar`, `ajustes-visuais.md`, 5.2), a prévia gerada dela (`previa.md`), o "aprovado"

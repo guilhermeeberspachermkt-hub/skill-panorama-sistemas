@@ -175,6 +175,37 @@ são outro sistema; se uma chave da configuração existe; e se o logo SVG traz 
 Pedido misturado é comum ("selo de desconto vermelho só na Black" é ajuste visual dentro de um tema
 sazonal). Leia os dois arquivos e siga o caminho comum de gravação abaixo.
 
+### Pedido visual grande: em dois tempos
+
+Fundo ou cor de várias regiões, mais de um tipo de página, uma proposta de estilo, um tema de época novo
+("deixar a página de produto e as listas com fundo escuro"): a primeira prévia sai em ~1 hora, não depois de
+tudo revisado (`references/previa.md`, "Fluxo em dois tempos"):
+
+1. **Rascunho rápido (~45 min):** uma direção, a que você recomenda (outras, se houver, só como esboço de dois
+   prints); 6 a 8 prints-chave (`assets/prints-chave.txt`) iterados nas cópias salvas, sem rede, e confirmados
+   no ar uma vez; o favorito de prévia. A mensagem pede a opinião dela, não o "aprovado".
+2. **A opinião da pessoa.** Ajuste pedido volta ao rascunho, em segundos.
+3. **Revisão profunda, só da versão que ela gostou:** estados, Tab, celular, larguras do meio, data de corte,
+   cor colada no admin, os testes de "nada mudou". Depois, a mensagem com o "aprovado".
+
+Revisão adversarial por agente: no máximo uma rodada, no tempo 3; uma segunda só se a primeira achou algo
+obrigatório. As medidas que já existem estão em `scripts/` (tabela "Scripts", abaixo): use-as, em vez de
+escrever ferramenta nova de print ou de medida.
+
+### Visitas ao site e agentes auxiliares
+
+- **Ritmo das visitas** (o CDN de uma loja já devolveu o erro 1015 por excesso): um Chrome por vez e um só
+  agente no site por vez; de 5 a 6 s entre cargas; o mesmo perfil do Chrome, com o cache; num 1015, esperar
+  6 minutos e tentar uma vez, e no segundo parar e contar à pessoa; num desafio de "você é humano", parar. Os
+  scripts de visita já seguem essas regras sozinhos (`scripts/cdp.mjs`); pela ferramenta de navegador, siga à
+  mão (`references/previa.md`, "Ritmo das visitas ao site").
+- **Iterar offline, confirmar no ar:** o laço de mudar o CSS e olhar roda nas cópias salvas, num Chrome sem rede
+  (`salvar_copia.mjs` uma vez, depois `rodada.mjs --offline`); o site no ar fica para a confirmação final e para
+  a simulação da gravação (`--replace`) (`previa.md`, "Iterar offline, confirmar no ar").
+- **Agentes auxiliares** trabalham só em cópias e renders locais, nunca no admin nem nas abas da pessoa, e
+  devolvem um JSON com veredito, obrigatórios (onde, o quê, medida, evidência, correção), opcionais e o que não
+  conferiram, mais um resumo de até 10 linhas (`criterios-de-design.md`, 4, "Agentes auxiliares").
+
 ### Página do construtor
 
 Antes de tudo, combine três coisas: o `#` da página de rascunho (se a loja não tem, quem cria é a pessoa:
@@ -232,7 +263,8 @@ As quatro regras, os nove passos em detalhe, a edição pontual e as medições 
    página e região.
 3. Prévia com `scripts/gerar_previa.py`, na mesma posição da cascata, e teste você mesmo com ela ligada, nas
    páginas e larguras que importam (no modo de época, com e sem a classe): contraste, área de clique,
-   rolagem lateral e uma página que não devia mudar.
+   rolagem lateral e uma página que não devia mudar. Itere o CSS nas cópias salvas (`rodada.mjs --offline`) e
+   confirme no ar no fim; num pedido grande, em dois tempos (acima).
 4. Prints de computador e celular para a pessoa; espere o "aprovado".
 5. Ponha no ar: backup, confira que o Arquivo no admin ainda é o do backup, grave o Arquivo, número novo no
    `<head>`, caches (o de configuração da loja: pergunte antes, ou faça se a pessoa pediu). Numa mudança com
@@ -400,6 +432,8 @@ na conferência:
 | `references/primeiro-uso.md` | Primeiro uso com uma loja: a configuração inicial em cinco passos (o ambiente, as sete perguntas e a mensagem pronta, o reconhecimento, o resumo do perfil e a espera pela correção, o "pronto"); a primeira mensagem para a pessoa colar; o que funciona em cada cliente (Claude Code, chat, Codex); as respostas momentâneas e as perguntas da hora certa. |
 | `references/reconhecimento-da-loja.md` | O passo 3 da configuração inicial: descoberta só de leitura (inclusive a família do tema, a ordem da cascata e se há CDN na frente), snippets e como salvar o perfil. |
 | `assets/perfil-da-loja.md` | Modelo do perfil da loja, para copiar para `~/.claude/panorama-lojas/<slug>.md`. |
+| `assets/prints-chave.txt` | Modelo da lista de prints do rascunho rápido (6 a 8 prints e uma página de controle), a mesma para `salvar_copia.mjs`, `rodada.mjs` e `larguras.mjs`. |
+| `assets/plano-revisao.mjs` | Modelo comentado de plano do `rev.mjs` para a revisão profunda da versão escolhida. |
 | `references/construtor.md` | Página do construtor: as duas raízes, as quatro regras, o fluxo em nove passos (do backup do `Blocos:` à aprovação e à página real), a verificação e a edição pontual numa página que já está no ar. |
 | `references/blocos.md` | Sempre que for gerar JSON: os 13 tipos (+ `accordion`), config base e específica, dicionário interface ↔ JSON, receitas de grid, tipos de página. |
 | `references/exemplo.md` | Ao migrar uma página do site antigo: caso completo, do HTML antigo ao JSON novo, e o script que lê a árvore. |
@@ -408,10 +442,10 @@ na conferência:
 | `references/catalogo-tema-base.md` | Para escrever o seletor na família `/dist` (e as partes marcadas "plataforma", comuns às famílias medidas): cabeçalho, menu, card, listas, etiquetas, carrosséis, barras, avisos, logo, tipografia e página do produto. No topo, a tabela "Qual catálogo" para as outras famílias; na seção 14, as armadilhas de CSS que valem em qualquer família. |
 | `references/catalogo-modelo-1.md` | O mesmo para a família `modelo-N` (medido no `modelo-1`), com os mesmos números de seção: cabeçalho fixo da home, Barra do Topo, selo e etiquetas, a barra da agenda que não serve nessa família; 15 = o que não recebe o tema, 16 = rodapé. |
 | `references/medir-no-navegador.md` | Os trechos de medição: ordem das folhas com o veredito do SCSS (`folhasEmOrdem`), `quemPinta`, `bissecta`, `acharPorTexto`, variáveis CSS, rolagem lateral (linha de base sem a prévia), área de clique, contraste, comparar estados com contraprova (`cssDaPrevia`), varredura de contraste (`varreduraContraste`, o texto que sumiu), como a pessoa vê (`comoAPessoaVe`: largura, zoom e `devicePixelRatio` de quem aprova), o card que chega depois (`guardarCardCru` e `puloDoCard`: o preço pula?) e o deslocamento na carga (`medirCLS`). A comparação de estados (`foto`/`diferencas`) é por elemento e devolve `mudaram`, `novos` e `sumiram`. |
-| `references/criterios-de-design.md` | O tom da marca (pergunte), acessibilidade (regra), o que não é seu para decidir e a proposta de estilo (seção 4: 2 ou 3 direções, régua, síntese; a pessoa escolhe vendo as opções). |
+| `references/criterios-de-design.md` | O tom da marca (pergunte), acessibilidade (regra), o que não é seu para decidir e a proposta de estilo (seção 4: uma direção recomendada e as outras em esboço, a régua, a síntese depois da opinião da pessoa; os agentes auxiliares: quantos, o briefing e o relatório em JSON com resumo curto). |
 | `references/temas-sazonais.md` | Tema de época: agenda de skins, item inerte, arquivo de tema isolado, `.promotionBar`, barra com fases, qual barra para qual pedido, urgência honesta, checklists, o roteiro do fundo escuro. |
 | `references/mapa-do-admin.md` | Onde fica cada coisa fora do construtor: configuração da loja, agenda, Arquivos, home no ar, as camadas de cache (a do CDN, só onde houver um), qual clique funciona em qual botão, o diagnóstico de "mudei e não aparece", as telas não mapeadas, as páginas que são outro sistema (Next.js). |
-| `references/previa.md` | Antes de qualquer gravação visual: qual prévia para qual mudança, o gerador de favorito e como mandar para a pessoa aprovar. |
+| `references/previa.md` | Antes de qualquer gravação visual: o fluxo em dois tempos de um pedido grande (rascunho rápido, opinião, revisão profunda; o limite da revisão adversarial), o ritmo das visitas ao site (1015), iterar offline e confirmar no ar, qual prévia para qual mudança, o gerador de favorito e como mandar para a pessoa aprovar. |
 | `references/gravacao-construtor.md` | Antes de gravar uma página do construtor: campo `Blocos:`, transporte com sha256, clique certo por botão, diálogo morto, os filtros da tela Páginas pelo rótulo, verificação. |
 | `references/gravacao-arquivo-e-head.md` | Antes de gravar um Arquivo (CSS/JS), o `<head>`, a agenda, a Barra do Topo ou o logo; o campo que a loja nunca usou (a chave não existe); colar à mão; modo guiado; a ordem de uma mudança em duas peças (CSS + JS); criar um Arquivo novo e onde a linha dele entra no `<head>`; `Publicar`, quando a pessoa pede. |
 | `references/ferramentas-de-navegador.md` | Quando uma verificação correta parecer falha: limites e manias da ferramenta de navegador, datados. |
@@ -425,6 +459,25 @@ na conferência:
 | `scripts/montar_tema.py` | Monta e confere um CSS de tema ou de ajuste antes da prévia: arquivo novo a partir de seções, ou a versão no ar (byte a byte) + seções. Confere BOM, CR, ASCII, comentários, chaves e CSS plano (sem aninhamento nem SCSS), e, com `--classe`, que todo seletor está preso à classe do `<body>` (lista de seletores separada só nas vírgulas de fora de parênteses, colchetes e aspas); imprime tamanho e sha256. `--publicar ARQ` grava também a versão de publicar (as seções novas sem comentários; com `--base`, a versão no ar fica byte a byte), confere que ela tem as mesmas regras da versão de trabalho e imprime o sha das duas: a gravação sai da de publicar (a prévia também, num arquivo novo). Lê os números de seção: AVISO de número repetido (da base ou entre seções novas; 8 e 8.8 são diferentes), de seção nova sem número e de regras depois do fim da última seção da base, e imprime a próxima livre. Com `--publicar`, cada seção nova guarda uma linha de cabeçalho com o número e o título. Com `--base`, imprime dois comandos de prévia: o de acréscimo (para a pessoa) e o do arquivo inteiro (para você conferir 0 diferenças). `--autoteste` roda os testes internos. Ver `ajustes-visuais.md`, 5.2. |
 | `scripts/validar_pagina.py` | Passo 5 do construtor, sobre o JSON, antes de gravar. Não conserta nada; sai 1 se houver ERRO. Aceita `--cor-link` com a cor medida e `--base backup.json` (edição pontual: ERRO que já estava no backup vira AVISO, e só os novos bloqueiam). Lê também JSON relido do admin, com os escalares em texto. |
 | `scripts/verificar_paridade.py` | Passo 7a do construtor, depois de cada gravação. Aceita caminho local (aí rode uma vez por aparelho, sem `--mobile`); precisa de `beautifulsoup4`. Imprime também o JS do passo 7b. |
+
+Os scripts de Chrome (Node 22 ou mais novo e o Chrome instalado; cada um mostra o uso com `--help`) abrem um
+Chrome headless próprio, sem a sessão de ninguém, e não gravam nada no site. No ar, seguem sozinhos o ritmo das
+visitas; nas cópias salvas, rodam sem rede, em segundos (`references/previa.md`, "Ritmo das visitas ao site" e
+"Iterar offline, confirmar no ar"):
+
+| Script | Para quê |
+|---|---|
+| `scripts/salvar_copia.mjs` | Salva cópias (MHTML) das páginas de uma lista de prints, uma carga por página e aparelho, com o DOM de depois dos scripts, as folhas na mesma ordem da cascata e as fotos; grava `copias.json` com o sha de cada uma. |
+| `scripts/shot.mjs` | Um print e medidas de uma página, no ar (`--url`) ou na cópia (`--copia`): `--css` na posição da cascata (`--depois-de`, `--substitui`, `--fim-do-head`, como o favorito), `--replace` (simula a gravação de um Arquivo), `--inject`, `--eval`, `--measure`, `--agora`, `--relogio` (data de corte), `--celular` (HTML de celular), `--hide-avisos`, `--rolar` e recortes. |
+| `scripts/rodada.mjs` | A rodada de prints de uma lista (`assets/prints-chave.txt`), no ar ou `--offline` nas cópias, com as mesmas opções do `shot.mjs`, `--medir` (`medir_cores.js` em cada print) e `--so`; grava os prints, as medidas e um `resumo.json` curto. |
+| `scripts/larguras.mjs` | Rolagem lateral e quem a causa em várias larguras numa carga (e o celular a 375), no ar ou nas cópias, com ou sem `--css`; a tabela em `larguras.md` (linha de base e prévia). |
+| `scripts/rev.mjs` + `scripts/rev.js` | A revisão profunda de uma versão, por um plano (`assets/plano-revisao.mjs`): Tab de verdade com pares de print, mouse de verdade, escopo na mesma carga, varredura de contraste, teste de cor colada no admin, larguras e data de corte; no ar ou na cópia. |
+| `scripts/pares.py` | Mede pelos pixels se o foco de teclado aparece (≥ 3:1), a partir dos pares do `rev.mjs`; `--grupos` junta por tipo de elemento. Precisa do Pillow. |
+| `scripts/medir_cores.js` | Na página: fundos reais, contraste de textos e controles, varredura de todo texto abaixo do mínimo, superfícies claras, rolagem lateral, cor colada nas áreas do admin e, opcional, a regra que pinta cada parte. Mapa de seletores genérico ou da família (`scripts/mapas/familia-dist.json`). |
+| `scripts/escopo.js` | Na página: a ordem real das folhas (`__folhas`) e quantos elementos cada regra da prévia pega em outros tipos de página, sem a classe do tema e nas regiões que não deviam mudar (`__escopo`). |
+| `scripts/comparar_prints.py` | Junta prints de várias versões num quadro só, com rótulo e nota, para a pessoa comparar. Precisa do Pillow. |
+| `scripts/ler_cache_chrome.mjs` | Último recurso: tira do cache em disco do perfil das visitas uma resposta que já veio (o HTML de uma vitrine), sem visitar o site de novo. |
+| `scripts/cdp.mjs` | Biblioteca dos scripts de Chrome: a trava e a pausa das visitas, o 1015, o CSS na posição da cascata, o relógio. `node scripts/cdp.mjs` mostra quem está com a trava. |
 
 Para que serve cada programa e o que funciona sem ele: `primeiro-uso.md`, 1c. Python: use `python` (no
 Windows, `python3` pode ser só o atalho da Microsoft Store); nos trechos colados

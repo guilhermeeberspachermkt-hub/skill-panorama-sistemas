@@ -265,6 +265,23 @@ mediu", a página e o aparelho; antes de escrever "no site todo", meça em pelo 
 | Preços da página do produto, principal / secundário (`productPageMainPrice` / `productPageSecondaryPrice`; snippet D, e Visual › Página do Produto na tela) | _(o que a tela escreve e o valor da chave; e qual a página mostra primeiro. Ex., numa loja medida: Tabela Preço / Pix, com o preço do Pix mostrado primeiro)_ | _(um pedido "junto do preço" na página do produto diz de qual dos dois; página e aparelho)_ |
 | Como quem aprova vê o site (janela em px CSS, zoom do Chrome na origem do site, `devicePixelRatio`, celular que usa) | _(ex.: "janela de ~2.133px CSS numa tela de 1920, zoom 90%, `devicePixelRatio` 0,9", medido numa loja; `comoAPessoaVe`, `medir-no-navegador.md`, 13)_ | _(data; aba da extensão ou perguntado a ela)_ |
 
+## Páginas de conferência (prints)
+
+Os endereços que se repetem a cada prévia, para a lista de prints (`assets/prints-chave.txt`, copiada para a
+pasta `trabalho/`) não ter de ser montada de novo a cada pedido. Confira de tempos em tempos que o produto ainda
+existe e tem estoque.
+
+| Para quê | Caminho | Observação |
+|---|---|---|
+| produto com etiqueta, selo ou preço de campanha | | _(o que ele tem de especial)_ |
+| produto sem etiqueta (o mesmo tipo de página, sem a novidade) | | |
+| produto com descrição longa e avaliações | | _(cor colada no admin aparece aqui?)_ |
+| categoria (lista) | | |
+| busca | | _(ex.: `/buscar/PALAVRA`)_ |
+| página que não deve mudar (controle) | | _(uma que recebe o tema; não um endereço de outro sistema)_ |
+| home | | |
+| lista de prints da loja | _(caminho do `prints.txt` em `trabalho/`)_ | _(data; e onde ficam as cópias salvas, com a data delas)_ |
+
 ## Etiquetas que o tema ou os seus arquivos estilizam (Loja On-line › Tags)
 
 Conferido em: AAAA-MM-DD _(só quando um pedido envolve uma etiqueta; grade de Tags com o filtro Loja = a sua,
