@@ -269,7 +269,11 @@ tema da Black deste ano), criado uma vez e depois só atualizado. Se ainda não 
   medido um arquivo de 115 KB com ~29 KB de comentários. Com `montar_tema.py --publicar` (5.2), as seções
   novas vão ao ar só com uma linha de cabeçalho (o número e o título), e a versão comentada fica na pasta
   `trabalho/` do perfil; a história longa fica nela e no perfil da loja. O que já está no ar com comentário
-  fica como está (com `--base`, a base vai byte a byte).
+  fica como está (com `--base`, a base vai byte a byte). Num tema longo, o melhor é guardar a versão
+  comentada **no admin**, numa página tipo Arquivo despublicada, e pôr no site só a versão enxuta, com um
+  único comentário que aponta para ela. Assim as notas ficam com a loja, e não num computador só, e quem
+  abrir o arquivo no site (outro Claude, um dev) sabe onde elas estão. Medido numa loja: de ~41 KB para
+  ~15 KB transferidos por visita, com as mesmas regras (5.2, "A versão comentada no admin").
 - **O número da seção nova vem da versão no ar.** Antes de numerar, leia o último número da versão no ar (a
   que vai de base) e a coluna "Última seção" do perfil ("Arquivos CSS/JS da loja"). Medido numa loja
   (2026-10): uma seção nova levou o número de uma que já estava no ar; e a versão publicada pelo `--publicar`
@@ -279,7 +283,8 @@ tema da Black deste ano), criado uma vez e depois só atualizado. Se ainda não 
   base" (regras depois do comentário de fim da última seção numerada, como `/* ==== fim 17 ==== */`), o
   último número vem do histórico do perfil, não do arquivo. Ele também avisa quando uma seção nova não tem
   cabeçalho numerado, e quando uma `--secao` tem mais de um número (18 e 19; 18 e 18.1 são uma seção só):
-  só o primeiro fica na versão de publicar.
+  só o primeiro fica na versão de publicar. Com a versão comentada guardada no admin (5.2), a enxuta do site
+  não tem cabeçalho de seção nenhum: os números vêm da comentada, que é a base do `montar_tema.py`.
 
 ### 2.3 Escopo: aparelho, tipo de página, região e, no modo de época, a classe
 
@@ -951,7 +956,9 @@ arquivo de trabalho era comentário. Com `--publicar`, o script grava, além da 
 comentada), a versão de publicar: as seções sem os comentários `/* */` (fica uma linha de cabeçalho por
 seção nova, com o número e o título, para o arquivo no ar continuar numerado: 2.2), sem espaços no fim das
 linhas e sem linhas em branco dentro delas. "Versão de publicar" é nome para você; com a pessoa, diga "a versão sem
-comentários que vai para o site" (`previa.md`, "Mandar para a pessoa").
+comentários que vai para o site" (`previa.md`, "Mandar para a pessoa"). Ela deixa a versão comentada na pasta
+`trabalho/` e, com `--base`, os comentários do que já está no ar continuam indo para o site; para guardar a
+comentada no admin e tirar também esses, veja "A versão comentada no admin", abaixo.
 
 - Sem `--base`, ela começa por uma linha ASCII que diz de qual versão de trabalho veio (nome, sha256 de 12
   dígitos e data). Por causa da data, montar de novo noutro dia muda o sha: monte uma vez, gere a prévia dela
@@ -978,6 +985,91 @@ da versão de publicar e o da versão de trabalho (`previa.md`, "Grave exatament
 Anote no histórico do perfil da loja (`~/.claude/panorama-lojas/<slug>.md`) o tamanho e o sha de cada versão
 publicada (com `--publicar`, o da versão de publicar e, entre parênteses, o da versão de trabalho, como na
 coluna do histórico do perfil): é o que permite provar, depois, qual versão está no ar.
+
+**A versão comentada no admin (o tema em duas páginas).** O `--publicar` resolve as seções novas, mas deixa
+duas coisas. A versão comentada fica na pasta `trabalho/` de quem mexeu, e o arquivo no ar só diz que ela "fica
+com quem mantém o tema": noutro computador, ou para outro Claude ou um dev que abra o arquivo no site, ela não
+existe. E os comentários do que já estava no ar continuam indo para todo visitante. Medido numa loja (2026-11):
+um tema de 190 KB, com ~2/5 de comentário, passava ~41 KB (gzip) por visita; a versão enxuta, com as mesmas 769
+regras, passa ~15 KB. A saída, quando a pessoa quer (pergunte: a página nova é dela, e criar página é pedido
+dela), é guardar o tema em duas páginas tipo Arquivo:
+
+- **A do site** (`/seu-tema.css`, a do `<head>`) leva a versão **enxuta**: sem comentários, com um único
+  comentário no topo, que diz o `#` e o endereço da comentada.
+- **A da comentada** (`/seu-tema-comentado.css`, com um nome como "<tema> - versao comentada (consulta, nao
+  publicar)") leva a versão **comentada**, que é a fonte: o porquê de cada regra e os números das seções. Ela
+  fica **despublicada de propósito**. No site, o endereço dá 404 e nenhuma página a carrega; no admin, abre-se
+  pelo `Alterar` da linha e sai-se por `Cancelar`. Não entra no `<head>` e nunca é publicada: publicada, seria
+  um segundo CSS grande, acessível no site sem que nenhuma página precise dele.
+
+A primeira vez, com o tema já no ar:
+
+1. Ache a comentada. Pode ser o próprio arquivo no ar, quando é ele que tem os comentários, ou a versão de
+   trabalho da pasta `trabalho/`. A de trabalho só serve se `node scripts/conferir_css.mjs <o servido>
+   <a de trabalho>` der 0 diferentes. Se der diferença, alguém mexeu no admin depois dela: mostre à pessoa e
+   combine qual vale.
+2. Crie a página da comentada. A pergunta fechada: "Crio a página `/seu-tema-comentado.css` na loja <nome>,
+   despublicada, com a versão comentada do tema (`Incluir` › `Confirmar`, sem `Publicar`)?". Com o sim, siga
+   `gravacao-arquivo-e-head.md`, "Criar um Arquivo novo", grave nela a comentada e confira ao reabrir. Ela não
+   muda o site: nenhuma página a carrega. Anote o `#` no perfil. Medido: uma comentada de 204 KB entrou pelo
+   `injetarArquivo` e conferiu ao reabrir.
+3. Gere a enxuta, com o `#` da página:
+   `python -I scripts/enxugar_tema.py trabalho/seu-tema-comentado.css --saida trabalho/seu-tema-enxuto.css
+   --pagina NNNNNN --url /seu-tema-comentado.css`. No Git Bash do Windows, rode com `MSYS_NO_PATHCONV=1`,
+   senão o `/seu-tema-comentado.css` do `--url` vira um caminho do Windows antes de chegar ao script (medido).
+4. Prove que nada muda:
+   - `node scripts/conferir_css.mjs <o servido> <a comentada> <a enxuta>` tem de dar 0 diferentes. É a prova
+     das regras, regra a regra, no Chrome;
+   - `node scripts/conferir_troca.mjs --url <página> --css <a enxuta> --substitui "seu-tema.css"` tem de dar 0
+     diferentes na mesma carga do site, numa página de cada tipo (produto, uma lista, a home), no computador e
+     com `--celular`. É o complemento na tela: ele não vê `:hover`, `::placeholder` e o que a página não
+     carregou (o cabeçalho do script diz tudo o que fica de fora). Na home, os carrosséis fazem "diferenças"
+     que não são do CSS; o script para o autoplay e tira da conta o que se mexe sozinho (`armadilhas.md` 35).
+5. Não é uma mudança visual, mas troca o arquivo inteiro do site. Mostre à pessoa os números (bytes, KB
+   transferidos, as duas conferências com 0) e ofereça a prévia de sempre: o favorito da enxuta no lugar do
+   arquivo no ar (`gerar_previa.py --css <a enxuta> --substitui "seu-tema.css"`; se ele passar do tamanho que
+   o favorito aguenta, prints de antes e depois pelo `shot.mjs --css <a enxuta> --substitui ...`, nas mesmas
+   páginas). Pule a prévia só se ela disser que pode pular (`SKILL.md`, regra zero). Grave só com o OK dela
+   para essa gravação.
+6. Grave a enxuta no Arquivo do site (5.3), suba o número no `<head>` (5.4) e confira na origem que o arquivo
+   servido é a enxuta (5.5). No histórico do perfil, anote o sha da enxuta e o da comentada.
+
+Daí em diante, em toda mudança:
+
+1. A base é a **comentada**, na cópia local da pasta `trabalho/` (a da última gravação). A página dela é
+   despublicada, então o `?nc=` do Passo A de `gravacao-arquivo-e-head.md` dá 404. Prove a cópia de duas formas:
+   - contra o admin: no `Alterar` da página da comentada, `await conferirArquivoAtual('<sha normalizado da
+     cópia>')` (Passo C) tem de passar; saia por `Cancelar`;
+   - contra o site: `enxugar_tema.py <a cópia> --saida <qualquer> --pagina NNNNNN --url ... --conferir <o
+     arquivo servido hoje, baixado com ?nc=>` tem de dar IGUAL. A mesma comentada dá sempre a mesma enxuta, e
+     o IGUAL prova que ninguém editou a enxuta direto no admin. DIFERENTE: pare, mostre a diferença à pessoa
+     (`conferir_css.mjs <o servido> <a enxuta gerada>`) e leve a mudança para a comentada antes de seguir.
+
+   Sem a cópia local (outro computador, a pasta perdida), peça à pessoa: abrir o `Alterar` da página da
+   comentada, clicar no editor da aba Conteúdo, apertar Ctrl+A e Ctrl+C, colar num arquivo `.css` em
+   `trabalho/` (ou colar para você salvar) e sair por `Cancelar`. Depois, as mesmas duas provas. Copiar em
+   pedaços pela ferramenta (o snippet E de `reconhecimento-da-loja.md`) daria centenas de chamadas num tema
+   de 200 KB.
+2. Monte a comentada nova com `montar_tema.py --base <a comentada> --secao ... --saida <a comentada nova>`,
+   **sem `--publicar`**. Os números das seções saem da comentada.
+3. Gere a enxuta nova com `enxugar_tema.py` e confira `conferir_css.mjs <a comentada nova> <a enxuta nova>` = 0.
+4. A prévia é a de sempre: o favorito de acréscimo, só com as seções (`--depois-de` o arquivo no ar). A sua
+   conferência é o arquivo inteiro com a enxuta nova (`--substitui`), com 0 diferenças entre os dois
+   (`previa.md`, "Favorito grande").
+5. Com o "aprovado", grave **as duas antes de subir o número**, cada uma com backup, `conferirArquivoAtual` e
+   `verificarArquivoGravou`:
+   - primeiro a comentada, na página dela. Nenhuma página a carrega, então gravá-la não muda o site;
+   - depois a enxuta, no Arquivo do site.
+
+   Se a da enxuta falhar, o site fica como estava, mas a comentada já descreve a versão nova: termine a enxuta
+   ou cole de volta na página da comentada o backup dela, antes de encerrar. Só a enxuta ganha número novo no
+   `<head>`, porque a comentada não é carregada.
+6. No histórico do perfil, anote o sha das seções (o aprovado), o da enxuta (o que está no ar) e o da
+   comentada. Guarde a comentada nova em `trabalho/`: é a base da próxima vez.
+
+O admin devolve o texto das duas com CRLF: compare sempre pelo sha normalizado (CRLF › LF, sem quebra no
+fim), que os dois scripts imprimem. A enxuta não é editada à mão. Mudou a comentada, gere a enxuta de novo: o
+comentário do topo leva o sha da comentada de que ela saiu, e isso prova o par.
 
 ### 5.3 Gravar o arquivo
 

@@ -8,6 +8,68 @@ A cada versão, suba também o `version` de `plugins/construtor-panorama/.claude
 quem já instalou não recebe a atualização); depois do commit, confira com
 `claude plugin tag --dry-run plugins/construtor-panorama`.
 
+## [1.2.0] - 2026-11-04
+
+O tema em duas páginas: a versão comentada guardada no admin, e a enxuta no site. Numa medição (2026-11-03), um
+tema de 190 KB, com ~2/5 de comentário, passava ~41 KB (gzip) por visita; a versão enxuta, com as mesmas 769
+regras, passa ~15 KB. A versão comentada, que antes ficava só na pasta de trabalho de quem mexeu, passa a ficar
+com a loja, e o arquivo no ar diz onde ela está, para quem o abrir (outro Claude, um dev).
+
+### O que mudou
+
+- **A versão comentada no admin** (`references/ajustes-visuais.md`, 5.2): uma página tipo Arquivo despublicada
+  de propósito (no site dá 404, nenhuma página a carrega) guarda a comentada, que é a fonte. O Arquivo do site
+  leva a enxuta, com um único comentário no topo, que aponta para o `#` e o endereço da comentada. Há um roteiro
+  para a primeira vez, com o tema já no ar, e um para toda mudança depois. Na mudança, a base é a comentada (a
+  cópia local, provada igual à do admin e à do site), são duas gravações antes do número novo (a comentada
+  primeiro), e só a enxuta ganha número no `<head>`. Os passos de gravação
+  (`gravacao-arquivo-e-head.md`), a prévia (`previa.md`), o tema de época (`temas-sazonais.md`), o reconhecimento
+  (que agora reconhece o comentário de uma enxuta) e o modelo do perfil (a linha da página da comentada e
+  "Tema em duas páginas") foram ajustados.
+- **Scripts novos:**
+  - `enxugar_tema.py` gera a enxuta a partir da comentada. Reaproveita o corte de comentários do
+    `montar_tema.py --publicar`, que dá ERRO onde tirar um comentário juntaria dois nomes ou mudaria um escape.
+    Põe o comentário do topo com o sha da comentada (sem data: a mesma entrada dá sempre a mesma saída) e confere
+    a mesma lista de regras. Com `--conferir <o arquivo servido>`, prova que o arquivo no ar saiu desta comentada.
+  - `conferir_css.mjs` prova, num Chrome sem rede, que dois ou mais CSS têm as mesmas regras para o navegador,
+    regra a regra.
+  - `conferir_troca.mjs` troca, no site e na mesma carga, um CSS da loja por outro e compara o estilo computado
+    (com `::before` e `::after`) e a caixa de cada elemento. Para o autoplay dos carrosséis, leva as transições
+    ao fim e tira da conta o que se mexe sozinho. É o complemento do `conferir_css.mjs`, e o cabeçalho diz o que
+    ele não vê (`:hover`, `::placeholder`, o que a página não carregou).
+- **Armadilha 35:** carrossel girando parece diferença de CSS. Numa home, 286 e 575 "diferenças" entre fotos,
+  todas dentro dos carrosséis; com o autoplay parado, 0.
+- **Criar um Arquivo novo:** as funções da criação por script rodaram no admin pela primeira vez (uma criação,
+  um clique real, uma linha nova). Também entrou o aviso de que a ferramenta do Chrome pode trocar o resultado
+  de `conferirUrlLivre` por `[BLOCKED: Cookie/query string data]`.
+
+### Como foi testada
+
+- Numa loja real (2026-11-03), o tema de 190 KB foi para o ar em duas páginas por este roteiro, com o OK da
+  pessoa. Os scripts desta versão rodaram depois, sobre os mesmos arquivos:
+  - `enxugar_tema.py` gerou uma enxuta de 125 KB (gzip ~15 KB);
+  - `conferir_css.mjs` deu 769 regras e 0 diferentes entre o arquivo servido, a comentada e a enxuta, e acusou 1
+    diferente quando um valor de cor foi trocado de propósito;
+  - `conferir_troca.mjs` deu 0 diferentes na home (computador, 5 carrosséis parados) e no produto (celular).
+    Com duas mudanças de propósito (o fundo do `<body>` e um contorno nos links), acusou 109 elementos.
+- Esse teste com as mudanças de propósito achou um defeito, corrigido antes desta versão: o `<html>` e o
+  `<body>` ficavam de fora da comparação.
+- Uma revisão independente achou mais três defeitos nos scripts. Os três foram reproduzidos, corrigidos e testados
+  de novo antes desta versão:
+  - uma transição (`transition: all .3s`, comum em botões) escondia a mudança no `conferir_troca.mjs`;
+  - as declarações de um `@page` não eram comparadas no `conferir_css.mjs`;
+  - um `<form>` com `<input name="id">` derrubava o `conferir_troca.mjs`.
+
+  Ela achou também dois pontos no roteiro, já acertados: a página despublicada não se baixa pelo site (o backup
+  da comentada é a cópia local, provada contra o admin e contra o site), e a prévia passa a ser oferecida na
+  primeira vez.
+- `enxugar_tema.py` passou em 18 casos: comentário em string e em `url()`, comentário colado entre nomes e
+  depois de escape (ERRO), `@charset`, `@media`, CRLF, acento só no comentário, acento no `content` (ERRO sem
+  `--permitir-nao-ascii`), BOM, saída igual à entrada, comentada sem nenhuma regra (ERRO). O `--conferir` deu
+  IGUAL contra uma enxuta da mesma comentada e DIFERENTE contra o arquivo no ar, que tinha sido gerado por
+  outro script.
+- O `montar_tema.py --autoteste` continua passando.
+
 ## [1.1.0] - 2026-11-03
 
 Primeira prévia mais rápida nos pedidos visuais grandes. Numa medição (2026-11-03), um pedido de fundo escuro

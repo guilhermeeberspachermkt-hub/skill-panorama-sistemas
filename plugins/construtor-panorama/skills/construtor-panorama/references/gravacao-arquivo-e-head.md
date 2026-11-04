@@ -147,7 +147,13 @@ cliques, para a pessoa, `ajustes-visuais.md`, seção 5.6).
      prévia da pessoa é a de acréscimo, só com as seções (o sha aprovado é o delas), e você confere 0
      diferenças entre ela e o arquivo inteiro (`previa.md`, "Favorito grande"). A versão de trabalho,
      comentada, fica na pasta `trabalho/` do perfil; os três sha (seções, versão de publicar e versão de
-     trabalho) vão para o histórico.
+     trabalho) vão para o histórico. Com a versão comentada guardada no admin (`ajustes-visuais.md`, 5.2, "A
+     versão comentada no admin"), é diferente:
+     - a base é a comentada. A página dela é despublicada, e o `?nc=` do item 1 dá 404: o backup é a cópia
+       local de `trabalho/`, provada igual à do admin pelo `conferirArquivoAtual` no Passo C;
+     - o que vai para o Arquivo do site é a enxuta do `enxugar_tema.py`;
+     - os Passos B a E rodam duas vezes antes do Passo F: primeiro para a comentada (nenhuma página a carrega),
+       depois para a enxuta. Só a enxuta ganha número novo.
    - JS: antes de trocar a linha N, confira que ela tem exatamente o texto esperado (o script aborta se o
      arquivo mudou desde o backup), troque **de baixo para cima** para não mexer na numeração, e envolva o
      bloco novo em `try/catch` para que uma falha nele não derrube o resto do arquivo. Rode `node --check`
@@ -647,7 +653,10 @@ Medido numa loja (2026-10-22), numa criação real:
 
 Por isso as funções da seção 10b de `scripts/injetar.js` conferem e **rotulam** o elemento, e não clicam: quem
 clica é você, pela ação de clique da ferramenta, uma vez. Essas funções são de 2026-10-22, escritas a partir
-dessa medição e testadas num DOM falso; ainda não rodaram no admin. Na primeira vez numa loja, confira cada
+dessa medição e testadas num DOM falso. Rodaram no admin pela primeira vez em 2026-11-03, numa criação real
+numa loja (a página despublicada da versão comentada de um tema): `lerTipoDoArquivo`, `conferirUrlLivre`,
+`conferirArquivoNovo`, `prepararConfirmarCriacao` com um clique real e `conferirCriacao` deram uma linha nova.
+Na primeira vez numa loja, confira cada
 passo também com um screenshot, e anote no perfil o que passou; se uma trava abortar com a tela parecendo
 certa, é o caso de `armadilhas.md` 34. A sequência, uma chamada por passo:
 
@@ -662,6 +671,9 @@ certa, é o caso de `armadilhas.md` 34. A sequência, uma chamada por passo:
 2. `conferirUrlLivre('/seu-arquivo.js')`: nenhuma página desta loja com essa URL. Ela aborta também com outro
    filtro com valor, com hífen no filtro URL, com a grade desatualizada (uma linha que não casa com o filtro)
    ou com outra página de resultados. Se houver uma página com a URL, pare: mudar a que existe é outro pedido.
+   O objeto que ela devolve traz textos com `?`, `=` e `&`, e a ferramenta do Chrome já trocou o resultado
+   inteiro por `[BLOCKED: Cookie/query string data]` (medido, 2026-11-03). Devolva só `livre` e as chaves
+   (`ferramentas-de-navegador.md`).
 3. `await abrirDialogo('Incluir')` e, na chamada seguinte, `dialogoUnico()`.
 4. **Pela tela, com a ferramenta** (ação de formulário ou clique real no elemento, nunca por coordenada): a
    Loja pelo campo de busca e a sugestão "N - Nome" da loja do perfil; Tipo = Arquivo; Nome (o dono e o
@@ -691,6 +703,9 @@ certa, é o caso de `armadilhas.md` 34. A sequência, uma chamada por passo:
    `await abrirDialogo('Alterar')`, aba Conteúdo, `conferirDialogo('seu-arquivo.js')`,
    `await verificarArquivoGravou('<sha normalizado>', ['<trecho>'])`) e saia por `Cancelar`.
 10. `Publicar`, só se a pessoa pediu: "Publicar, quando a pessoa pede", abaixo. Sem publicar, a URL dá 404.
+    É isso que se quer numa página só de consulta, como a da versão comentada de um tema (`ajustes-visuais.md`,
+    5.2, "A versão comentada no admin"): nela não há `Publicar` nem linha no `<head>`. Do passo 11, pule a
+    linha do `<head>` e o Passo G, e anote no perfil o `#`, a URL e que ela é despublicada de propósito.
 11. A linha no `<head>` (Passo F, item 6; numa mudança em duas peças, a ordem de cima) e o Passo G. Anote no
     perfil o `#`, a URL, a linguagem e o tipo, a linha do `<head>`, o número, o dono ("Claude, a pedido de
     <pessoa>, AAAA-MM-DD") e como desfazer.

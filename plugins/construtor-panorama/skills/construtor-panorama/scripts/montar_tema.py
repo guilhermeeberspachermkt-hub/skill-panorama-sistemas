@@ -49,6 +49,9 @@ Opções:
                         dois se juntariam) ou logo depois de um escape como \\e9 (sem ele, o espaço seguinte viraria
                         parte do escape). Confere que a lista de regras (seletores e declarações, espaços
                         normalizados) é a mesma da versão de trabalho.
+                        Com o tema em duas páginas (a comentada guardada no admin, ajustes-visuais.md 5.2), não
+                        use --publicar: monte a comentada nova com --base <a comentada> e gere a do site com o
+                        enxugar_tema.py, que tira também os comentários da base.
   --autoteste           Roda os testes internos (corte de seletores, leitor de CSS, classe, versão de publicar,
                         números de seção) e sai.
 

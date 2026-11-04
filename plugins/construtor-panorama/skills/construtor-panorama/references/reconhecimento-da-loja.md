@@ -476,6 +476,13 @@ Regras depois do comentário de fim da última seção numerada (`/* ==== fim 17
 dizer que uma versão publicada perdeu o cabeçalho de uma seção: o último número vem do histórico do perfil,
 se houver, e o `montar_tema.py --base` avisa.
 
+Um CSS que começa por `/* Versao ENXUTA deste arquivo (sem comentarios). A versao COMENTADA ... fica no admin:
+pagina Arquivo #NNNNNN ...` é a metade de um tema em duas páginas (`ajustes-visuais.md`, 5.2, "A versão
+comentada no admin"). Ele não tem números de seção: eles estão na página que o comentário aponta, despublicada
+(no site, 404). Anote as duas linhas na tabela de arquivos do perfil e leia a comentada no admin, só para ler
+(`Alterar`, aba Conteúdo, `Cancelar`), para a coluna "Última seção". Confira também se ela saiu da comentada de
+hoje: o sha normalizado da comentada começa pelos 12 dígitos que o comentário traz.
+
 **Os ids de bloco que os CSS da loja miram.** Um `#block-…` é o id de um bloco do construtor e morre quando
 a home é trocada (`ajustes-visuais.md`, 2.4). Confira se os que os arquivos da loja usam ainda existem na
 home de hoje:

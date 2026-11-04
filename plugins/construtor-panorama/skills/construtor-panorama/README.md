@@ -203,7 +203,7 @@ O que vale a pena você saber:
 | `references/gravacao-construtor.md` | Como o Claude grava uma página do construtor e confere a gravação. |
 | `references/gravacao-arquivo-e-head.md` | Como o Claude grava os arquivos CSS/JS e a configuração da loja, e como você grava à mão. |
 | `references/ferramentas-de-navegador.md` | Limites da ferramenta de navegador, para o Claude não confundir com defeito do site. |
-| `scripts/` | Os scripts de prévia (`gerar_previa.py`), de montagem e conferência de um CSS de tema (`montar_tema.py`), de validação (`validar_pagina.py`) e de conferência (`verificar_paridade.py`) das páginas do construtor, e as funções usadas no admin (`injetar.js`). Os de prints e medidas num Chrome próprio (`salvar_copia.mjs`, `shot.mjs`, `rodada.mjs`, `larguras.mjs`, `rev.mjs` e os que eles carregam na página) e os de conferir os prints (`pares.py`, `comparar_prints.py`). Cada um mostra o uso com `--help`. |
+| `scripts/` | Os scripts de prévia (`gerar_previa.py`), de montagem e conferência de um CSS de tema (`montar_tema.py`) e da versão enxuta de um tema comentado (`enxugar_tema.py`), de validação (`validar_pagina.py`) e de conferência (`verificar_paridade.py`) das páginas do construtor, e as funções usadas no admin (`injetar.js`). Os de prints e medidas num Chrome próprio (`salvar_copia.mjs`, `shot.mjs`, `rodada.mjs`, `larguras.mjs`, `rev.mjs` e os que eles carregam na página), os que provam que duas versões de um CSS dão a mesma tela (`conferir_css.mjs`, regra a regra; `conferir_troca.mjs`, no site, na mesma carga) e os de conferir os prints (`pares.py`, `comparar_prints.py`). Cada um mostra o uso com `--help`. |
 
 ## Limites conhecidos
 

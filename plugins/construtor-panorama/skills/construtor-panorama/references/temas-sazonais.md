@@ -440,7 +440,10 @@ Cada byte vai para todo visitante: no caso real o arquivo passou de 100 KB, com 
 de trabalho, com `montar_tema.py --publicar` (`ajustes-visuais.md`, 5.2), e guarde a versão de trabalho,
 comentada, na pasta `trabalho/` do perfil: a explicação longa fica nela e no perfil. Com `--base`, a parte
 que já está no ar fica como está, byte a byte, e só as seções novas saem sem comentário. A prévia e a
-gravação usam a versão de publicar, e o histórico guarda o sha das duas.
+gravação usam a versão de publicar, e o histórico guarda o sha das duas. Num tema que vai durar, ou que já
+está no ar cheio de comentários, proponha guardar a comentada no admin, numa página despublicada, e pôr no
+site só a enxuta (`ajustes-visuais.md`, 5.2, "A versão comentada no admin"; medido: de ~41 KB para ~15 KB
+transferidos por visita).
 
 O admin guarda o corpo dos Arquivos e o `<head>` com CRLF e sem quebra de linha no fim (medido). Para
 comparar o que está lá com o seu arquivo, normalize (`\r\n` → `\n`, sem `\n` final) antes do sha.

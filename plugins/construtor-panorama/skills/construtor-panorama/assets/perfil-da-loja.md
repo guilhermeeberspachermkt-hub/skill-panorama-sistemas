@@ -127,6 +127,7 @@ Conferido em: AAAA-MM-DD
 | `#NNNNNN` | `/seu-tema.css` | _(tema sazonal X, ativo com a classe `skin-...`)_ | _(ex.: "Claude, a pedido de <pessoa>, AAAA-MM-DD", confirmado por ela)_ | sim | `?v=N` | _(o número da última seção da versão no ar, ex.: 12; a próxima é 13)_ | AAAA-MM-DD |
 | `#NNNNNN` | `/seus-ajustes.js` | _(tudo o que ele faz, não só a parte da tarefa; se mexe em `.promotionBar`, `.header-top-bar`, `<body>`; as datas escritas no código e o que acontece em cada uma)_ | _(ex.: "a loja", "agência X"; ou "origem: não verificada")_ | sim, `defer` | `?updatedNN` | — | |
 | `#NNNNNN` | `/tema-antigo.css` | _(fora do ar: não está no `<head>`)_ | | não | — | | |
+| `#NNNNNN` | `/seu-tema-comentado.css` | _(só se a loja guarda o tema em duas páginas: a versão comentada de `/seu-tema.css`, para consulta e edição; **despublicada de propósito**, dá 404 no site; sha normalizado da última gravada)_ | | não (despublicada) | — | _(a mesma da enxuta; os números estão aqui)_ | AAAA-MM-DD |
 
 - **Dono:** pergunte à pessoa por cada arquivo em que a tarefa pode mexer e escreva a resposta com a data
   ("dito pela pessoa em AAAA-MM-DD"). Um arquivo criado por uma sessão anterior do Claude para esta loja só é
@@ -134,7 +135,11 @@ Conferido em: AAAA-MM-DD
 - **Última seção** (arquivos de tema com seções numeradas): o número da última seção da versão **no ar**,
   atualizado a cada linha do histórico. Leia no arquivo servido, não na cópia de trabalho: a versão publicada
   pode ter perdido comentários (o `montar_tema.py --base` avisa número repetido). Com os números fora de
-  ordem no arquivo, vale o maior (reconhecimento, 2f).
+  ordem no arquivo, vale o maior (reconhecimento, 2f). Com o tema em duas páginas, o arquivo servido não
+  tem números: eles vêm da comentada, e a coluna vale para as duas linhas.
+- **Tema em duas páginas** (`ajustes-visuais.md`, 5.2, "A versão comentada no admin"): a enxuta no site e
+  a comentada numa página despublicada. Toda mudança nasce na comentada, grava as duas e sobe só o número
+  da enxuta. _(sim, desde AAAA-MM-DD / não)_
 - **No `<head>`?**: _sim_ (com `defer` ou `async`, como o 2f leu do HTML servido), _publicado fora do
   `<head>`_ (o CSS de uma página, chamado por ela ou por um JS), _não publicado_ ou _do sistema_
   (`robots.txt`, `ads.txt`, o manifest, os de `/.well-known/`: não se mexe). Duas linhas com a mesma URL: as
@@ -337,4 +342,4 @@ dia para o outro. Os problemas do site achados de passagem, com o número medido
 
 | Data | O que mudou | Onde (tela, campo, `#`) | sha publicado (e o da versão de trabalho) | Backup do antes | Como desfazer | Conferido no ar |
 |---|---|---|---|---|---|---|
-| AAAA-MM-DD | _(num arquivo de tema com seções: "seção N acrescentada; última seção agora N", e a coluna "Última seção" da tabela de arquivos atualizada)_ | | _(sha256 da versão de publicar, a mesma da prévia aprovada; entre parênteses, o da versão de trabalho, a comentada)_ | | | _(computador / celular)_ |
+| AAAA-MM-DD | _(num arquivo de tema com seções: "seção N acrescentada; última seção agora N", e a coluna "Última seção" da tabela de arquivos atualizada)_ | | _(sha256 da versão de publicar, a mesma da prévia aprovada; entre parênteses, o da versão de trabalho, a comentada; com o tema em duas páginas, o das seções aprovadas, o da enxuta e o da comentada)_ | | | _(computador / celular)_ |

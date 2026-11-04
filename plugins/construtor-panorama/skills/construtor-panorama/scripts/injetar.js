@@ -1908,8 +1908,10 @@ async function verificarArquivoGravou(shaNormalizadoEsperado, marcadores) {
  *     `OK` clicado pela ferramenta, no elemento, publicou.
  * Por isso nada aqui clica: as funções conferem e ROTULAM o elemento (rotularParaFerramenta), e o clique
  * é UM clique real da ferramenta nele, uma vez. Repetir o clique é o acidente que estas funções evitam.
- * As funções desta seção são de 2026-10-22, escritas a partir dessa medição e testadas num DOM falso; ainda
- * não rodaram no admin. Na primeira vez numa loja, confira cada passo também com um screenshot; se uma
+ * As funções desta seção são de 2026-10-22, escritas a partir dessa medição e testadas num DOM falso. A
+ * criação rodou no admin em 2026-11-03 (lerTipoDoArquivo, conferirUrlLivre, conferirArquivoNovo,
+ * prepararConfirmarCriacao + um clique real, conferirCriacao: uma linha nova). Na primeira vez numa loja,
+ * confira cada passo também com um screenshot; se uma
  * trava abortar com a tela parecendo certa, é trava com defeito de leitura (armadilhas.md 34).
  */
 

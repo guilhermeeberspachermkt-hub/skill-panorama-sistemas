@@ -2042,7 +2042,28 @@ A resposta tem dois lados:
   no histórico do perfil como foi. Nunca em silêncio, e nunca para uma condição que você não conseguiu
   provar.
 
-Este caso foi corrigido em `injetar.js` (2026-10; testado num DOM falso, ainda não no admin): o rótulo ignora
+Este caso foi corrigido em `injetar.js` (2026-10; testado num DOM falso e, desde 2026-11-02, rodado no admin
+de uma loja, onde `limparCacheConfigLoja` limpou com o filtro lido como "valor + nome (rótulo ilegível)"): o rótulo ignora
 o que não está desenhado e as listas dos seletores, e o filtro Loja de rótulo ilegível passa pelo valor da
 opção **e** pelo `lojaNome` de `definirLoja` (`filtroLojaDoPerfil`). A regra fica para o próximo defeito de
 leitura (`SKILL.md`, regra zero; `gravacao-arquivo-e-head.md`, Passo G).
+
+## 35. Carrossel girando parece diferença de CSS
+
+Medido em 2026-11, numa loja (família `/dist`). A tarefa era provar que a versão sem comentários de um tema não
+mudava a tela, trocando o arquivo na mesma carga da página e comparando o estilo e a caixa de cada elemento. No
+produto e na categoria, a troca deu 0 diferenças. Na home, deu 286; numa segunda rodada, 575. Todas estavam dentro
+de `.owl-stage`, a faixa dos carrosséis Owl da home, que giram sozinhos, e nenhuma fora. Duas fotos sem troca
+nenhuma, com o mesmo intervalo, davam 0 ou centenas, conforme um slide passava ou não entre elas. Com o autoplay
+dos 5 carrosséis parado (`jQuery('.owl-carousel').trigger('stop.owl.autoplay')`), a home deu 0 antes, durante e
+depois da troca.
+
+O que fazer: antes de concluir que um CSS mudou a tela, separe o que se mexe sozinho. É a regra 2 do item M,
+aplicada à comparação. O `scripts/conferir_troca.mjs` já faz isso:
+
+- para o autoplay que reconhece (Owl e Slick, com jQuery; Swiper), os vídeos e as animações;
+- tira duas fotos antes da troca e duas depois;
+- o que muda entre as duas do mesmo lado sai da conta e é listado à parte, com o bloco em que está.
+
+O que fica fora da conta não foi conferido. Se a lista de instáveis for grande, ou cair num bloco que importa
+para a mudança, pare esse bloco de outro jeito e rode de novo.
