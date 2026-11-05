@@ -21,7 +21,7 @@ ser medido.
 
 Antes de começar:
 
-- **Leia o perfil da loja** (`~/.claude/panorama-lojas/<slug-da-loja>.md`). Se ele não existir, não tiver a
+- **Leia o perfil da loja** (`~/panorama-lojas/<slug-da-loja>.md`). Se ele não existir, não tiver a
   parte de temas ou não disser a família do tema, faça o levantamento da seção 1 e anote o que achar
   (seção 11).
 - **A regra zero do `SKILL.md` pesa mais aqui.** A agenda de skins, o `<head>` e os arquivos de tema são
@@ -1054,7 +1054,7 @@ o da CDN, onde houver) e confira no ar como no lançamento.
 
 ## 11. O que anotar no perfil da loja
 
-Na parte de temas do perfil (`~/.claude/panorama-lojas/<slug-da-loja>.md`; modelo em
+Na parte de temas do perfil (`~/panorama-lojas/<slug-da-loja>.md`; modelo em
 `assets/perfil-da-loja.md`):
 
 - a família do tema e os arquivos dele, com o hash e a data (`reconhecimento-da-loja.md`, 2i), e a ordem

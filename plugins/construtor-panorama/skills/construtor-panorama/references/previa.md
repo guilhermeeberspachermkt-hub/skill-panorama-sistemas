@@ -515,7 +515,7 @@ Diga também o que a prévia **não** mostra, quando houver algo assim:
     esta prévia. Faça uma pergunta fechada ("Posso gravar a versão X, a dos prints?") e espere. Com duas
     variantes na mesa, a pergunta nomeia uma só.
 - **Grave exatamente o que foi aprovado.** A prévia sai dos mesmos arquivos que vão para o admin, não de uma cópia ajeitada.
-  - Anote o sha256 dos arquivos aprovados (o hash, uma impressão digital do conteúdo) e a data no histórico do perfil da loja (`~/.claude/panorama-lojas/<slug>.md`). O sha que vai no histórico é o que o `gerar_previa.py` imprimiu para cada `--css` e `--js` do favorito aprovado.
+  - Anote o sha256 dos arquivos aprovados (o hash, uma impressão digital do conteúdo) e a data no histórico do perfil da loja (`~/panorama-lojas/<slug>.md`). O sha que vai no histórico é o que o `gerar_previa.py` imprimiu para cada `--css` e `--js` do favorito aprovado.
   - **Com `montar_tema.py --publicar`**, é a versão de publicar que vai para o admin. Anote também o sha da versão de trabalho (a comentada) para achar a fonte depois: o script imprime os dois (`ajustes-visuais.md`, 5.2).
     - Arquivo novo (sem `--base`): a prévia sai da versão de publicar, e o sha aprovado é o dela.
     - Versão nova de um arquivo no ar (`--base`): a prévia da pessoa é a de acréscimo, e o sha que o gerador imprime é o das seções; a versão de publicar é a base, byte a byte, mais as mesmas regras dessas seções (o `montar_tema.py` confere), e você comparou na sua aba os dois favoritos, com 0 diferenças ("Favorito grande", acima). Anote os três shas (seções, versão de publicar, versão de trabalho) e o resultado da comparação.

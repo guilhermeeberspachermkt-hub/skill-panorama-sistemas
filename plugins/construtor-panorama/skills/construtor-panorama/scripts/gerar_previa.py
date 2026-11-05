@@ -86,7 +86,7 @@ Opções:
                     quando o sha muda.
   --autoteste       Roda os testes internos do compactador de JS e do aviso de caractere fora do ASCII, e sai.
   --saida ARQ.txt   Arquivo com o favorito (uma linha "javascript:..."). Também grava ARQ.js com o código legível,
-                    para o Claude rodar na própria aba do navegador e conferir antes de entregar. Por isso use um
+                    para o assistente rodar na própria aba do navegador e conferir antes de entregar. Por isso use um
                     nome que não seja o de nenhum --css/--js (ex.: previa-barra.txt): o script recusa se for, e
                     também recusa sobrescrever um ARQ.js, ARQ.txt ou ARQ.gz.b64 que ele mesmo não gerou. Se der
                     ERRO, nada é gravado (uma saída anterior fica como estava).

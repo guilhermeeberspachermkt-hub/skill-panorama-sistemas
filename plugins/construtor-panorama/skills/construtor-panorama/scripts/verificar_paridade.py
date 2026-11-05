@@ -26,7 +26,7 @@ USO
                                   --json pagina.json --cor-link '#RRGGBB'
 
     (os enderecos acima sao marcadores: os da sua loja estao no perfil dela,
-     ~/.claude/panorama-lojas/<slug-da-loja>.md)
+     ~/panorama-lojas/<slug-da-loja>.md)
 
     --nova       (obrigatorio) a pagina reproduzida, no site novo
     --original   a pagina de referencia, no site antigo
@@ -964,7 +964,7 @@ def eh_url(x):
 
 
 def main():
-    # No Windows, com a saida canalizada (e' como o Claude roda os comandos), o Python escreve em
+    # No Windows, com a saida canalizada (e' como os assistentes rodam os comandos), o Python escreve em
     # cp1252: o primeiro emoji do texto da pagina (um alt "🔥 Oferta") derrubava o script com
     # UnicodeEncodeError antes do resumo de erros, e os acentos saiam trocados. `python -I`
     # ignora o PYTHONUTF8, entao a correcao tem de estar aqui (a mesma do gerar_previa.py).

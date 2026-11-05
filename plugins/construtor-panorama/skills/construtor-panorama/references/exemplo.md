@@ -5,7 +5,7 @@ chamada de `https://www.SUA-LOJA.com.br/quem-somos` — refeita no construtor no
 pequena — **11 blocos** — e ainda assim exercita container, grid, texto rico, ícone e banner. Textos,
 slugs e ids da loja medida foram trocados por exemplos; a estrutura, os números e as decisões são os
 reais. Os hosts, `#` de página e classes da **sua** loja ficam no perfil dela
-(`~/.claude/panorama-lojas/<slug-da-loja>.md`).
+(`~/panorama-lojas/<slug-da-loja>.md`).
 
 O fluxo completo, com as regras e os passos citados aqui, está em `construtor.md`.
 

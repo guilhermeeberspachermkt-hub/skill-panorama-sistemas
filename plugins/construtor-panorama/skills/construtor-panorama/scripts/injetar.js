@@ -15,7 +15,7 @@
 // (construtor) e gravacao-arquivo-e-head.md (Arquivo e configuração da loja).
 //
 // SERVE PARA QUALQUER LOJA: nenhum número de loja, domínio ou id de página está escrito aqui.
-// Eles vêm do perfil da loja (~/.claude/panorama-lojas/<slug-da-loja>.md). Antes de gravar,
+// Eles vêm do perfil da loja (~/panorama-lojas/<slug-da-loja>.md). Antes de gravar,
 // rode `definirLoja({loja, hostAdmin, dominio})` (seção 0b); as funções que gravam abortam sem
 // isso, porque num admin com várias lojas a mesma grade mostra páginas de todas.
 //
@@ -69,7 +69,7 @@
 /* ------------------------------------------------------------------ *
  * 0b. A LOJA — o número da loja e o endereço do admin vêm do perfil  *
  * ------------------------------------------------------------------ *
- * Preencha com os dados do perfil da loja (~/.claude/panorama-lojas/<slug-da-loja>.md) e rode
+ * Preencha com os dados do perfil da loja (~/panorama-lojas/<slug-da-loja>.md) e rode
  * uma vez por carregamento do admin — `location.reload()` apaga:
  *
  *   definirLoja({ loja: N, hostAdmin: 'admin.SUA-LOJA.com.br', dominio: 'www.SUA-LOJA.com.br' });
@@ -134,7 +134,7 @@ function exigirLoja() {
   const L = window.__LOJA_ALVO;
   if (!L || !L.loja || !L.hostAdmin || !L.dominio) {
     throw new Error('ABORTADO: loja não definida nesta aba. Rode definirLoja({loja, hostAdmin, '
-      + 'dominio}) com os dados do perfil da loja (~/.claude/panorama-lojas/<slug>.md). O reload '
+      + 'dominio}) com os dados do perfil da loja (~/panorama-lojas/<slug>.md). O reload '
       + 'do admin apaga essa definição.');
   }
   const aqui = String(location.hostname || '').toLowerCase();
@@ -1747,6 +1747,51 @@ async function lerEntradaArquivo(sha256DosBytes) {
 }
 
 /**
+ * Passo B sem upload: o mesmo papel de criarEntradaArquivo + upload + lerEntradaArquivo, com o arquivo
+ * levado em gzip+base64 numa chamada só (para a ferramenta sem ação de upload, ou com upload não medido:
+ * ferramentas-de-navegador.md, seções 4 e 7). Descomprime, confere o sha256 DOS BYTES dentro da página e
+ * só então guarda o texto em `window.__ARQUIVO`, para o injetarArquivo(). Aborta com BOM, com UTF-8
+ * inválido ou com base64 que não decodifica (cortado na fronteira da chamada). No terminal:
+ *   python -I -c "import gzip,base64,sys; print(base64.b64encode(gzip.compress(open(sys.argv[1],'rb').read(),9)).decode())" ARQ
+ * Na página: await lerArquivoGzipB64('<o base64 inteiro>', '<sha256 dos BYTES do arquivo>', 'nome.css')
+ * Devolva só o objeto que ele devolve: o filtro de saída de algumas ferramentas bloqueia o que parece base64.
+ */
+async function lerArquivoGzipB64(b64, sha256DosBytes, nome) {
+  const esperado = exigirHex64(sha256DosBytes, 'o sha256 dos BYTES do arquivo novo');
+  window.__ARQUIVO = null;
+  if (typeof b64 !== 'string' || !b64.trim()) {
+    throw new Error('Passe o arquivo em gzip+base64, como texto, numa chamada só.');
+  }
+  let bytes;
+  try {
+    const bin = atob(b64.trim());
+    const z = new Uint8Array(bin.length);
+    for (let k = 0; k < bin.length; k++) z[k] = bin.charCodeAt(k);
+    const s = new Blob([z]).stream().pipeThrough(new DecompressionStream('gzip'));
+    bytes = new Uint8Array(await new Response(s).arrayBuffer());
+  } catch (e) {
+    throw new Error('ABORTADO: o base64 não decodificou (veio cortado?). Gere de novo e mande inteiro, '
+      + 'sem remendar. Erro: ' + (e && e.message));
+  }
+  const h = await crypto.subtle.digest('SHA-256', bytes);
+  const hex = [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join('');
+  const rel = { nome: String(nome || '(gzip+base64)'), bytes: bytes.length, confere: hex === esperado };
+  if (!rel.confere) {
+    console.warn('sha256 NÃO confere: o base64 não é do arquivo que você montou, ou veio truncado. '
+      + 'Nada foi guardado; gere de novo.');
+    return rel;
+  }
+  if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+    throw new Error('ABORTADO: o arquivo começa com BOM (EF BB BF). Salve sem BOM e refaça.');
+  }
+  let texto;
+  try { texto = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+  catch (e) { throw new Error('ABORTADO: o arquivo não é UTF-8 válido — os acentos sairiam trocados.'); }
+  window.__ARQUIVO = { nome: rel.nome, texto, bytes: bytes.length };
+  return Object.assign(rel, { chars: texto.length, temCR: texto.indexOf('\r') >= 0 });
+}
+
+/**
  * O escopo que grava o Arquivo, a partir do ELEMENTO do diálogo (mesma razão de escopoDoDialogo:
  * o diálogo morto). Sobe por $parent até achar `data.body` como texto.
  */
@@ -1792,7 +1837,8 @@ async function conferirArquivoAtual(shaNormalizadoDoBackup) {
 }
 
 /**
- * Passo D, 1/2. Escreve o texto lido por `lerEntradaArquivo` em `data.body` do diálogo único.
+ * Passo D, 1/2. Escreve o texto lido por `lerEntradaArquivo` (ou `lerArquivoGzipB64`) em `data.body` do
+ * diálogo único.
  * NÃO grava. Exige, neste MESMO diálogo, `conferirArquivoAtual` (Arquivo que já existe) ou
  * `conferirArquivoNovo` (diálogo de criação, seção 10b: o "backup" é o texto vazio, e não há sha a passar).
  * ⚠️ O $apply empurra o texto para o Ace: ~119 KB funcionou; 284 KB congelou o Ace do `Blocos:`.
@@ -1801,7 +1847,7 @@ function injetarArquivo() {
   const A = window.__ARQUIVO;
   if (!A || typeof A.texto !== 'string') {
     throw new Error('ABORTADO: nenhum arquivo conferido. Rode criarEntradaArquivo(), o upload e '
-      + 'lerEntradaArquivo(sha) até dar confere: true.');
+      + 'lerEntradaArquivo(sha) até dar confere: true (ou, sem upload, lerArquivoGzipB64(b64, sha, nome)).');
   }
   if (!A.texto.trim()) throw new Error('ABORTADO: arquivo vazio — gravar isto apagaria o CSS/JS do site.');
   const dlg = dialogoUnico();
@@ -3096,7 +3142,7 @@ function ultimoFlushConfigLoja() {
  * ⚠️ UMA CHAMADA POR PASSO. Não junte clique + espera + conferência num único evaluate: os
  * 45s do CDP estouram (medido) e você fica sem saber em que ponto parou.
  * Os valores N, NNNNNN, 'minha-pagina-teste' e 'admin.SUA-LOJA.com.br' são marcadores: os da sua
- * loja estão no perfil dela (~/.claude/panorama-lojas/<slug-da-loja>.md).
+ * loja estão no perfil dela (~/panorama-lojas/<slug-da-loja>.md).
  *
  * // -- a loja (depois de cada reload); lojaNome e campoLoja vêm do perfil, se ele tiver --
  * definirLoja({ loja: N, hostAdmin: 'admin.SUA-LOJA.com.br', dominio: 'www.SUA-LOJA.com.br' });
@@ -3205,6 +3251,7 @@ function ultimoFlushConfigLoja() {
  * criarEntradaArquivo();                          // B1
  * // upload do arquivo local no #__entrada_arquivo, pela ferramenta de navegador   // B2
  * await lerEntradaArquivo('<sha dos bytes do novo>');       // B3: tem de dar confere: true
+ * // sem upload (B1 a B3 numa chamada): await lerArquivoGzipB64('<gzip+base64>', '<sha dos bytes do novo>', 'nome')
  * // filtrar (pelo # do Arquivo, se a tela tiver esse filtro: campoDoFiltro('#'); senão Loja +
  * // Tipo = Arquivo + Nome) e marcar pelo DOM:
  * conferirAlvo(NNNNNN);

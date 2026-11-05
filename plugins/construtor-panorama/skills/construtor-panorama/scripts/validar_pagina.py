@@ -6,7 +6,7 @@ Uso:
     python validar_pagina.py caminho/para/pagina.json [--cor-link '#RRGGBB'] [--base backup.json]
 
     --cor-link  a cor do link MEDIDA na página original com getComputedStyle. Cada loja tem a
-                sua (o perfil da loja, ~/.claude/panorama-lojas/<slug-da-loja>.md, guarda a que
+                sua (o perfil da loja, ~/panorama-lojas/<slug-da-loja>.md, guarda a que
                 já foi medida). Sem ela, o validador avisa em todo bloco com link, para você medir.
     --base      o backup do campo `Blocos:` de antes da sua mudança (edição pontual numa página que
                 já está no ar, construtor.md seção 7). ERRO que já aparece, com o mesmo texto, no
@@ -672,7 +672,7 @@ def _rodar(doc):
 
 def main():
     global COR_LINK
-    # No Windows, com a saída canalizada (é como o Claude roda os comandos), o Python escreve em
+    # No Windows, com a saída canalizada (é como os assistentes rodam os comandos), o Python escreve em
     # cp1252: os acentos saem trocados e um emoji derruba o script. `python -I` ignora o
     # PYTHONUTF8, então a correção tem de estar aqui (a mesma do gerar_previa.py).
     for st in (sys.stdout, sys.stderr):

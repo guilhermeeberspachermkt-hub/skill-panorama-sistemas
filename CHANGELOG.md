@@ -4,9 +4,92 @@ As mudanças de cada versão ficam aqui, da mais nova para a mais antiga. As ver
 [Versionamento Semântico](https://semver.org/lang/pt-BR/): o primeiro número muda quando algo deixa de
 funcionar como antes, o segundo quando entra algo novo, o terceiro numa correção.
 
-A cada versão, suba também o `version` de `plugins/construtor-panorama/.claude-plugin/plugin.json` (sem isso,
-quem já instalou não recebe a atualização); depois do commit, confira com
+A cada versão, suba também o `version` de `plugins/construtor-panorama/.claude-plugin/plugin.json` (Claude
+Code) e de `plugins/construtor-panorama/plugin.json` (Codex), os dois com o mesmo número (sem isso, quem já
+instalou não recebe a atualização); depois do commit, confira com
 `claude plugin tag --dry-run plugins/construtor-panorama`.
+
+## [1.3.0] - ainda não publicada
+
+O Codex, da OpenAI, como segundo cliente. O formato da skill já era o que o Codex lê; esta versão acrescenta
+o catálogo e o manifesto do plugin para ele, tira da skill o que só fazia sentido no Claude e diz o que a
+skill precisa de uma ferramenta de navegador. O uso numa loja, no Codex, ainda não foi testado de ponta a
+ponta.
+
+### O que mudou
+
+- **Instalação no Codex:** o catálogo `.agents/plugins/marketplace.json` (o Codex também lê o
+  `.claude-plugin/marketplace.json`, como formato compatível), o manifesto `plugins/construtor-panorama/plugin.json`
+  no formato portátil, com o nome, a descrição, os pedidos de exemplo e o ícone que o Codex mostra
+  (`assets/icon.svg`), e o `agents/openai.yaml` da skill, para quem copia só a pasta. O README tem os três
+  jeitos de instalar no Codex: o plugin pelo catálogo, o `$skill-installer` e a cópia da pasta.
+- **A pasta das lojas:** a padrão passa a ser `~/panorama-lojas/`, que não depende do cliente. Quem já tem
+  `~/.claude/panorama-lojas/` continua nela, sem mover nada (`SKILL.md`, "A pasta antiga"); os trechos de
+  terminal do primeiro uso e do reconhecimento escolhem a antiga quando ela existe.
+- **O que a skill precisa do navegador** (`primeiro-uso.md`, 1b): uma tabela de capacidades (abrir aba no
+  Chrome logado, rodar JavaScript na página e receber o valor, clique de verdade, enviar arquivo, print), o
+  que cada uma permite e o que fazer sem ela, com um teste de uma linha para a principal. Sem "rodar
+  JavaScript e receber o valor", nada é gravado por script, e o admin vai pelo modo guiado. Os limites de
+  `ferramentas-de-navegador.md` valem como hipótese noutra ferramenta.
+- **Codex no primeiro uso** (`primeiro-uso.md`, 1a, 1b e 1d): a extensão do ChatGPT para Chrome e o Chrome
+  DevTools MCP como ferramentas possíveis, as permissões do *sandbox* (internet, pasta do perfil) como decisão
+  da pessoa, sem pedir para desligar a proteção, e abrir o Codex com a pasta das lojas como pasta do projeto.
+  O modelo do perfil ganhou as linhas "Capacidades da ferramenta" e "Permissões pedidas (Codex)".
+- **O primeiro teste no Codex** (2026-11-04, a configuração inicial numa loja real, só leitura, no aplicativo
+  do ChatGPT para Windows com a extensão do ChatGPT para Chrome). Funcionaram: a skill carregada pela pasta, a
+  aba no Chrome logado, o JavaScript que devolve um objeto, o clique por papel e nome, o print, o
+  reconhecimento do site público e a pasta das lojas dentro da pasta aberta, sem pedir permissão. Não
+  funcionaram: um trecho terminado em `;` (o `evaluate` dele só aceita expressão), `typeof window.countdown`
+  e os snippets B e C no admin (nenhuma grade nem filtro "com layout", com os dois na tela). Uma segunda
+  rodada, no mesmo dia, achou a causa: o `playwright.evaluate` roda numa cópia só de leitura do HTML (sem o
+  código da página, sem `offsetParent`, sem gravar nada), e o CDP da aba (`Runtime.evaluate`) roda na página
+  de verdade, onde, no site público, passaram as chamadas de ler, guardar entre chamadas, ver o código da
+  página e mudar a página. Uma terceira rodada, no admin e só de leitura, passou pelo CDP nas chamadas de
+  layout e do código da página, leu a grade e os filtros e levou o `injetar.js` numa chamada só, com o sha
+  conferido na página. Nenhuma gravação por script foi feita ainda no Codex. O que mudou por causa dos
+  testes:
+  - o teste do navegador (`primeiro-uso.md`, 1b) virou cinco chamadas: ler, guardar entre chamadas, medir o
+    layout, ver o código da página e mudar a página; o que falhou não se contorna, e a gravação por script só
+    vale com as cinco (`SKILL.md`, "O caminho comum de toda gravação");
+  - `ferramentas-de-navegador.md` ganhou a seção 7, com o que se mediu no Codex: os dois caminhos de
+    JavaScript, qual serve à skill (o CDP), a espera quando o CDP diz que a página está carregando e a
+    extensão que precisa estar ligada a cada conversa;
+  - o auxiliar `fatia` virou expressão, e os snippets B e C dizem qual é o caso quando não acham nada: a
+    ferramenta não vê o layout, a tela está num iframe ou não há grade;
+  - `medir-no-navegador.md` explica como rodar os trechos que definem funções numa ferramenta que só aceita
+    expressão;
+  - o `typeof window.countdown` (reconhecimento, 2f) só vale numa ferramenta que vê o código da página;
+  - a pasta combinada vale sozinha, sem procurar as outras, e o teste de escrita do 1d tem versão para
+    PowerShell;
+  - no Codex, as leituras de internet do reconhecimento vão juntas num script, para um pedido de permissão
+    só;
+  - a conferência do `cdp.mjs` no 1c lê as duas últimas linhas da saída;
+  - uma quarta rodada (a fase 2, num Arquivo despublicado que a pessoa criou) carregou o pacote pelo CDP e
+    rodou no admin as funções até a última conferência antes de gravar, inclusive o `lerArquivoGzipB64`. O
+    diálogo sumiu enquanto o Codex esperava o "sim", e a trava parou a gravação. Por isso: o "sim" se pede
+    com o diálogo fechado, e a comparação com o backup se refaz logo antes de gravar (`SKILL.md`, "O caminho
+    comum", item 1; `gravacao-arquivo-e-head.md`, Passo C); no Codex, cada chamada de CDP confere o
+    `exceptionDetails` e para no primeiro aborto; a aba do agente é dita à pessoa, para ela não fechar o
+    diálogo dele; e a seção 7 traz o fechamento de aba que derrubou a conexão e o filtro de menu com o nome
+    repetido. O reload do admin volta para a tela inicial (reabrir Páginas pelo menu), e a URL de um Arquivo
+    novo pode vir preenchida a partir do Nome;
+  - na quinta rodada (a fase 2b, na mesma página), com o "sim" pedido de diálogo fechado, a gravação rodou:
+    `injetarArquivo` e `confirmarArquivo`, e o admin mostrou "Registro alterado com sucesso.". A releitura
+    de prova (Passo E) parou porque um `location.reload()` mandado pelo CDP deixou a aba sem CDP por uns
+    minutos; o `tab.reload()` da ferramenta não fez isso na fase 2. Por isso: no Codex, recarregar pela
+    ferramenta, e, sem a releitura pelo CDP, provar pelo modo guiado; e, como a sexta rodada mostrou, tirar o await do começo dos trechos mandados pelo CDP (o Runtime.evaluate recusa o await solto);
+  - na sexta e última rodada (a fase 2c), numa aba nova e com o reload pela API, o `verificarArquivoGravou`
+    conferiu o conteúdo gravado pelo sha e achou o marcador: a gravação de um Arquivo por script ficou
+    medida de ponta a ponta no Codex, numa página despublicada;
+  - `scripts/injetar.js` ganhou o `lerArquivoGzipB64`: leva o conteúdo de um Arquivo em gzip+base64 numa
+    chamada, confere o sha dos bytes na página e o deixa pronto para o `injetarArquivo()`, para a
+    ferramenta sem upload (ou com upload não medido, como no Codex). Testado no Node (sha errado, base64
+    cortado, BOM, UTF-8 inválido e o `injetar.js` inteiro) e no admin, no Codex (fase 2); a gravação que vem
+    depois dele, ainda não.
+- **Textos neutros:** onde a skill dizia "o Claude" para falar do assistente (o dono de um arquivo, quem roda
+  os comandos, quem lê o arquivo no ar), agora diz "o assistente" ou "Claude (ou Codex)". Os fatos medidos
+  com a extensão do Claude para Chrome continuam com o nome dela. Sem agentes auxiliares, você faz o trabalho
+  deles, na mesma ordem.
 
 ## [1.2.0] - 2026-11-04
 

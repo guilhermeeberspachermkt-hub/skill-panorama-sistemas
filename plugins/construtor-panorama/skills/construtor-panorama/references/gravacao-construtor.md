@@ -10,7 +10,7 @@ ferramenta de navegador estão em `ferramentas-de-navegador.md`.
 
 Os números daqui foram medidos numa loja real da plataforma. Os da sua loja (número da loja, endereço do
 admin, ids de página, nomes de arquivo) são outros, porque cada loja cria os seus: ficam no perfil dela,
-em `~/.claude/panorama-lojas/<slug-da-loja>.md`. Nos exemplos, `#NNNNNN` é um id de página, `loja N` é o
+em `~/panorama-lojas/<slug-da-loja>.md`. Nos exemplos, `#NNNNNN` é um id de página, `loja N` é o
 número da loja, `admin.SUA-LOJA.com.br` é o endereço do admin e `/seu-tema.css` é um arquivo do site.
 
 ## Antes de qualquer gravação

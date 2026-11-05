@@ -7,6 +7,13 @@ cortada perto de 1.000 caracteres (`ferramentas-de-navegador.md`). Rode cada um 
 que guardam um resultado grande (`window.__folhas`, `window.__a`, `window.__contraste`) devolvem só um
 resumo: leia o resto em pedaços (`window.__contraste.slice(8, 16)`).
 
+Os trechos que definem uma função (`window.quemPinta = function ...`) pedem duas coisas da ferramenta
+(`primeiro-uso.md`, 1b): que ela aceite instruções, e que o que fica em `window` sobreviva até a chamada
+seguinte (chamada 2). Numa ferramenta que só aceita expressão, embrulhe o trecho:
+`(() => { <o trecho>; return 'ok'; })()`. Se o que fica em `window` não sobrevive, defina e use a função na
+mesma chamada: `(() => { <o trecho>; return quemPinta('.botao', 'color'); })()`. Uma medida que depende do
+código da página (as variáveis de um script do tema, por exemplo) também pede a chamada 4.
+
 Para medir o computador numa aba que veio estreita, rode dentro de um `<iframe>` da largura certa
 (`ferramentas-de-navegador.md`, seção 2) com `w.eval(codigo)`, e diga que o número veio de um `<iframe>`
 (seção 6: ele pode não ser o de uma janela da mesma largura). Para medir o celular, use o HTML de celular

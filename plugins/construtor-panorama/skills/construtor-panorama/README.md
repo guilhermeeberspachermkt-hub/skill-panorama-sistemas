@@ -1,8 +1,11 @@
-# construtor-panorama: uma skill do Claude para lojas da Panorama Sistemas
+# construtor-panorama: uma skill para lojas da Panorama Sistemas (Claude e Codex)
 
-Esta pasta é uma **skill** do Claude: um conjunto de instruções e scripts que o Claude lê quando você pede
-ajuda com o site da sua loja na plataforma Panorama Sistemas. Com ela, o Claude sabe onde fica cada coisa
-no admin, como mudar o visual sem quebrar o resto do site e como conferir que a mudança entrou no ar.
+Esta pasta é uma **skill**: um conjunto de instruções e scripts que o Claude lê quando você pede ajuda com o
+site da sua loja na plataforma Panorama Sistemas. Com ela, o Claude sabe onde fica cada coisa no admin, como
+mudar o visual sem quebrar o resto do site e como conferir que a mudança entrou no ar.
+
+Ela foi feita e testada no Claude, e o Codex (da OpenAI) lê skills no mesmo formato. Onde este texto diz
+"o Claude", no Codex leia "o Codex". O que muda no Codex está em "Do que você precisa" e "Como instalar".
 
 Ela foi escrita a partir de trabalho real em lojas da plataforma, com tudo o que deu errado no caminho
 anotado para não se repetir. Não traz dados de nenhuma loja: na primeira vez que você usar, o Claude
@@ -51,9 +54,14 @@ instalada não perder nada numa atualização.
     mande o código da página (Ctrl+U no Chrome, copiar e colar). O perfil da loja vem como um arquivo para
     você baixar e guardar: anexe-o no começo da próxima conversa. O chat com a extensão do Chrome não foi
     testado com esta skill.
-  - **No Codex** (da OpenAI), que lê skills no mesmo formato, o admin também vai pelo modo guiado, a não ser
-    que haja uma ferramenta de navegador conectada. Por padrão, o Codex bloqueia a internet e a gravação fora
-    da pasta do projeto: ele vai pedir a sua permissão para ler o site e para guardar o perfil. Não testado.
+  - **No Codex** (da OpenAI), que lê skills no mesmo formato, o admin depende de uma ferramenta de navegador
+    que rode as conferências da skill dentro da página: a extensão do ChatGPT para Chrome (no aplicativo do
+    ChatGPT, em Configurações › Computer Use) ou um servidor MCP de navegador. Na primeira vez, a skill testa
+    o que a ferramenta consegue fazer e diz; sem ela, o admin vai pelo modo guiado. Por padrão, o Codex
+    bloqueia a internet e a gravação fora da pasta aberta: ele vai pedir a sua permissão para ler o site e
+    para guardar o perfil. Para pedir menos, abra o Codex com a pasta `panorama-lojas` (abaixo) como pasta do
+    projeto. No Codex, numa loja real, foram testadas a configuração inicial, as leituras do admin e uma
+    gravação por script numa página que não aparece no site, conferida pelo sha.
 - **Login no admin da sua loja.** Se você não tem, ou não sabe o endereço do admin, peça a quem cuida da loja
   (a agência, a TI) ou ao suporte da Panorama Sistemas.
 - **Python 3**, para gerar a prévia e conferir o que vai ser gravado. Sem ele dá para conversar sobre o que
@@ -80,8 +88,11 @@ uso").
 Se a pasta `skills` não existir, crie. Depois, abra uma conversa nova do Claude Code: a skill entra sozinha
 quando o pedido for sobre o site ou o admin da loja.
 
-**No Codex**, a pasta de skills pessoais é `~/.agents/skills/` (copie para lá a pasta `construtor-panorama`
-inteira), e a skill se chama com `$construtor-panorama` no começo da mensagem ou pela lista de `/skills`.
+**No Codex**, a pasta de skills pessoais é `~/.agents/skills/` (no Windows,
+`C:\Users\<seu usuário>\.agents\skills\`): copie para lá a pasta `construtor-panorama` inteira, ou peça ao
+próprio Codex, com o `$skill-installer`, que instale a skill a partir do endereço desta pasta no GitHub. A
+skill se chama com `$construtor-panorama` no começo da mensagem ou pela lista de `/skills`. Se ela não
+aparecer, feche e abra o Codex. A instalação como plugin, pelo catálogo, está no README do repositório.
 
 **Pelo pacote `.skill`.** Se você recebeu um arquivo `construtor-panorama.skill`, instale pelo lugar onde o seu
 Claude gerencia skills, ou descompacte o arquivo (é um zip) e copie a pasta como acima.
@@ -119,10 +130,11 @@ antes, do mesmo jeito. Ela tem cinco passos, e nenhum muda nada na sua loja:
 5. **Ele avisa que está pronto**, com o que consegue fazer daí, alguns exemplos de pedido e as regras de
    segurança que segue.
 
-O que ele aprende fica num **perfil da loja**, em `~/.claude/panorama-lojas/<nome-da-loja>.md` (no Windows,
-`C:\Users\<seu usuário>\.claude\panorama-lojas\`), ou noutra pasta que vocês combinarem. Nas próximas vezes ele
+O que ele aprende fica num **perfil da loja**, em `~/panorama-lojas/<nome-da-loja>.md` (no Windows,
+`C:\Users\<seu usuário>\panorama-lojas\`), ou noutra pasta que vocês combinarem. Nas próximas vezes ele
 lê esse perfil e só reconfere o que muda com frequência (qual home está no ar, o número de versão dos
-arquivos).
+arquivos). Até a versão 1.2.0, a pasta padrão era `~/.claude/panorama-lojas/`: se você já tem essa pasta, a
+skill continua usando ela, e não precisa mover nada.
 
 ## Como é um pedido típico
 
@@ -223,8 +235,12 @@ cada seletor no seu site antes de usar, e a prévia mostra o resultado antes de 
 ser de outro sistema da plataforma (numa loja medida, o carrinho): o tema e os ajustes não chegam a elas, e
 o Claude diz quais são.
 
-A skill foi testada no Claude Code com a extensão do Claude para Chrome, em duas lojas. No chat do Claude e
-no Codex ela não foi testada, e funciona em modo guiado. Nem toda loja tem um CDN na frente do site: o
+A skill foi testada no Claude Code com a extensão do Claude para Chrome, em duas lojas. No chat do Claude ela
+não foi testada, e funciona em modo guiado. No Codex, com a extensão do ChatGPT para Chrome, foram testadas
+numa loja real a configuração inicial, as leituras do admin e uma gravação por script numa página que não
+aparece no site, conferida pelo sha. Sem uma
+ferramenta de navegador que rode as conferências dentro do admin, ela funciona em modo guiado. Nem toda loja
+tem um CDN na frente do site: o
 reconhecimento mede, e os passos de cache valem com ou sem ele.
 
 Esta skill não é um produto da Panorama Sistemas e não substitui o suporte da plataforma.

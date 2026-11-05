@@ -52,7 +52,7 @@ arquivo CSS ligado no `<head>` afeta **todas as páginas, nos dois aparelhos, em
 errado aqui não quebra uma página, quebra a loja. Por isso: só grave o que a pessoa pediu, com backup do
 valor anterior, e nunca `Excluir`, `Publicar` ou `Despublicar` sem pedido explícito e específico.
 
-**Leia o perfil da loja** em `~/.claude/panorama-lojas/<slug-da-loja>.md`. É de lá que saem o domínio, o
+**Leia o perfil da loja** em `~/panorama-lojas/<slug-da-loja>.md`. É de lá que saem o domínio, o
 número da loja, a família do tema e a ordem da cascata (o catálogo e a posição da prévia dependem delas), os
 endereços que são outro sistema, o `#` e a URL do arquivo de ajustes, a linha dele no `<head>`, o número
 atual do `?v=`, o cache medido dos Arquivos, a classe de controle, a home no ar, quem limpa cada cache e as
@@ -237,9 +237,9 @@ tema da Black deste ano), criado uma vez e depois só atualizado. Se ainda não 
 - **Não edite arquivos dos outros** (o CSS do cabeçalho feito pela agência, o tema do ano passado). Se uma
   regra deles está errada, sobreponha no seu e conte à pessoa. Assim, desfazer o seu nunca quebra o deles.
   Um arquivo só conta como seu quando a coluna de dono do perfil ("Arquivos CSS/JS da loja") diz que ele
-  foi criado pelo Claude para esta loja, a pedido da pessoa, **e** ela confirma. Um arquivo que uma sessão
-  anterior criou e que o perfil não registra (o nome parece seu, o histórico não diz nada): pergunte de quem
-  é antes de editar, e anote a resposta na coluna.
+  foi criado por um assistente (Claude, Codex) para esta loja, a pedido da pessoa, **e** ela confirma. Um
+  arquivo que uma sessão anterior criou e que o perfil não registra (o nome parece seu, o histórico não diz
+  nada): pergunte de quem é antes de editar, e anote a resposta na coluna.
 - **Posição no `<head>`**: logo depois dos arquivos que você precisa vencer. Onde ele fica em relação ao SCSS
   de Personalização e ao CSS da página depende da família (1.1, perfil "Ordem da cascata"): na `/dist`, todo
   link do Código dentro do `<head>` vem antes do SCSS, que vence o seu no empate (suba a especificidade onde
@@ -272,7 +272,7 @@ tema da Black deste ano), criado uma vez e depois só atualizado. Se ainda não 
   fica como está (com `--base`, a base vai byte a byte). Num tema longo, o melhor é guardar a versão
   comentada **no admin**, numa página tipo Arquivo despublicada, e pôr no site só a versão enxuta, com um
   único comentário que aponta para ela. Assim as notas ficam com a loja, e não num computador só, e quem
-  abrir o arquivo no site (outro Claude, um dev) sabe onde elas estão. Medido numa loja: de ~41 KB para
+  abrir o arquivo no site (outro assistente, um dev) sabe onde elas estão. Medido numa loja: de ~41 KB para
   ~15 KB transferidos por visita, com as mesmas regras (5.2, "A versão comentada no admin").
 - **O número da seção nova vem da versão no ar.** Antes de numerar, leia o último número da versão no ar (a
   que vai de base) e a coluna "Última seção" do perfil ("Arquivos CSS/JS da loja"). Medido numa loja
@@ -982,13 +982,13 @@ A gravação usa a versão de publicar. Arquivo novo: a prévia sai dela, e o sh
 mesmas regras (o script confere), com 0 diferenças contra o acréscimo na sua aba; anote o sha das seções, o
 da versão de publicar e o da versão de trabalho (`previa.md`, "Grave exatamente o que foi aprovado").
 
-Anote no histórico do perfil da loja (`~/.claude/panorama-lojas/<slug>.md`) o tamanho e o sha de cada versão
+Anote no histórico do perfil da loja (`~/panorama-lojas/<slug>.md`) o tamanho e o sha de cada versão
 publicada (com `--publicar`, o da versão de publicar e, entre parênteses, o da versão de trabalho, como na
 coluna do histórico do perfil): é o que permite provar, depois, qual versão está no ar.
 
 **A versão comentada no admin (o tema em duas páginas).** O `--publicar` resolve as seções novas, mas deixa
 duas coisas. A versão comentada fica na pasta `trabalho/` de quem mexeu, e o arquivo no ar só diz que ela "fica
-com quem mantém o tema": noutro computador, ou para outro Claude ou um dev que abra o arquivo no site, ela não
+com quem mantém o tema": noutro computador, ou para outro assistente ou um dev que abra o arquivo no site, ela não
 existe. E os comentários do que já estava no ar continuam indo para todo visitante. Medido numa loja (2026-11):
 um tema de 190 KB, com ~2/5 de comentário, passava ~41 KB (gzip) por visita; a versão enxuta, com as mesmas 769
 regras, passa ~15 KB. A saída, quando a pessoa quer (pergunte: a página nova é dela, e criar página é pedido
@@ -1176,7 +1176,7 @@ fica na aba Conteúdo e o tipo MIME na Configurações; os padrões são Publica
 |---|---|---|
 | Loja | a loja do perfil | vem vazia (medido): escolha pelo campo de busca dela, na sugestão "N - Nome" da loja do perfil. Deixe também o filtro Loja da grade nessa loja antes de clicar, e confira o campo no diálogo; um Arquivo criado na loja errada não é servido no site certo |
 | Nome | algo que diga o dono e o assunto (`Ajustes visuais - <loja>`) | o nome não diz o que o arquivo faz; quem vier depois lê a grade |
-| URL | `/ajustes-<slug>.css` | é o que vai no `<link>`; minúsculas, sem acento, sem espaço |
+| URL | `/ajustes-<slug>.css` | é o que vai no `<link>`; minúsculas, sem acento, sem espaço. Ela pode vir preenchida a partir do Nome, sem o `.css` (medido): preencha depois do Nome, troque pela combinada, e depois de criar confira na grade a URL exata |
 | Tipo | **Arquivo** | outro tipo não é servido como arquivo; só com ele aparece a aba Conteúdo |
 | Linguagem do editor (aba Conteúdo) e tipo MIME (aba Configurações) | os mesmos de um Arquivo do mesmo tipo que já funciona na loja (no admin medido, um CSS com a linguagem `sass` e o MIME de CSS; um JS, noutra loja, com a linguagem JavaScript e `application/javascript`) | abra um Arquivo da loja do mesmo tipo, leia os dois valores e saia por Cancelar; não invente |
 | Robots e Página no Sitemap | os mesmos dos outros Arquivos da loja | é um arquivo, não uma página para o Google; o padrão do diálogo (robots `index, follow`, Sitemap ligado) pode não ser o deles |
@@ -1240,7 +1240,7 @@ passo inerte até a linha do `<head>` (2.6, item g).
 ## 6. Desfazer
 
 Escreva o caminho de volta **antes** de pôr no ar, no histórico do perfil da loja
-(`~/.claude/panorama-lojas/<slug>.md`). Do mais rápido ao mais completo:
+(`~/panorama-lojas/<slug>.md`). Do mais rápido ao mais completo:
 
 1. **Desligar a classe** (modo de época). Tema por agenda: trocar o `bodyClass` do item de volta (ou pôr a
    data de fim no passado), uma troca só, no seu item, e o cache de configuração (pergunte antes, ou faça

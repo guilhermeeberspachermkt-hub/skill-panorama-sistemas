@@ -13,7 +13,7 @@ Uso (rode com os arquivos na pasta trabalho/ do perfil):
                         Aceita CRLF (o admin devolve o texto assim) e acento nos comentários.
   --saida ARQ           a versão enxuta: é ela que vai para o Arquivo do site e ganha o número novo no <head>.
   --pagina / --url      o # e o endereço da página tipo Arquivo, despublicada, que guarda a comentada no admin.
-                        Entram no comentário do topo, para quem lê o arquivo no ar (outro Claude, um dev) achar a
+                        Entram no comentário do topo, para quem lê o arquivo no ar (outro assistente, um dev) achar a
                         comentada.
   --conferir ARQ        compara a enxuta gerada com ARQ (em geral, o arquivo que o site serve hoje, baixado com ?nc=)
                         pelo sha256 normalizado. Como a mesma comentada dá sempre a mesma enxuta, IGUAL prova que o

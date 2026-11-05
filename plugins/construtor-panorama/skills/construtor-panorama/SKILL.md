@@ -96,24 +96,30 @@ Cada loja tem números e nomes próprios, e adivinhar qualquer um deles é o jei
 lugar errado. Por isso a skill trabalha com um perfil por loja, guardado **fora** da pasta da skill:
 
 ```
-~/.claude/panorama-lojas/<slug-da-loja>.md      (no Windows: C:\Users\<usuário>\.claude\panorama-lojas\)
-~/.claude/panorama-lojas/<slug-da-loja>/backups/   e   .../trabalho/
+~/panorama-lojas/<slug-da-loja>.md      (no Windows: C:\Users\<usuário>\panorama-lojas\)
+~/panorama-lojas/<slug-da-loja>/backups/   e   .../trabalho/
 ```
 
 (ou na pasta que a pessoa indicar: anote no perfil; `primeiro-uso.md`, 1d)
 
-1. **No começo de toda tarefa**, liste essa pasta e leia o perfil da loja em que a pessoa quer mexer. No
-   chat, a pasta fica na máquina da nuvem e começa vazia a cada conversa: antes de concluir que não há
-   perfil, pergunte se a pessoa tem o arquivo do perfil de uma conversa anterior e peça que ela o anexe; só
-   sem ele siga para a configuração inicial. Se não estiver claro qual loja, pergunte. Um perfil pode citar
+**A pasta antiga.** Até a versão 1.2.0, a pasta padrão era `~/.claude/panorama-lojas/`. Se ela existe neste
+computador, é nela que estão os perfis e os backups: continue nela e não mova nada sem a pessoa pedir. Nos
+arquivos da skill, `~/panorama-lojas/` quer dizer a pasta das lojas que vale aqui: a padrão, a antiga ou a
+combinada com a pessoa.
+
+1. **No começo de toda tarefa**, liste a pasta das lojas (sem saber qual vale, olhe a padrão e a antiga) e
+   leia o perfil da loja em que a pessoa quer mexer. No chat, a pasta fica na máquina da nuvem e começa vazia
+   a cada conversa: antes de concluir que não há perfil, pergunte se a pessoa tem o arquivo do perfil de uma
+   conversa anterior e peça que ela o anexe; só sem ele siga para a configuração inicial. Se não estiver claro qual loja, pergunte. Um perfil pode citar
    lojas irmãs do mesmo admin. Se o perfil não diz a **família do tema** (perfis antigos não têm essa linha),
    descubra antes de usar qualquer seletor ou conselho de CSS da skill (`reconhecimento-da-loja.md`, passos
    2a e 2i) e anote. Se não tem a seção "Ambiente", ou você está noutro computador ou noutro cliente, refaça
    só o passo 1 da configuração inicial (`primeiro-uso.md`).
 2. **Se não houver perfil** (no chat: nem um anexado pela pessoa, item 1), faça a configuração inicial de
    `references/primeiro-uso.md` antes de qualquer prévia ou alteração, mesmo quando a pessoa já chegou com um
-   pedido. São cinco passos, nesta ordem: conferir o ambiente sozinho (em qual Claude você está, a ferramenta
-   de navegador e o admin logado, Python e Node, a pasta do perfil, a rede) e dizer à pessoa o que falta; uma
+   pedido. São cinco passos, nesta ordem: conferir o ambiente sozinho (em qual cliente você está, entre
+   Claude Code, chat e Codex; a ferramenta de navegador e o que ela consegue fazer, e o admin logado; Python e
+   Node; a pasta do perfil; a rede) e dizer à pessoa o que falta; uma
    mensagem só com sete perguntas (site, admin e nome da loja, obrigatórias; quem aprova, quem limpa o cache,
    página de teste e limites, cada uma com um padrão seguro); o reconhecimento só de leitura de
    `references/reconhecimento-da-loja.md`, salvo a partir do modelo `assets/perfil-da-loja.md`; o resumo do
@@ -204,7 +210,8 @@ escrever ferramenta nova de print ou de medida.
   a simulação da gravação (`--replace`) (`previa.md`, "Iterar offline, confirmar no ar").
 - **Agentes auxiliares** trabalham só em cópias e renders locais, nunca no admin nem nas abas da pessoa, e
   devolvem um JSON com veredito, obrigatórios (onde, o quê, medida, evidência, correção), opcionais e o que não
-  conferiram, mais um resumo de até 10 linhas (`criterios-de-design.md`, 4, "Agentes auxiliares").
+  conferiram, mais um resumo de até 10 linhas (`criterios-de-design.md`, 4, "Agentes auxiliares"). Se o seu
+  cliente não tem agentes auxiliares, faça você mesmo o trabalho deles, na mesma ordem.
 
 ### Página do construtor
 
@@ -324,9 +331,14 @@ Antes do passo 1, leia no perfil as respostas momentâneas e as perguntas em abe
 gravação (alguém mais mexendo no admin agora, quem cuida do GTM, quem publica), pergunte agora. Numa sessão,
 perguntas deixadas para depois sem anotação nunca foram feitas (`primeiro-uso.md`, passo 2).
 
-1. **Prévia aprovada** (`references/previa.md`), quando a mudança é visual.
+1. **Prévia aprovada** (`references/previa.md`), quando a mudança é visual. Quando não é, o "sim" sobre a
+   explicação do que muda. **Nunca espere a resposta da pessoa com um diálogo do admin aberto:** peça o
+   "sim" com o diálogo fechado (saia por `Cancelar` antes de perguntar) e, depois dele, abra de novo e faça
+   o passo 3 logo antes de gravar. Medido no Codex, 2026-11-04: o diálogo aberto antes da pergunta tinha
+   sumido quando o "sim" chegou, e a trava parou a gravação.
 2. **Backup** do valor atual, num arquivo local com data.
-3. **Comparação**: o valor no admin ainda é o do backup.
+3. **Comparação**: o valor no admin ainda é o do backup, conferida no mesmo diálogo que vai receber a
+   gravação, sem espera entre ela e o passo 4.
 4. **Gravar só o alvo**, com o texto transportado e conferido por sha256 dentro da página
    (`references/gravacao-construtor.md` para páginas do construtor; `references/gravacao-arquivo-e-head.md`
    para Arquivos e configuração da loja).
@@ -336,6 +348,11 @@ perguntas deixadas para depois sem anotação nunca foram feitas (`primeiro-uso.
    se a sua tem).
 7. **Conferir no ar**, computador e celular, com uma query nova (`?nc=...`), contra a prévia aprovada.
 8. **Atualizar o perfil**: histórico, backup e como desfazer.
+
+**Por script, só numa ferramenta de navegador que passou nas cinco chamadas de `primeiro-uso.md`, 1b**
+(guardar entre chamadas, medir o layout, ver o código da página, mudar a página). Com uma que falhou, ou que
+não foi testada nesta máquina, a gravação vai pelo modo guiado, abaixo: não tente carregar o pacote por outro
+caminho (medido no Codex, 2026-11-04: `ferramentas-de-navegador.md`, 7).
 
 Por script, carregue as funções de `scripts/injetar.js` na aba do admin (como carregar na primeira vez,
 conferindo o sha256, e restaurar depois de cada reload com `(0, eval)`:
@@ -356,9 +373,10 @@ gravação.
 
 ## Modo guiado: sem ferramenta de navegador
 
-Muitas pessoas usam o Claude sem navegador conectado: no chat (claude.ai, ou o aplicativo fora da aba Code),
-que roda numa máquina na nuvem, sem acesso ao computador da pessoa nem ao admin; no Codex e noutros clientes
-sem ferramenta de navegador; e no Claude Code sem a extensão do Chrome. O fluxo inteiro foi testado só no
+Muitas pessoas usam a skill sem navegador conectado, ou com um que não roda JavaScript na página
+(`primeiro-uso.md`, 1b): no chat do Claude (claude.ai, ou o aplicativo fora da aba Code), que roda numa
+máquina na nuvem, sem acesso ao computador da pessoa nem ao admin; no Codex e noutros clientes sem essa
+ferramenta; e no Claude Code sem a extensão do Chrome. O fluxo inteiro foi testado só no
 Claude Code com a extensão do Claude para Chrome (`primeiro-uso.md`, 1a). Sem navegador você não lê o admin,
 não grava por script, não confere a prévia nem tira prints. O trabalho continua, com a pessoa nas mãos e você
 na conferência:
@@ -433,7 +451,7 @@ na conferência:
 |---|---|
 | `references/primeiro-uso.md` | Primeiro uso com uma loja: a configuração inicial em cinco passos (o ambiente, as sete perguntas e a mensagem pronta, o reconhecimento, o resumo do perfil e a espera pela correção, o "pronto"); a primeira mensagem para a pessoa colar; o que funciona em cada cliente (Claude Code, chat, Codex); as respostas momentâneas e as perguntas da hora certa. |
 | `references/reconhecimento-da-loja.md` | O passo 3 da configuração inicial: descoberta só de leitura (inclusive a família do tema, a ordem da cascata e se há CDN na frente), snippets e como salvar o perfil. |
-| `assets/perfil-da-loja.md` | Modelo do perfil da loja, para copiar para `~/.claude/panorama-lojas/<slug>.md`. |
+| `assets/perfil-da-loja.md` | Modelo do perfil da loja, para copiar para `~/panorama-lojas/<slug>.md`. |
 | `assets/prints-chave.txt` | Modelo da lista de prints do rascunho rápido (6 a 8 prints e uma página de controle), a mesma para `salvar_copia.mjs`, `rodada.mjs` e `larguras.mjs`. |
 | `assets/plano-revisao.mjs` | Modelo comentado de plano do `rev.mjs` para a revisão profunda da versão escolhida. |
 | `references/construtor.md` | Página do construtor: as duas raízes, as quatro regras, o fluxo em nove passos (do backup do `Blocos:` à aprovação e à página real), a verificação e a edição pontual numa página que já está no ar. |
@@ -450,13 +468,13 @@ na conferência:
 | `references/previa.md` | Antes de qualquer gravação visual: o fluxo em dois tempos de um pedido grande (rascunho rápido, opinião, revisão profunda; o limite da revisão adversarial), o ritmo das visitas ao site (1015), iterar offline e confirmar no ar, qual prévia para qual mudança, o gerador de favorito e como mandar para a pessoa aprovar. |
 | `references/gravacao-construtor.md` | Antes de gravar uma página do construtor: campo `Blocos:`, transporte com sha256, clique certo por botão, diálogo morto, os filtros da tela Páginas pelo rótulo, verificação. |
 | `references/gravacao-arquivo-e-head.md` | Antes de gravar um Arquivo (CSS/JS), o `<head>`, a agenda, a Barra do Topo ou o logo; o campo que a loja nunca usou (a chave não existe); colar à mão; modo guiado; a ordem de uma mudança em duas peças (CSS + JS); criar um Arquivo novo e onde a linha dele entra no `<head>`; `Publicar`, quando a pessoa pede. |
-| `references/ferramentas-de-navegador.md` | Quando uma verificação correta parecer falha: limites e manias da ferramenta de navegador, datados. |
+| `references/ferramentas-de-navegador.md` | Quando uma verificação correta parecer falha: limites e manias da ferramenta de navegador, datados (da extensão do Claude para Chrome; na seção 7, o que se mediu no Codex com a extensão do ChatGPT). |
 
 ## Scripts
 
 | Script | Para quê |
 |---|---|
-| `scripts/injetar.js` | Funções de console para o admin, com backup automático e travas que abortam: `definirLoja`, `conferirAlvo`, os filtros da tela pelo rótulo (`filtrosDaTela`, `campoDoFiltro`: eles mudam de admin para admin), `abrirDialogo`, `dialogoUnico`, `conferirDialogo` (a loja pelo campo Loja do diálogo, `lerCampoLoja`), `injetar`, `confirmarGravacao`, `verificarGravou`; cache da página (`limparCache(#)` e `clicarOkDoModal`, o OK só do modal que ele abriu); transporte gzip+base64, clipboard e arquivo (`lerEntradaArquivo`); Arquivo (`conferirArquivoAtual`, `injetarArquivo`, `confirmarArquivo`, `verificarArquivoGravou`); configuração da loja (`lerCampo`, que diz `abaVisivel: false` quando a subaba do campo não aparece para o usuário e `existe: false` para um campo nunca usado ou sem acesso, `conferirCampoAtual`, que aborta nesses dois casos, `trocarNaConfig`, `verificarCampoGravou`, com os atalhos do `<head>` `trocarNoHead` e `verificarHeadGravou`, e `confirmarConfigLoja`; nenhuma cria chave, e o SCSS de Personalização fica de fora); cache de configuração (`limparCacheConfigLoja`, `ultimoFlushConfigLoja`, que exigem o filtro Loja na loja do perfil e uma linha `loja_config` só; o Último flush é indício, e a prova é o HTML servido); filtros feitos de seletor "bootstrap" (o filtro Loja pelo rótulo ou, quando o rótulo não se lê, pelo valor e pelo `lojaNome`: `filtroLojaDoPerfil`) e `rotularParaFerramenta` (um `aria-label` próprio, `__nome`, para o `find` da ferramenta achar o campo certo); `fecharConfigLoja` (o controller pelo select Tipo, ou o `Cancelar` do diálogo); Arquivo novo e `Publicar`, só com o pedido da pessoa nomeando os botões e a página (`lerTipoDoArquivo`, `conferirUrlLivre`, `conferirArquivoNovo`, `prepararConfirmarCriacao`, `conferirCriacao`, `prepararPublicar`, `prepararOkDoPublicar`, `conferirPublicada`: conferem e rotulam UM elemento para UM clique real da ferramenta, e não clicam). As gravações de páginas e de Arquivos clicam só no `Confirmar` de dentro do diálogo, abortam sem ele (pode ser permissão) e recusam o diálogo de criação ("Adicionar Página"); a da configuração da loja exige um `controller.confirmar` só, procurado primeiro no diálogo, e aborta sem nenhum. Sequências comentadas no fim do arquivo. Escrever na textarea/Ace não grava, e `configInput.builder` também não. |
+| `scripts/injetar.js` | Funções de console para o admin, com backup automático e travas que abortam: `definirLoja`, `conferirAlvo`, os filtros da tela pelo rótulo (`filtrosDaTela`, `campoDoFiltro`: eles mudam de admin para admin), `abrirDialogo`, `dialogoUnico`, `conferirDialogo` (a loja pelo campo Loja do diálogo, `lerCampoLoja`), `injetar`, `confirmarGravacao`, `verificarGravou`; cache da página (`limparCache(#)` e `clicarOkDoModal`, o OK só do modal que ele abriu); transporte gzip+base64, clipboard e arquivo (`lerEntradaArquivo`; sem upload, `lerArquivoGzipB64`); Arquivo (`conferirArquivoAtual`, `injetarArquivo`, `confirmarArquivo`, `verificarArquivoGravou`); configuração da loja (`lerCampo`, que diz `abaVisivel: false` quando a subaba do campo não aparece para o usuário e `existe: false` para um campo nunca usado ou sem acesso, `conferirCampoAtual`, que aborta nesses dois casos, `trocarNaConfig`, `verificarCampoGravou`, com os atalhos do `<head>` `trocarNoHead` e `verificarHeadGravou`, e `confirmarConfigLoja`; nenhuma cria chave, e o SCSS de Personalização fica de fora); cache de configuração (`limparCacheConfigLoja`, `ultimoFlushConfigLoja`, que exigem o filtro Loja na loja do perfil e uma linha `loja_config` só; o Último flush é indício, e a prova é o HTML servido); filtros feitos de seletor "bootstrap" (o filtro Loja pelo rótulo ou, quando o rótulo não se lê, pelo valor e pelo `lojaNome`: `filtroLojaDoPerfil`) e `rotularParaFerramenta` (um `aria-label` próprio, `__nome`, para o `find` da ferramenta achar o campo certo); `fecharConfigLoja` (o controller pelo select Tipo, ou o `Cancelar` do diálogo); Arquivo novo e `Publicar`, só com o pedido da pessoa nomeando os botões e a página (`lerTipoDoArquivo`, `conferirUrlLivre`, `conferirArquivoNovo`, `prepararConfirmarCriacao`, `conferirCriacao`, `prepararPublicar`, `prepararOkDoPublicar`, `conferirPublicada`: conferem e rotulam UM elemento para UM clique real da ferramenta, e não clicam). As gravações de páginas e de Arquivos clicam só no `Confirmar` de dentro do diálogo, abortam sem ele (pode ser permissão) e recusam o diálogo de criação ("Adicionar Página"); a da configuração da loja exige um `controller.confirmar` só, procurado primeiro no diálogo, e aborta sem nenhum. Sequências comentadas no fim do arquivo. Escrever na textarea/Ace não grava, e `configInput.builder` também não. |
 | `scripts/gerar_previa.py` | Gera o favorito de prévia (CSS e/ou JS) que liga e desliga só na aba de quem clica, na posição certa da cascata (`--depois-de` um link, um `#id` ou um `<style>` sem id pelo trecho, `style:TRECHO`, como o do SCSS; `--substitui`; `--fim-do-head`); `--substitui` desliga o `<link>` velho pela folha de estilo dele (sem o navegador recarregar o arquivo) e não liga se ele ainda não carregou; um AVISO para caractere fora do ASCII num `--css` ou `--js`, com o escape a usar (`--permitir-nao-ascii` cala); `--desligar NOME` adota a função de desligar de um JS de tema; `--js` pode repetir (rodam na ordem: um que põe a classe ou fixa a hora, e o arquivo do tema sem mudança); `--resize` refaz as medidas de carrossel ao ligar e desligar; `--transporte` grava também o `.gz.b64` para o painel do aplicativo. Imprime o sha256 de cada entrada e avisa quando o favorito passa de ~55 mil caracteres, dizendo quanto vem do CSS, de cada `--js` e do código fixo do favorito; `--compactar-js` (opcional) tira comentários e recuo do JS só no favorito, quando é seguro e conferido pelo Node (senão, avisa e deixa o JS como está), e o sha impresso continua o do arquivo; `--autoteste` roda os casos difíceis do compactador. Recusa CSS sem posição; não liga se não achar o arquivo ou se o trecho casar com mais de um; nunca grava por cima de um arquivo de entrada e, com ERRO, não grava nada. Ver `previa.md`. |
 | `scripts/montar_tema.py` | Monta e confere um CSS de tema ou de ajuste antes da prévia: arquivo novo a partir de seções, ou a versão no ar (byte a byte) + seções. Confere BOM, CR, ASCII, comentários, chaves e CSS plano (sem aninhamento nem SCSS), e, com `--classe`, que todo seletor está preso à classe do `<body>` (lista de seletores separada só nas vírgulas de fora de parênteses, colchetes e aspas); imprime tamanho e sha256. `--publicar ARQ` grava também a versão de publicar (as seções novas sem comentários; com `--base`, a versão no ar fica byte a byte), confere que ela tem as mesmas regras da versão de trabalho e imprime o sha das duas: a gravação sai da de publicar (a prévia também, num arquivo novo). Lê os números de seção: AVISO de número repetido (da base ou entre seções novas; 8 e 8.8 são diferentes), de seção nova sem número e de regras depois do fim da última seção da base, e imprime a próxima livre. Com `--publicar`, cada seção nova guarda uma linha de cabeçalho com o número e o título. Com `--base`, imprime dois comandos de prévia: o de acréscimo (para a pessoa) e o do arquivo inteiro (para você conferir 0 diferenças). `--autoteste` roda os testes internos. Ver `ajustes-visuais.md`, 5.2. |
 | `scripts/enxugar_tema.py` | Da versão comentada de um tema, a enxuta que vai para o site: sem comentários, com um comentário só no topo, que aponta para a página do admin onde a comentada fica guardada (despublicada). Confere comentários, chaves, ASCII e a mesma lista de regras; imprime bytes, sha e gzip das duas. `ajustes-visuais.md`, 5.2, "A versão comentada no admin". |
@@ -488,5 +506,6 @@ Para que serve cada programa e o que funciona sem ele: `primeiro-uso.md`, 1c. Py
 Windows, `python3` pode ser só o atalho da Microsoft Store); nos trechos colados
 (`python -I -`), use também `-X utf8`: com `-I` o `PYTHONIOENCODING` é ignorado, e os acentos saem trocados no
 console do Windows (medido). Para o admin e as
-prévias conferidas por você, é preciso uma ferramenta de navegador conectada (por exemplo, a extensão do
-Claude para Chrome), com a pessoa já logada no admin; sem ela, siga o modo guiado.
+prévias conferidas por você, é preciso uma ferramenta de navegador conectada ao Chrome em que a pessoa
+está logada no admin, que rode JavaScript na página e devolva o resultado (a testada é a extensão do Claude
+para Chrome; as outras, `primeiro-uso.md`, 1b); sem ela, siga o modo guiado.

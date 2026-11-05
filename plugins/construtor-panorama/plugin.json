@@ -1,0 +1,47 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "construtor-panorama",
+  "version": "1.3.0",
+  "description": "Ajustes visuais, temas de época, páginas do construtor e telas de configuração de uma loja da Panorama Sistemas, pelo admin da própria loja: prévia no site e o seu \"sim\" antes de cada gravação, backup antes de trocar e um perfil privado da loja no seu computador.",
+  "author": {
+    "name": "Profit Brand Digital",
+    "url": "https://github.com/guilhermeeberspachermkt-hub"
+  },
+  "homepage": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas",
+  "repository": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas",
+  "license": "MIT",
+  "keywords": [
+    "panorama-sistemas",
+    "loja-virtual",
+    "e-commerce",
+    "css",
+    "temas-de-epoca",
+    "construtor",
+    "pt-BR"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Construtor Panorama",
+        "shortDescription": "Visual e páginas da sua loja",
+        "longDescription": "Para quem cuida de uma loja na plataforma Panorama Sistemas, mesmo sem ser desenvolvedor. Ajusta o visual por CSS (cores, botões, cards, selo de desconto, menu), liga temas de época (Black Friday, Natal), monta páginas do construtor e mexe nas telas de configuração (código do <head>, logo, arquivos CSS e JS). Mostra a prévia antes, grava só com o seu \"sim\", guarda um backup do que estava no ar e mantém um perfil privado da loja no seu computador. Projeto independente, não é um produto oficial da Panorama Sistemas. Testada no Claude Code com a extensão do Claude para Chrome. No Codex, com a extensão do ChatGPT para Chrome, a leitura do site e do admin e uma gravação numa página que não aparece no site foram testadas numa loja real; sem uma ferramenta de navegador que rode JavaScript na página, o admin vai pelo modo guiado (você faz os cliques que ela indicar).",
+        "developerName": "Profit Brand Digital",
+        "category": "Productivity",
+        "capabilities": [
+          "Lê o site e o admin da loja",
+          "Grava no admin só com a sua aprovação"
+        ],
+        "websiteURL": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas",
+        "supportURL": "https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas/issues",
+        "defaultPrompt": [
+          "Configuração inicial da minha loja Panorama, só lendo, sem mudar nada no site nem no admin.",
+          "Quero o botão de comprar da minha loja em outra cor. Me mostre a prévia antes de gravar.",
+          "Mudei uma coisa no admin e não aparece no site. O que pode ser?"
+        ],
+        "brandColor": "#0F766E",
+        "composerIcon": "./assets/icon.svg",
+        "logo": "./assets/icon.svg"
+      }
+    }
+  }
+}

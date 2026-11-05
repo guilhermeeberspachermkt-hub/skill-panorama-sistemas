@@ -68,7 +68,7 @@ Code, ou no chat?"
 | **Claude Code** (a aba Code do aplicativo do Claude para computador, ou o terminal), com a extensão do Claude para Chrome conectada e a pessoa logada no admin nesse Chrome | o fluxo inteiro: ler e gravar no admin com as travas de `scripts/injetar.js`, rodar os scripts, guardar o perfil e os backups no computador dela. **Foi assim que a skill foi desenhada e testada**: em duas lojas reais, em três rodadas, a última com uma gravação real de ponta a ponta | só o resultado do 1b ao 1e |
 | **Claude Code sem ferramenta de navegador** | o site público por `curl`, os scripts e o perfil; o admin, só pelo **modo guiado** (`SKILL.md`, "Modo guiado") | "Sem a extensão do Chrome conectada, eu preparo e confiro cada mudança, e você faz os cliques no admin." E como resolver (1b) |
 | **Claude no chat** (claude.ai, ou o aplicativo fora da aba Code) | a skill roda numa máquina na nuvem, que não vê o computador da pessoa nem o admin dela: explicar, escrever o CSS e o JS, gerar o favorito de prévia e guiar a pessoa pelo **modo guiado**. Você não grava no admin por conta própria. A extensão do Chrome junto do chat, com esta skill, **não foi testada**: se for o caso, diga isso, e grave pelo modo guiado | "Aqui no chat eu não entro no seu admin: preparo cada mudança, você confere a prévia e faz os cliques que eu indicar. Para eu mesmo ler e gravar no admin, com as conferências automáticas, use o Claude Code com a extensão do Chrome." |
-| **Codex** (da OpenAI) ou outro cliente que lê skills | o Codex lê o mesmo formato (uma pasta com `SKILL.md`; as skills pessoais ficam em `~/.agents/skills`; chama-se com `$construtor-panorama` ou pela lista de `/skills`). O admin, só pelo modo guiado, a não ser que haja uma ferramenta de navegador conectada. Por padrão, a proteção do Codex bloqueia a rede e a escrita fora da pasta do projeto: o `curl` (1e) e a pasta do perfil (1d) pedem a permissão dela. **Não testado** | "Esta skill foi testada no Claude Code. Aqui ela funciona no modo guiado: eu preparo e confiro, e você faz os cliques no admin. Algumas leituras vão pedir a sua permissão." |
+| **Codex** (da OpenAI: no aplicativo do ChatGPT para computador, no terminal ou no editor) ou outro cliente que lê skills | o Codex lê o mesmo formato (uma pasta com `SKILL.md`; chama-se com `$construtor-panorama` ou pela lista de `/skills`). O site público por `curl`, os scripts e o perfil, como no Claude Code, mas a proteção do Codex (o *sandbox*) bloqueia por padrão a rede e a escrita fora da pasta aberta: o `curl` (1e), os scripts de Chrome que visitam o site e a pasta do perfil (1d) pedem a permissão dela. O admin depende da ferramenta de navegador (1b): sem uma que rode JavaScript na página e devolva o resultado, só pelo modo guiado. **Não testado de ponta a ponta** | "Esta skill foi testada no Claude Code; no Codex, ainda não de ponta a ponta. Algumas leituras e a pasta do perfil vão pedir a sua permissão." E o resultado do 1b: com a ferramenta de navegador, o que ela permite; sem ela, o modo guiado |
 
 Por que importa:
 
@@ -79,25 +79,96 @@ Por que importa:
   continuam valendo. O que você não puder conferir vai para a pessoa como "não conferido", nunca como feito.
 - **Modo guiado** quer dizer: você prepara, monta e confere; a pessoa clica no admin, com a lista de cliques
   que você passa, e cola para você o que o admin mostra. As regras de segurança são as mesmas.
+- **No Codex**, cada pedido de permissão é uma decisão dela: diga antes o que vai pedir e por quê ("vou ler o
+  site da loja: o Codex vai pedir a sua permissão para a internet"). Não peça para desligar a proteção (o
+  "acesso total"); se ela quiser, a decisão e o risco são dela. Duas coisas reduzem os pedidos: aprovar
+  "para esta sessão" quando o Codex oferecer, e abrir o Codex com a pasta das lojas como pasta do projeto
+  (1d). Anote no perfil, na seção "Ambiente", o que pediu permissão.
+- **Sem agentes auxiliares, ou sem um meio de mandar arquivo na conversa** (o Codex, ou outro cliente): o
+  trabalho que a skill dá a um agente auxiliar você faz, na mesma ordem e com as mesmas regras; os prints e os
+  arquivos ficam em `trabalho/`, e você diz o caminho (`ferramentas-de-navegador.md`, 5).
 
 ### 1b. A ferramenta de navegador e o admin logado
 
-- **Há uma conectada?** Veja se você tem ferramentas de navegador (na extensão do Claude para Chrome, com nomes
-  como `tabs_context`, `navigate`, `read_page` e `javascript_tool`) e liste as abas: se a chamada responde,
-  ela está conectada. Se as ferramentas do navegador aparecerem só pelo nome (adiadas), carregue-as antes de
+- **Há uma conectada?** Veja se você tem ferramentas de navegador e liste as abas: se a chamada responde, ela
+  está conectada. Os nomes mudam de cliente para cliente, e de versão para versão. Na extensão do Claude para
+  Chrome, nomes como `tabs_context`, `navigate`, `read_page` e `javascript_tool`. No Codex, a extensão do
+  ChatGPT para Chrome (ligada no aplicativo do ChatGPT, em Configurações › Computer Use) ou um servidor MCP de
+  navegador, como o Chrome DevTools MCP (nomes como `list_pages`, `navigate_page`, `take_snapshot` e
+  `evaluate_script`). Se as ferramentas do navegador aparecerem só pelo nome (adiadas), carregue-as antes de
   concluir que não há; com mais de um Chrome conectado, escolha o que a pessoa usa para entrar no admin (na
-  extensão, com nomes como `list_connected_browsers` e `select_browser`). Sem nenhuma, o admin vai pelo modo
+  extensão do Claude, com nomes como `list_connected_browsers` e `select_browser`). Sem nenhuma, o admin vai
+  pelo modo guiado.
+- **O que a skill precisa da ferramenta.** Não basta "ter navegador": confira cada capacidade abaixo. O fluxo
+  inteiro foi medido só com a extensão do Claude para Chrome; noutra ferramenta, cada linha é uma hipótese até
+  você testar, e o que você mediu vai para o perfil, na seção "Ambiente".
+
+  | Capacidade | Para que a skill usa | Sem ela |
+  |---|---|---|
+  | abrir uma aba e navegar **no Chrome em que a pessoa entrou no admin** | ler e gravar no admin com o login dela | o admin vai pelo modo guiado |
+  | **rodar JavaScript na página e receber o valor de volta** | as funções e travas de `scripts/injetar.js` (toda gravação por script), as medições de `medir-no-navegador.md` | sem gravação por script: o admin vai pelo modo guiado. Medições no site público, pelos scripts de Chrome (Node 22) |
+  | achar um elemento e dar **um clique de verdade** nele | os botões que só respondem a um clique real (`Publicar`, o `Confirmar` de criação: o script rotula, a ferramenta clica) | a pessoa clica, com o nome do botão e da página |
+  | enviar um arquivo local para um `<input type="file">` | levar o `injetar.js` e um tema para a página, com o sha conferido lá dentro | o texto em gzip+base64 numa chamada (`ferramentas-de-navegador.md`, 3 e 4) |
+  | print da aba | conferir a prévia você mesmo | prints pelos scripts de Chrome, ou da pessoa |
+
+  "Roda JavaScript" não é uma coisa só: uma ferramenta pode devolver o resultado de uma conta e ainda assim
+  não ver o código da página, não guardar nada entre uma chamada e outra ou não medir o layout (medido no
+  Codex: abaixo). Teste em chamadas separadas, cada uma escrita como **expressão** (um objeto ou uma função
+  que se chama, `(() => { ...; return x; })()`, sem `;` no fim: há ferramenta que só aceita expressão). Para
+  ler o site, basta a 1; para ler o admin, a 1 e a 3; para gravar por script, as cinco.
+
+  1. **Ler** (no site público, assim que a aba abrir):
+     `({ soma: 1 + 1, largura: innerWidth, links: document.links.length })`. Se a ferramenta executa mas não
+     devolve o objeto (só diz "feito"), conte como sem a capacidade.
+  2. **Guardar entre chamadas** (no site público): `(() => { window.__teste = 41; return 'ok'; })()` e, na
+     chamada seguinte, `typeof window.__teste + ' ' + window.__teste`, que tem de dar `number 41`. Os
+     trechos que guardam um resultado em `window` para ler em pedaços (`fatia`, `__GRADE`) e o pacote de
+     funções dependem disso.
+  3. **Medir o layout** (no admin, numa tela com grade, como Loja On-line › Páginas, sem mexer em nada):
+     `(() => { const t = [...document.querySelectorAll('table')]; return { tabelas: t.length, comLayout: t.filter(x => x.offsetParent).length, iframes: document.querySelectorAll('iframe').length }; })()`.
+     Com a grade à vista na tela, `comLayout` tem de ser maior que 0. Com `tabelas` acima de 0 e `comLayout`
+     0, a ferramenta não vê o layout desta página; com `tabelas` 0 e `iframes` acima de 0, a tela está dentro
+     de um iframe. Nos dois casos, os trechos que contam linhas marcadas (snippet B, `conferirAlvo`) não
+     valem: pare a contagem da seleção e leia pela tela.
+  4. **O mundo da página** (na primeira aba do admin, antes de carregar `injetar.js`):
+     `({ jq: typeof window.jQuery, ev: (0, eval)('1 + 1') })`. As funções de `injetar.js` usam o jQuery do
+     admin e são carregadas por `(0, eval)`. Se `jq` não der `'function'`, o JavaScript roda num mundo isolado,
+     que vê o HTML mas não o código da página. Se o `eval` der erro, a página ou a ferramenta o bloqueia.
+  5. **Mudar a página** (no site público): ponha um atributo seu no `<html>`
+     (`(() => { document.documentElement.setAttribute('data-teste', '1'); return 'ok'; })()`), leia de volta
+     numa segunda chamada e remova numa terceira. As funções que gravam escrevem na página; sem isso, elas
+     não rodam.
+
+  Anote no perfil o resultado de cada uma, com a data e o nome da ferramenta. Uma que falhou não se
+  contorna: os trechos que dependem dela não valem nesta ferramenta, e o que eles fariam vai pelo modo
   guiado.
+  Uma ferramenta pode ter mais de um jeito de rodar JavaScript: faça as chamadas por cada um e use o que
+  passar.
+  - **Medido no Codex** (app do ChatGPT no Windows, extensão do ChatGPT para Chrome, 2026-11-04): a
+    ferramenta é `mcp__cua_repl.js`, com dois caminhos (`ferramentas-de-navegador.md`, 7). O
+    `playwright.evaluate` roda numa cópia só de leitura do HTML: passa na chamada 1 e falha nas outras quatro
+    (no admin, por isso, os snippets B e C não acharam a grade nem os filtros). O CDP da aba
+    (`Runtime.evaluate`) roda na página de verdade e passou nas cinco (as 3 e 4 no admin), mas às vezes
+    responde que está indisponível: aí, espere, tente mais uma vez e, se repetir, modo guiado. Uma gravação
+    por script foi feita e provada no Codex, numa página despublicada (o Passo E conferiu o sha); o que
+    ainda não foi medido lá, e a primeira vez numa loja: `ferramentas-de-navegador.md`, 7.
 - **Qual delas vai ao admin.** O login da pessoa vale no Chrome em que ela entrou, e a aba que você abre pela
-  extensão usa essa sessão (`ferramentas-de-navegador.md`, 3). O painel de navegador do aplicativo do Claude
-  é outro navegador, sem os cookies dela: serve para o site público e para prints, não para o admin.
+  extensão do Claude usa essa sessão (`ferramentas-de-navegador.md`, 3). O painel de navegador do aplicativo
+  do Claude é outro navegador, sem os cookies dela: serve para o site público e para prints, não para o admin.
+  O Chrome DevTools MCP, no padrão, abre um Chrome próprio, também sem o login dela: serve para o site público;
+  ligá-lo ao Chrome dela é uma configuração que ela faz, e não foi testada com esta skill. A extensão do
+  ChatGPT para Chrome usa o Chrome dela (medido: o admin abriu logado, sem senha) e pode pedir licença por
+  site; o que o JavaScript dela consegue está no "Medido no Codex", acima.
 - **O admin abre logado?** Só depois de ela dar o endereço (pergunta 2): abra uma aba nova no seu grupo, vá ao
   endereço e leia pelo texto da página, não pelo print, se é o admin ou a tela de login. A aba que ela mesma
   abriu pode não aparecer para você (medido: `ferramentas-de-navegador.md`, 3). Na tela de login, peça que
   ela entre, no Chrome dela. **Você não digita senha**, nem com ela pedindo, e não pede senha na conversa; se
   ela colar uma, diga que não precisa e não guarde em lugar nenhum.
-- **Como resolver, para a pessoa:** "Instale a extensão do Claude para Chrome, conecte ao Claude Code seguindo
-  as instruções da própria extensão e entre no admin nesse Chrome." Até lá, a skill segue no modo guiado.
+- **Como resolver, para a pessoa:** no Claude Code, "Instale a extensão do Claude para Chrome, conecte ao
+  Claude Code seguindo as instruções da própria extensão e entre no admin nesse Chrome." No Codex, "No
+  aplicativo do ChatGPT, em Configurações › Computer Use, escolha o Chrome e instale a extensão que ele
+  indicar; depois, entre no admin nesse Chrome." Diga que, no Codex, isso não foi testado com esta skill. Até
+  lá, a skill segue no modo guiado.
 
 ### 1c. Python, Node e os outros programas
 
@@ -110,8 +181,9 @@ done
 python -I -c "import bs4; print('beautifulsoup4', bs4.__version__)" 2>/dev/null \
   || echo 'beautifulsoup4: não instalado'
 python -I -c "import PIL; print('Pillow', PIL.__version__)" 2>/dev/null || echo 'Pillow: não instalado'
-# o Chrome dos scripts de Chrome (Node 22+): "Trava agora" no fim quer dizer que ele achou o Node e o módulo
-node scripts/cdp.mjs 2>&1 | tail -1
+# o Chrome dos scripts de Chrome (Node 22+). As duas últimas linhas: "Trava agora: ..." (ele carregou) e
+# "Node <versão> (ok) | Chrome: <caminho>" (Node 22 ou mais novo, e o Chrome que ele vai usar)
+node scripts/cdp.mjs 2>&1 | tail -2
 ```
 
 No PowerShell, os mesmos programas respondem a `--version` (`python --version`, `node --version`,
@@ -128,24 +200,47 @@ mensagem de "Python não foi encontrado" em vez da versão (visto no Git Bash, 2
 | **curl** | ler o site público, baixar o backup de um Arquivo, conferir no ar (1e) | o site se lê pela ferramenta de navegador (snippet A do reconhecimento) ou, sem ela, pelo código da página que a pessoa manda (1e, "Sem rede até o site"); o que ficar sem ler entra no resumo como "não lido" |
 
 Como resolver, para a pessoa: "Instale o Python 3 pelo site oficial, python.org. No Windows, na primeira tela
-da instalação, marque a caixa 'Add python.exe to PATH' (é o que deixa o Claude achar o Python). Depois, abra
+da instalação, marque a caixa 'Add python.exe to PATH' (é o que deixa o assistente achar o Python). Depois, abra
 uma conversa nova." O Node vem do site oficial dele, nodejs.org, e é opcional.
 
 ### 1d. A pasta do perfil
 
-O perfil, os backups e o trabalho ficam fora da pasta da skill: `~/.claude/panorama-lojas/<slug>.md`, com
-`<slug>/backups/` e `<slug>/trabalho/` (no Windows, `C:\Users\<usuário>\.claude\panorama-lojas\`). Teste se dá
-para gravar ali agora, e não na hora de guardar o primeiro backup:
+O perfil, os backups e o trabalho ficam fora da pasta da skill: `~/panorama-lojas/<slug>.md`, com
+`<slug>/backups/` e `<slug>/trabalho/` (no Windows, `C:\Users\<usuário>\panorama-lojas\`). Se já existe a
+pasta antiga, `~/.claude/panorama-lojas/` (o padrão até a versão 1.2.0), ela continua valendo (`SKILL.md`,
+"A pasta antiga"). Com uma pasta combinada com a pessoa (abaixo), é ela, e só ela: não procure nem leia a
+padrão e a antiga. Teste se dá para gravar ali agora, e não na hora de guardar o primeiro backup:
 
 ```bash
-P="$HOME/.claude/panorama-lojas"
+P="$HOME/panorama-lojas"
+[ -d "$HOME/.claude/panorama-lojas" ] && P="$HOME/.claude/panorama-lojas"   # a pasta antiga, se existir
+# com pasta combinada, troque as duas linhas acima por: P='o caminho combinado'
 mkdir -p "$P" && t="$P/.teste-de-escrita-$$" && printf 'ok\n' > "$t" && rm -f -- "$t" \
   && echo "dá para gravar em $P" || echo "não deu para gravar em $P"
 ```
 
+```powershell
+# PowerShell, o mesmo teste
+$P = "$HOME\panorama-lojas"
+if (Test-Path -LiteralPath "$HOME\.claude\panorama-lojas") { $P = "$HOME\.claude\panorama-lojas" }
+# com pasta combinada, troque as duas linhas acima por: $P = 'o caminho combinado'
+try {
+  New-Item -ItemType Directory -Force -Path $P -ErrorAction Stop | Out-Null
+  $t = Join-Path $P ".teste-de-escrita-$PID"
+  Set-Content -LiteralPath $t -Value 'ok' -Encoding utf8 -ErrorAction Stop
+  Remove-Item -LiteralPath $t -ErrorAction Stop
+  "dá para gravar em $P"
+} catch { "não deu para gravar em ${P}: $($_.Exception.Message)" }
+```
+
 - **No Claude Code**, gravar fora da pasta do projeto pode pedir a permissão da pessoa: diga antes que é a
-  pasta do perfil da loja, para o pedido não a pegar de surpresa. No Codex, a escrita fora do projeto é
-  bloqueada por padrão (1a).
+  pasta do perfil da loja, para o pedido não a pegar de surpresa.
+- **No Codex**, a escrita fora da pasta aberta é bloqueada por padrão, e o teste acima pode falhar ou pedir
+  permissão: isso não quer dizer que a pasta não sirva. Diga à pessoa as duas saídas, e a escolha é dela:
+  aprovar quando o Codex perguntar (a cada gravação no perfil, ou "para esta sessão", se ele oferecer), ou
+  abrir o Codex com a pasta das lojas como pasta do projeto, para o perfil ficar dentro da área em que ele
+  grava (medido em 2026-11-04: com a pasta das lojas dentro da pasta aberta, o Codex gravou o perfil sem
+  pedir nada). A pasta das lojas não é um repositório: não rode `git init` nela.
 - **Não deu, ou a pessoa prefere outra pasta, ou ela restringe onde você grava** ("grave só nesta pasta"):
   combine a pasta com ela. Nunca dentro da pasta da skill (ela é compartilhada e substituída nas
   atualizações), nem num projeto que vai para um repositório compartilhado (o perfil é particular). Anote o
@@ -173,6 +268,11 @@ funciona, e o reconhecimento segue (`reconhecimento-da-loja.md`, 2a). Erro de co
 rede vem bloqueada por padrão (peça a permissão dela); no chat, a máquina da nuvem pode não alcançar o site;
 noutro caso, um bloqueio da rede da empresa. Sem `curl`, o site se lê pela ferramenta de navegador (snippet A
 do reconhecimento), e o que ficar sem ler entra no resumo como "não lido".
+
+**No Codex, cada comando novo que usa a internet pede permissão** (medido em 2026-11-04: quatro pedidos no
+reconhecimento). Para pedir menos, junte as leituras do reconhecimento num comando só: um script na pasta do
+reconhecimento que baixa a lista inteira, com as pausas de `previa.md`, "Ritmo das visitas ao site". Diga à
+pessoa, antes, o que o script baixa.
 
 **Sem rede até o site e sem ferramenta de navegador** (o chat cuja máquina na nuvem não alcança o site, ou o
 Codex sem a permissão dela): o reconhecimento do site público, o backup de um Arquivo e a conferência depois
@@ -205,7 +305,11 @@ em ordem menos o Node:
 > - O Python está instalado: é ele que gera as prévias e confere os arquivos antes de gravar. O Node não
 >   está; ele é opcional e só faz falta numa mudança com JavaScript.
 > - O que eu aprender sobre a sua loja fica numa pasta só sua, fora da skill:
->   `C:\Users\<você>\.claude\panorama-lojas\`. O Claude Code pode pedir a sua permissão para gravar lá.
+>   `C:\Users\<você>\panorama-lojas\`. O Claude Code pode pedir a sua permissão para gravar lá.
+
+No Codex, o mesmo relatório diz também o que vai pedir permissão (a internet, a pasta do perfil) e o
+resultado do teste das capacidades do navegador (1b), em palavras simples: "consigo ler o admin, mas não
+rodar as conferências dentro dele: as gravações vão pelo modo guiado".
 
 Anote tudo no perfil, na seção "Ambiente", com a data.
 

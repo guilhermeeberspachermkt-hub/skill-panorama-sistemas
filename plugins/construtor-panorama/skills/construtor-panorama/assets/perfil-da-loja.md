@@ -2,7 +2,8 @@
 
 <!--
 Modelo da skill construtor-panorama. Como usar:
-- Copie para ~/.claude/panorama-lojas/<slug-da-loja>.md (no Windows, C:\Users\<usuário>\.claude\panorama-lojas\).
+- Copie para ~/panorama-lojas/<slug-da-loja>.md (no Windows, C:\Users\<usuário>\panorama-lojas\), ou para a pasta
+  antiga, ~/.claude/panorama-lojas/, se ela já existe neste computador (SKILL.md, "A pasta antiga").
   Nunca dentro da pasta da skill: este arquivo é particular de quem usa e não vai junto quando a skill é compartilhada.
   Se a pessoa restringiu onde você pode gravar ("só nesta pasta"), o perfil, os backups e o trabalho vão para a pasta
   dela: escreva aqui o caminho e a data do combinado (reconhecimento, passo 5).
@@ -62,10 +63,12 @@ Conferido em: AAAA-MM-DD, neste computador _(noutro computador ou noutro cliente
 
 | Item | O que se viu |
 |---|---|
-| Cliente | _(Claude Code: aba Code do aplicativo ou terminal / Claude no chat / Codex / outro)_ |
+| Cliente | _(Claude Code: aba Code do aplicativo ou terminal / Claude no chat / Codex: aplicativo do ChatGPT, terminal ou editor / outro)_ |
 | Modo de trabalho | _(completo / guiado, e por quê: "sem ferramenta de navegador", "chat: não entra no admin")_ |
-| Ferramenta de navegador | _(extensão do Claude para Chrome conectada / só o painel do aplicativo, sem a sessão do admin / nenhuma)_ |
-| O admin abriu logado pela ferramenta? | _(sim, AAAA-MM-DD / tela de login: a pessoa entrou / não testado. Claude nunca digita senha)_ |
+| Ferramenta de navegador | _(extensão do Claude para Chrome conectada / extensão do ChatGPT para Chrome / MCP de navegador: qual, e se usa o Chrome logado / só o painel do aplicativo, sem a sessão do admin / nenhuma)_ |
+| Capacidades da ferramenta (`primeiro-uso.md`, 1b) | _(rodar JavaScript na página e receber o valor: sim / não; clique de verdade; enviar arquivo; print. Cada uma com a data, ou "não testado")_ |
+| O admin abriu logado pela ferramenta? | _(sim, AAAA-MM-DD / tela de login: a pessoa entrou / não testado. O assistente nunca digita senha)_ |
+| Permissões pedidas (Codex) | _(o que pediu permissão: a internet, a pasta do perfil, o Chrome dos scripts; aprovado a cada vez ou para a sessão; qual pasta o Codex abriu)_ |
 | Python | _(versão e o comando que funciona: `python` ou `python3`; "não encontrado": sem prévia nem gravação pelo caminho da skill)_ |
 | Node.js | _(versão / não encontrado: os JS ficam sem `node --check`, e os scripts avisam)_ |
 | beautifulsoup4 | _(versão / não instalado: só `verificar_paridade.py` precisa)_ |
@@ -79,7 +82,7 @@ Conferido em: AAAA-MM-DD, neste computador _(noutro computador ou noutro cliente
 | Quem pede e aprova alterações | _(pergunta 4; pode ser "eu". O "sim" vale quando chega pela conversa, mesmo que quem aprova seja outra pessoa)_ |
 | Quem mais mexe no admin | _(pergunta da hora certa: antes da primeira gravação na configuração da loja. Quem tem acesso e mexe: a loja, a agência, a TI; num admin com várias lojas, também quem cuida das outras. "Alguém editando agora?" não vai aqui: é pergunta de cada gravação, e a resposta vai em "Respostas momentâneas", com a hora)_ |
 | Quem decide publicar / despublicar | _(pergunta da hora certa: quando uma tarefa precisar de `Publicar`. Até lá, o padrão "nada se publica". Um pedido para você publicar vale só para a página que ele nomeia, com o botão: anote data e página)_ |
-| Quem limpa o cache de configuração da loja (Administrador › Cache › `loja_config`) | _(pergunta 5: a pessoa / Claude com pedido dela / outra pessoa / "não sei". Com "não sei", o padrão "pedir a cada limpeza", nunca em branco. Uma resposta dada na prática ("limpa pra mim") vale para aquela tarefa: anote data e alcance)_ |
+| Quem limpa o cache de configuração da loja (Administrador › Cache › `loja_config`) | _(pergunta 5: a pessoa / o assistente, com pedido dela / outra pessoa / "não sei". Com "não sei", o padrão "pedir a cada limpeza", nunca em branco. Uma resposta dada na prática ("limpa pra mim") vale para aquela tarefa: anote data e alcance)_ |
 | Quem cuida do CDN, se a loja tiver um (o Cloudflare, por exemplo) | _(só se o reconhecimento achou um CDN pelos cabeçalhos, 2b: aí é pergunta do resumo, e costuma ser a TI. Sem CDN identificado: "não se aplica: nenhum CDN identificado pelos cabeçalhos, AAAA-MM-DD". Padrão: no CDN você não mexe)_ |
 | Quem cuida de GTM e pixels de anúncio | _(pergunta da hora certa: antes de mexer no `<head>` perto desses códigos; até lá, não se mexe neles)_ |
 | Acessos deste usuário no admin | _(o que não aparece para ele, com a data: sistemas, telas, abas, botões, campos, lojas no filtro; ex.: "sem a aba Cabeçalho no diálogo Configurações", "sem `Confirmar` em Páginas". "Tudo o que a skill usa apareceu" se nada faltou. Se o diálogo Configurações deste admin escreve outro rótulo de subaba ou desenha as abas com outro elemento, anote o rótulo e o seletor medidos (`opcoes.aba`, `opcoes.seletorAba` de `injetar.js`); se o `Confirmar` de um diálogo fica fora do `.ui-dialog`, anote com a data da medição (`confirmarForaDoDialogo`). Quem libera acesso: o administrador da conta ou o suporte)_ |
@@ -124,14 +127,15 @@ Conferido em: AAAA-MM-DD
 
 | # | URL | Para que serve | Dono (quem criou / quem cuida) | No `<head>`? | Cache-buster atual | Última seção | Última alteração |
 |---|---|---|---|---|---|---|---|
-| `#NNNNNN` | `/seu-tema.css` | _(tema sazonal X, ativo com a classe `skin-...`)_ | _(ex.: "Claude, a pedido de <pessoa>, AAAA-MM-DD", confirmado por ela)_ | sim | `?v=N` | _(o número da última seção da versão no ar, ex.: 12; a próxima é 13)_ | AAAA-MM-DD |
+| `#NNNNNN` | `/seu-tema.css` | _(tema sazonal X, ativo com a classe `skin-...`)_ | _(ex.: "Claude (ou Codex), a pedido de <pessoa>, AAAA-MM-DD", confirmado por ela)_ | sim | `?v=N` | _(o número da última seção da versão no ar, ex.: 12; a próxima é 13)_ | AAAA-MM-DD |
 | `#NNNNNN` | `/seus-ajustes.js` | _(tudo o que ele faz, não só a parte da tarefa; se mexe em `.promotionBar`, `.header-top-bar`, `<body>`; as datas escritas no código e o que acontece em cada uma)_ | _(ex.: "a loja", "agência X"; ou "origem: não verificada")_ | sim, `defer` | `?updatedNN` | — | |
 | `#NNNNNN` | `/tema-antigo.css` | _(fora do ar: não está no `<head>`)_ | | não | — | | |
 | `#NNNNNN` | `/seu-tema-comentado.css` | _(só se a loja guarda o tema em duas páginas: a versão comentada de `/seu-tema.css`, para consulta e edição; **despublicada de propósito**, dá 404 no site; sha normalizado da última gravada)_ | | não (despublicada) | — | _(a mesma da enxuta; os números estão aqui)_ | AAAA-MM-DD |
 
 - **Dono:** pergunte à pessoa por cada arquivo em que a tarefa pode mexer e escreva a resposta com a data
-  ("dito pela pessoa em AAAA-MM-DD"). Um arquivo criado por uma sessão anterior do Claude para esta loja só é
-  "seu" com essa linha preenchida e confirmada pela pessoa; sem registro, pergunte antes de editar.
+  ("dito pela pessoa em AAAA-MM-DD"). Um arquivo criado por uma sessão anterior de um assistente (Claude,
+  Codex) para esta loja só é "seu" com essa linha preenchida e confirmada pela pessoa; sem registro, pergunte
+  antes de editar.
 - **Última seção** (arquivos de tema com seções numeradas): o número da última seção da versão **no ar**,
   atualizado a cada linha do histórico. Leia no arquivo servido, não na cópia de trabalho: a versão publicada
   pode ter perdido comentários (o `montar_tema.py --base` avisa número repetido). Com os números fora de
@@ -327,9 +331,9 @@ dia para o outro. Os problemas do site achados de passagem, com o número medido
 
 - Combinado com a pessoa em AAAA-MM-DD: _(a pasta padrão, testada na configuração inicial, `primeiro-uso.md`, 1d / a
   pasta que ela indicou, com a restrição dela, se houver: "grave só em ...")_.
-- Backups: `~/.claude/panorama-lojas/<slug>/backups/` _(ou outra combinada com a pessoa)_. Nome dos
+- Backups: `~/panorama-lojas/<slug>/backups/` _(ou outra combinada com a pessoa)_. Nome dos
   arquivos: `<campo-ou-arquivo>-ANTES-AAAA-MM-DD.<ext>` (um por gravação, antes de gravar).
-- Trabalho: `~/.claude/panorama-lojas/<slug>/trabalho/` _(ou outra combinada)_. As seções de CSS, as versões
+- Trabalho: `~/panorama-lojas/<slug>/trabalho/` _(ou outra combinada)_. As seções de CSS, as versões
   inteiras de cada arquivo (`-v1`, `-v2`…; de cada uma, a de trabalho, comentada, e a de publicar), os scripts
   de montagem, os favoritos de prévia e os prints de antes e depois. O que um agente auxiliar deixou numa pasta
   temporária (direções, prints) vem para cá antes de ser mostrado à pessoa: uma pasta temporária pode ser limpa.

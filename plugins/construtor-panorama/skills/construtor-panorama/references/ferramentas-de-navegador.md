@@ -1,11 +1,17 @@
 # Ferramentas de navegador: limites e manias medidos
 
 Os outros arquivos da skill descrevem a plataforma. Este descreve o **canal**: a ferramenta que conecta o
-Claude ao navegador da pessoa. Tudo aqui foi medido entre agosto e outubro de 2026, com a extensão do Claude
-para Chrome e com o painel de navegador do aplicativo do Claude para computador. Ferramentas mudam de
+assistente ao navegador da pessoa. Tudo aqui foi medido entre agosto e outubro de 2026, com a extensão do
+Claude para Chrome e com o painel de navegador do aplicativo do Claude para computador. Ferramentas mudam de
 versão, e outra ferramenta pode ter outros limites (ou nenhum destes). Quando uma verificação correta
 **parecer** falha, olhe esta lista antes de concluir que o site ou o admin estão errados: cada item aqui
 já custou um diagnóstico errado.
+
+**Noutra ferramenta** (no Codex, a extensão do ChatGPT para Chrome ou um servidor MCP de navegador, como o
+Chrome DevTools MCP), nada disto foi medido. O que a skill precisa da ferramenta, e como testar cada
+capacidade, está em `primeiro-uso.md`, 1b. Os itens abaixo valem como hipótese: um limite de tempo, uma saída
+cortada ou um filtro que esconde texto podem existir lá também, com outros números. O que você medir vai para
+o perfil, na seção "Ambiente", com a data e o nome da ferramenta.
 
 Se não houver ferramenta de navegador conectada, nada disto se aplica: siga o modo guiado do `SKILL.md`.
 
@@ -318,7 +324,7 @@ Se não houver ferramenta de navegador conectada, nada disto se aplica: siga o m
 
 Use o meio que a sua ferramenta oferecer para mandar arquivos na conversa (no Claude Code para computador,
 a ferramenta de enviar arquivo ao usuário). Se não houver, salve os prints numa pasta do perfil
-(`~/.claude/panorama-lojas/<slug>/trabalho/`) e diga à pessoa o caminho. Para o favorito de prévia, mande o
+(`~/panorama-lojas/<slug>/trabalho/`) e diga à pessoa o caminho. Para o favorito de prévia, mande o
 conteúdo do `.txt` (ou o caminho dele) e as instruções de `previa.md`. O nome de cada print diz o que ele é: a
 largura (ou "como você vê"), "opção" para o que não está na versão para aprovar, e "render local" com a data da
 cópia para o que não veio do site no ar (`previa.md`, "Mandar para a pessoa").
@@ -348,3 +354,111 @@ Valem como hipótese noutra ferramenta ou noutra versão.
   próprio por script, `rotularParaFerramenta(el, 'nome')` de `scripts/injetar.js`, e ache-o por `__nome`.
   Serviu para Loja, Nome, URL, `Confirmar` e OK. O rótulo só ajuda a achar: não autoriza clique nenhum, e
   cada clique continua sendo o que a pessoa pediu, com as travas do roteiro.
+
+## 7. Codex: a extensão do ChatGPT para Chrome
+
+Medido em 2026-11-04, numa loja, no Codex do aplicativo do ChatGPT para Windows, com a extensão do ChatGPT
+para Chrome conectada (Configurações › Computer Use), em três testes sem gravar nada no admin: a
+configuração inicial, uma rodada com as chamadas de `primeiro-uso.md`, 1b, no site público (desfeitas no
+fim), e uma rodada no admin, só de leitura. É uma medição só, numa versão da ferramenta; confira na sua com
+as mesmas chamadas.
+
+- **A ferramenta.** Duas: `mcp__cua_repl.js`, um console JavaScript com uma API própria (`cua`), e
+  `mcp__cua_repl.js_reset`, que reinicia esse console. Pela API: `cua.getState()` lista os navegadores
+  conectados (o Chrome da extensão e um navegador interno do aplicativo, que não tem a sessão dela);
+  `cua.createBrowserTab` abre uma aba no Chrome dela; na aba, `getByRole(...).click()` clica,
+  `getScreenshot()` tira o print, e `getAXState` e `domSnapshot` leem a página. Para rodar JavaScript na
+  página, há **dois caminhos, e só um serve a esta skill**:
+
+  | Caminho | O que é | O que se mediu |
+  |---|---|---|
+  | `tab.playwright.evaluate(expr)` (e `locator.evaluate`, `evaluateAll`) | a documentação diz "Evaluate JavaScript in a read-only page scope": uma cópia só de leitura do HTML, não a página | devolve leituras simples (contas, textos, contagens, estilos). Falham: `setAttribute` ("is not a function"), guardar em `window` ("object is not extensible"), `(0, eval)`, `crypto`, `btoa`, `localStorage`; o jQuery dá `'undefined'`; `offsetParent` não existe (por isso os snippets B e C não acharam a grade nem os filtros, que estavam na tela, sem iframe); e só aceita expressão (um `;` no fim dá `SyntaxError`) |
+  | o CDP da aba: `const cdp = await tab.capabilities.get('cdp')` e `cdp.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })` | o acesso de desenvolvedor do Chrome (Chrome DevTools Protocol), na página de verdade. A documentação diz: "for development use. Prefer higher-level Browser Use APIs", e "Raw CDP access is scoped to the tab's current web origin" | **as cinco chamadas do 1b passaram**: no site público, guardar em `window` entre chamadas, mudar a página, `crypto.subtle` com `await`, `btoa` e `localStorage`; no admin, o layout (a grade com `offsetParent`, sem iframe), o jQuery do admin (`'function'`) e o `(0, eval)`. Os snippets B e C leram a grade e os filtros. O `injetar.js` (~200 KB) foi levado em gzip+base64 numa chamada só, de ~82 mil caracteres, e o sha256 conferiu na página; carregado com `(0, eval)` e guardado no `localStorage`, ele rodou as funções do admin (fase 2, abaixo). Saídas de 5.000 caracteres e de base64 voltaram inteiras, sem corte nem bloqueio. O resultado vem dentro de `{ result: { value } }` |
+
+- **Use o CDP para os trechos da skill**, e o `evaluate` só para uma leitura simples. Diga à pessoa, antes,
+  que vai usar o acesso de desenvolvedor da extensão. A documentação do CDP pede que toda mudança deixada na
+  página seja contada à pessoa no fim: é o que a skill já faz com o pacote de funções no `localStorage`
+  (seção 3), que você apaga no fim.
+- **O CDP pode ficar indisponível.** Três vezes ele respondeu `Raw CDP is unavailable while Browser Use is
+  resolving a paused document response`, antes de rodar qualquer coisa: uma no admin, logo depois de abrir a
+  tela Páginas, e duas numa aba nova no site público, com 5 s entre elas, num momento em que o ChatGPT
+  estava instável (reconexões, troca de modelo no meio da conversa). Repetido mais tarde, numa aba nova, ele
+  funcionou no site e no admin. A causa não foi medida. Comece cada aba por uma chamada pequena (`1 + 1`)
+  para saber se ele está disponível; se não estiver, espere uns segundos e tente mais uma vez; se repetir,
+  conte à pessoa e siga pelo modo guiado, sem procurar outro caminho para rodar o código na página.
+- **Confira o `exceptionDetails` de cada chamada, e pare no primeiro.** O CDP não falha quando uma função
+  da skill aborta: ele devolve `{ exceptionDetails, result }`, e o `ABORTADO: ...` fica lá dentro. Num lote
+  de chamadas, a seguinte roda mesmo assim, se você não conferir (medido, fase 2: depois do aborto de uma
+  trava, a conferência seguinte rodou no mesmo lote). Uma chamada por passo, e, no seu console:
+
+  ```js
+  const r = await cdp.send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
+  if (r.exceptionDetails) throw new Error((r.exceptionDetails.exception || {}).description || r.exceptionDetails.text);
+  r.result.value
+  ```
+
+  Um `ABORTADO: ...` de uma função da skill é uma trava: pare e mostre à pessoa. Um erro de sintaxe na
+  expressão que você mesmo escreveu não é trava: corrija e mande de novo, uma vez.
+- **No CDP, tire o `await` do começo dos trechos da skill.** Os arquivos escrevem `await
+  verificarArquivoGravou(...)`, como no console do Chrome. O `Runtime.evaluate` recusa esse `await` solto
+  (medido, fase 2c: `SyntaxError: await is only valid in async functions and the top level bodies of
+  modules`, e a função não rodou). Mande a chamada sem ele, `verificarArquivoGravou('<sha>', ['<trecho>'])`,
+  ou embrulhada, `(async () => { return await verificarArquivoGravou('<sha>', ['<trecho>']); })()`: com
+  `awaitPromise: true`, o CDP espera a promessa e devolve o resultado (medido nas rodadas 0b e 0c, com o
+  trecho embrulhado).
+
+- **Recarregue e navegue pela ferramenta, nunca por `location.reload()` dentro do CDP.** Na fase 2b, um
+  `location.reload()` mandado pelo `Runtime.evaluate` deixou a aba presa: o `Page.getFrameTree` expirou em
+  10 s, e o CDP respondeu `Raw CDP is unavailable while Browser Use is resolving a paused document response`
+  por mais de 5 s; ele só voltou a responder uns 2,5 minutos depois. Na fase 2, o `tab.reload()` da API da
+  ferramenta, no mesmo admin, deixou o CDP responder em 7 s. É uma medição de cada; a documentação do CDP
+  pede para preferir a API da ferramenta. Depois de recarregar, teste com `1 + 1` a cada uns 20 s, por até
+  3 minutos, antes de desistir.
+- **Gravação por script no Codex: medida de ponta a ponta, num Arquivo despublicado.** Numa loja,
+  2026-11-04: a fase 2b gravou e a fase 2c provou, numa aba nova, depois de um `tab.reload()` pela API
+  (o CDP respondeu de primeira): `verificarArquivoGravou` deu `confere: true` e o trecho marcador presente
+  (185 caracteres relidos, com CRLF: o admin guarda assim, e o sha normalizado conferiu). Ainda não
+  medidos no Codex: o clique real num elemento rotulado (`Publicar`, criação por script), o `Limpar cache`
+  (`limparCache`, `clicarOkDoModal`), a gravação do `<head>` e da configuração da loja, e uma gravação numa
+  página que está no ar. Na primeira vez numa loja, diga isso à pessoa e comece por uma página que não
+  aparece no site, combinada com ela.
+- **A fase 2b, em detalhe.** No Arquivo despublicado da fase 2: com o "sim" pedido de diálogo fechado, o
+  `Alterar` reaberto, o `lerArquivoGzipB64`, o `conferirArquivoAtual`, o `injetarArquivo` e o `confirmarArquivo`
+  rodaram, e o admin mostrou "Registro alterado com sucesso.". O Passo E (reabrir e conferir pelo sha) parou
+  no reload acima. O aviso de sucesso não prova o conteúdo gravado: sem o Passo E pelo CDP, a prova é a do
+  modo guiado (a pessoa abre o `Alterar`, copia o Conteúdo e cola para você, que compara pelo sha
+  normalizado: `SKILL.md`, "Modo guiado"), ou o Passo E numa aba nova, mais tarde (foi o que a fase 2c
+  fez).
+- **A fase 2, antes:** o caminho até a gravação rodou. Numa loja, 2026-11-04, num Arquivo despublicado que a
+  pessoa criou: o pacote carregado pelo CDP, `definirLoja`, os filtros (`filtrosDaTela`,
+  `rotularParaFerramenta`), `conferirUrlLivre`, `conferirCriacao`,
+  `conferirAlvo`, `abrirDialogo('Alterar')`, `abaDialogo`, `conferirDialogo`, `lerTipoDoArquivo`,
+  `lerCampoLoja`, o backup, o `lerArquivoGzipB64` (184 bytes, sha conferido) e o `conferirArquivoAtual`
+  funcionaram. Enquanto o Codex esperava o "sim" da pessoa, o diálogo do `Alterar` sumiu da tela; depois do
+  "sim", o `conferirDialogo` abortou ("nenhum .ui-dialog no DOM"), e nada foi gravado: a trava fez o papel
+  dela. Por isso o `SKILL.md` ("O caminho comum de toda gravação", item 1) manda pedir o "sim" com o diálogo
+  fechado (e a fase 2b passou).
+- **A sua aba fica no Chrome da pessoa.** Ela vê o diálogo que você abriu e pode fechá-lo achando que é
+  dela. Diga qual aba é a sua (o título, o grupo de abas do Codex) e peça que ela não mexa nela enquanto
+  você trabalha. Ao pedir que ela feche outros diálogos `Alterar` da mesma página, diga "nas suas abas, não
+  na minha".
+- **Fechar a aba do agente pode derrubar a conexão.** No fim da fase 2, o `tab.close()` da aba do admin
+  respondeu `native pipe closed before response`, e depois o Chrome não aparecia mais em `cua.getState()`;
+  nas fases 2b e 2c, o mesmo `tab.close()` funcionou, e o Chrome da pessoa continuou aberto. Salve o
+  relatório e tudo o que precisa guardar **antes** de fechar a aba, feche só a que você abriu, e depois
+  pergunte à pessoa se o Chrome dela continua aberto.
+- **Ainda não medido:** o envio de arquivo (a API anuncia `waitForEvent('filechooser')` e `setFiles`). Não
+  faz falta: o transporte em gzip+base64 numa chamada de CDP funcionou (seção 4), e um Arquivo vai assim
+  pelo `lerArquivoGzipB64` (`gravacao-arquivo-e-head.md`, Passo B).
+- **O que funcionou também:** a aba abriu no Chrome dela, e o admin entrou logado (num dos testes, a aba nova
+  caiu na tela de login, e a pessoa entrou nela). O clique num link por papel e nome navegou. O print voltou.
+- **Num filtro feito de menu (o bootstrap-select do filtro Loja), o mesmo nome aparece duas vezes:** no item
+  do menu (`a[role=option]`) e no `<option>` escondido. Um localizador por texto da API do Codex recusou
+  por ambiguidade (modo estrito), sem clicar. Escolha o item do menu por um seletor dele e confira o
+  filtro com `filtrosDaTela()` depois (seção 6).
+- **A extensão precisa estar ligada a cada conversa.** Numa conversa nova, depois de reabrir o aplicativo, o
+  Chrome não apareceu em `cua.getState()` até a pessoa abrir o Chrome e conferir a extensão. Se não aparecer,
+  peça isso a ela; não siga por outro navegador.
+- **Licença por site.** Nesses testes, a conexão com o Chrome não pediu confirmação visível. A documentação da
+  extensão diz que ela pede licença por site; se pedir, a escolha é da pessoa: "permitir para este site", e
+  não para todos.

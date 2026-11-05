@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>construtor-panorama</title>
+  <rect width="256" height="256" rx="56" fill="#0F766E"/>
+  <path d="M56 104 L72 64 H184 L200 104 Z" fill="#FFFFFF"/>
+  <path d="M56 104 a18 18 0 0 0 36 0 a18 18 0 0 0 36 0 a18 18 0 0 0 36 0 a18 18 0 0 0 36 0 Z" fill="#FFFFFF"/>
+  <rect x="70" y="128" width="116" height="72" rx="6" fill="none" stroke="#FFFFFF" stroke-width="12"/>
+  <rect x="112" y="152" width="32" height="48" fill="#FFFFFF"/>
+</svg>

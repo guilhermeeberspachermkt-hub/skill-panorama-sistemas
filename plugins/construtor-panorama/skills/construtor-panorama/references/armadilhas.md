@@ -17,7 +17,7 @@ tamanhos, contagens, tempos — são reais e foram mantidos. Os identificadores 
 página, número da loja, domínio, nomes de arquivo, cores da marca) foram trocados por marcadores como
 `#NNNNNN`, `SUA-LOJA.com.br`, `#RRGGBB` e `.SEU-BODY-CLASS`; as classes que a loja medida criou
 ganharam nomes neutros (como `.faixa-de-tags`), e na sua loja os nomes são outros. Os da **sua** loja ficam no perfil
-dela (`~/.claude/panorama-lojas/<slug-da-loja>.md`), não aqui. Quando um fato depende do tema, ele diz
+dela (`~/panorama-lojas/<slug-da-loja>.md`), não aqui. Quando um fato depende do tema, ele diz
 onde foi medido — família `/dist`, família `modelo-1`, plataforma (nas duas) ou front-end novo (React) —
 e vale onde foi medido, não em toda loja: as famílias diferem de uma loja para outra, e o tema muda com o
 tempo. Confira na sua antes de confiar num número (`SKILL.md`, "Família do tema"; o que já se viu mudar de

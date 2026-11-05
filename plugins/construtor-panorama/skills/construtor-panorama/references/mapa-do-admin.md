@@ -8,7 +8,7 @@ com exceções anotadas onde apareceram (os filtros da tela Páginas, por exempl
 id da loja, os nomes dos arquivos CSS/JS, os domínios e qual página é a home no ar são de cada loja: cada
 cliente cria os seus, e eles mudam com o tempo.
 
-Esses dados da loja ficam no **perfil da loja**, em `~/.claude/panorama-lojas/<slug-da-loja>.md`. Se ainda
+Esses dados da loja ficam no **perfil da loja**, em `~/panorama-lojas/<slug-da-loja>.md`. Se ainda
 não existe perfil para a loja em que você vai mexer, faça antes o reconhecimento
 (`references/reconhecimento-da-loja.md`): é só leitura e evita gravar no lugar errado. Mesmo com perfil,
 reabra a tela e confira nome, URL e loja antes de gravar em qualquer `#`. O perfil é um mapa, não uma

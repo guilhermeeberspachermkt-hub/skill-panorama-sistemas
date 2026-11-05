@@ -10,7 +10,7 @@ tempos) são medições e foram mantidos. Os identificadores da loja medida não
 `#NNNNNN` é o `#` de uma página, `loja N` é o número da loja, `www.SUA-LOJA.com.br` é o site,
 `novo.SUA-LOJA.com.br` é o endereço do front-end novo (o host varia por loja; numa loja que só tem um
 front-end, ele não existe) e `.SEU-BODY-CLASS` é a classe do `<body>` da sua página. Os valores da sua loja
-estão no perfil dela, em `~/.claude/panorama-lojas/<slug-da-loja>.md`.
+estão no perfil dela, em `~/panorama-lojas/<slug-da-loja>.md`.
 
 Se a sua loja só tem um front-end, o reconhecimento (`reconhecimento-da-loja.md`, passo 2c) diz qual. As
 partes sobre migração twig → React valem só para quem migra; o formato do JSON, as duas raízes, as quatro
@@ -896,7 +896,7 @@ renderizando antes de entregar. E "renderiza" não é "serve": o `accordion` do 
 
 ## 6. Duas trilhas, dois públicos
 
-**Por script (Claude grava pelo navegador, ou entrega o JSON pronto).** Gere o `block_list` completo e siga
+**Por script (você grava pelo navegador, ou entrega o JSON pronto).** Gere o `block_list` completo e siga
 `gravacao-construtor.md` para injetar, ou entregue o arquivo para a pessoa colar no campo `Blocos:`. É o caminho para
 migração em volume e para páginas grandes.
 

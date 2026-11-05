@@ -17,7 +17,7 @@ Os números daqui foram medidos em lojas reais da plataforma: a maior parte numa
 tema, e o que se mostrou diferente noutra loja (família `modelo-1`, outubro de 2026) está marcado no lugar
 (`SKILL.md`, "Família do tema"). Os da sua loja (número da loja, endereço do admin, ids de página, nomes de
 arquivo, formato do número de versão, tempo de cache) são outros, porque cada loja cria os seus: ficam no
-perfil dela, em `~/.claude/panorama-lojas/<slug-da-loja>.md`. Nos exemplos, `#NNNNNN` é um id
+perfil dela, em `~/panorama-lojas/<slug-da-loja>.md`. Nos exemplos, `#NNNNNN` é um id
 de página, `loja N` é o número da loja, `admin.SUA-LOJA.com.br` é o endereço do admin e `/seu-tema.css` é
 um arquivo do site.
 
@@ -197,12 +197,28 @@ pelo texto da conversa nem pelo clipboard, e o tamanho não pesa na chamada.
 O sha aqui tem o mesmo papel que no `Blocos:`: é ele que transforma "subi o arquivo errado" numa rodada
 perdida em vez de site quebrado.
 
+**Sem upload na ferramenta** (ou com um upload que ainda não foi medido nela, como no Codex:
+`ferramentas-de-navegador.md`, 7), os três itens viram uma chamada só:
+`await lerArquivoGzipB64('<o arquivo em gzip+base64>', '<sha dos bytes do arquivo novo>', 'seu-tema.css')`.
+Ela descomprime, confere o sha dos bytes dentro da página, recusa BOM e UTF-8 inválido, e só então guarda o
+texto para o `injetarArquivo()`, como o `lerEntradaArquivo`. O base64 sai do terminal (o comando está no
+comentário da função, em `scripts/injetar.js`) e vai inteiro, numa chamada: nunca transcrito à mão nem
+remendado. Medido no Codex, 2026-11-04: o `injetar.js` inteiro (~198 KB) foi assim em 82 mil caracteres, e o
+sha conferiu (com o trecho da seção 4 de `ferramentas-de-navegador.md`, que faz a mesma conta). A função foi
+testada no Node (sha errado, base64 cortado, BOM, UTF-8 inválido) e rodou no admin, no Codex, com um CSS
+de 184 bytes (sha conferido); a gravação que viria depois não chegou a rodar
+(`ferramentas-de-navegador.md`, 7).
+
 O mesmo transporte serve para **prévia sem gravar**: numa aba do site (por exemplo em `/robots.txt`, que
 carrega rápido), um `<iframe>` da mesma origem com a página a testar, o upload do JS/CSS de prévia no input,
 e `iframe.contentWindow.eval(texto)`. Foi preciso porque o site bloqueia `fetch` e `<script>` vindos de
 `127.0.0.1`.
 
 ### Passo C — abra o Arquivo e compare o conteúdo atual com o seu backup
+
+O "sim" da pessoa vem **antes** deste passo, com o diálogo fechado (`SKILL.md`, "O caminho comum de toda
+gravação", item 1): do Passo C ao D não há espera por ninguém. Se você já abriu o diálogo e precisa
+perguntar algo, saia por `Cancelar`, pergunte e recomece por aqui.
 
 A abertura é a das páginas do construtor: filtrar (pelo `#` do Arquivo, se a tela tiver esse filtro;
 senão por Loja, Tipo = Arquivo e Nome), marcar a linha pelo DOM,
@@ -233,8 +249,11 @@ avise a pessoa do risco antes, e tenha o plano B pronto (ela cola à mão; a ski
 
 ### Passo E — reabra e confira pelo sha; depois `Limpar cache` na linha
 
-1. `location.reload()` (o diálogo velho pode ter ficado no DOM; se saiu, o reload não atrapalha), restaure
-   as funções, `definirLoja(...)` de novo, refiltre, remarque, `conferirAlvo(NNNNNN)`,
+1. `location.reload()` (o diálogo velho pode ter ficado no DOM; se saiu, o reload não atrapalha; no Codex,
+   recarregue pela ferramenta, `tab.reload()`, e não pelo CDP: `ferramentas-de-navegador.md`, 7), restaure
+   as funções, `definirLoja(...)` de novo, reabra Loja On-line › Páginas pelo menu (o reload volta para a
+   tela inicial do admin, e `filtrosDaTela()` dá `[]` até reabrir: medido), refiltre, remarque,
+   `conferirAlvo(NNNNNN)`,
    `await abrirDialogo('Alterar')`, aba Conteúdo.
 2. `await verificarArquivoGravou('<sha normalizado do arquivo novo>', ['um trecho que só existe na versão
    nova'])`. Aqui o sha **vale como prova**, ao contrário do `Blocos:`: o conteúdo é texto, e a única
@@ -562,8 +581,9 @@ Se a pessoa preferir gravar ela mesma, a skill faz antes e depois o que é dela:
 
 ### Modo guiado (sem ferramenta de navegador)
 
-Sem navegador conectado ao Claude, nada é gravado por script, e a pessoa faz os cliques. O que continua
-seguro e possível está no `SKILL.md` ("Modo guiado"). Para esta receita, o que muda:
+Sem navegador conectado, ou com um que não roda JavaScript na página (`primeiro-uso.md`, 1b), nada é gravado
+por script, e a pessoa faz os cliques. O que continua seguro e possível está no `SKILL.md` ("Modo guiado").
+Para esta receita, o que muda:
 
 - **Backup de um Arquivo**: o `curl` da URL pública com `?nc=` é o conteúdo publicado; salve com data.
 - **Backup do `<head>`, da agenda, da Barra do Topo ou do logo**: peça à pessoa para abrir o campo, clicar
@@ -647,6 +667,9 @@ Medido numa loja (2026-10-22), numa criação real:
   fica na aba Conteúdo, e o tipo do arquivo (MIME), na aba Configurações;
 - os padrões do diálogo: não publicada, robots "index, follow" e Página no Sitemap ligada (ponha como nos
   outros Arquivos da loja);
+- a URL pode vir preenchida a partir do Nome: numa criação pela pessoa (2026-11-04), o Nome
+  `Teste Codex - nao publicar` virou a URL `/teste-codex-nao-publicar`, sem o `.css`. Escreva a URL por
+  último, depois do Nome, e confira na grade, depois de criar, a URL exata (`conferirCriacao`);
 - o clique composto no `Confirmar` (o de `confirmarArquivo`) já criou a mesma página **duas vezes** numa loja;
   **um clique real**, pela ferramenta, no elemento, criou **uma**: "Registro inserido com sucesso." apareceu
   uma vez, e o diálogo ficou aberto.
@@ -685,7 +708,8 @@ certa, é o caso de `armadilhas.md` 34. A sequência, uma chamada por passo:
    criação, um só; a loja do perfil no campo Loja; a aba Conteúdo e o campo do conteúdo; a URL; a linguagem e o
    tipo; e o conteúdo vazio. O "backup" de um Arquivo novo é o texto vazio: a função calcula esse sha, e não
    há sha a passar (`conferirArquivoAtual` recusa o diálogo de criação).
-6. O Passo B (`criarEntradaArquivo()`, o upload, `await lerEntradaArquivo('<sha dos bytes>')`) e
+6. O Passo B (`criarEntradaArquivo()`, o upload, `await lerEntradaArquivo('<sha dos bytes>')`, ou, sem
+   upload, `await lerArquivoGzipB64(...)`) e
    `injetarArquivo()`.
 7. `prepararConfirmarCriacao()`: as travas de `confirmarArquivo` e mais a Loja, a URL e a URL livre. Ela **não
    clica**: rotula o `Confirmar` do diálogo com `__confirmar_criacao`. Faça **um** clique real nele pela
@@ -707,8 +731,8 @@ certa, é o caso de `armadilhas.md` 34. A sequência, uma chamada por passo:
     5.2, "A versão comentada no admin"): nela não há `Publicar` nem linha no `<head>`. Do passo 11, pule a
     linha do `<head>` e o Passo G, e anote no perfil o `#`, a URL e que ela é despublicada de propósito.
 11. A linha no `<head>` (Passo F, item 6; numa mudança em duas peças, a ordem de cima) e o Passo G. Anote no
-    perfil o `#`, a URL, a linguagem e o tipo, a linha do `<head>`, o número, o dono ("Claude, a pedido de
-    <pessoa>, AAAA-MM-DD") e como desfazer.
+    perfil o `#`, a URL, a linguagem e o tipo, a linha do `<head>`, o número, o dono ("Claude (ou Codex), a pedido
+    de <pessoa>, AAAA-MM-DD") e como desfazer.
 
 ### Onde a linha nova entra no `<head>`
 

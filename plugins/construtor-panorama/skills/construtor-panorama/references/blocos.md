@@ -18,7 +18,7 @@ front-end novo (React/Next), medido numa loja em agosto de 2026: ele é da plata
 versões, então confira na sua (`SKILL.md`, "Família do tema"). As medições (tamanhos, contagens) foram
 feitas em lojas reais; ids de mídia, de vitrine, de tipo de banner e de página aparecem aqui como
 marcadores (`NNNNNN`), porque cada loja cadastra os seus. Os da sua loja ficam no perfil dela
-(`~/.claude/panorama-lojas/<slug-da-loja>.md`).
+(`~/panorama-lojas/<slug-da-loja>.md`).
 
 As regras citadas como "regra N" e os passos como "passo N" estão em `construtor.md`.
 

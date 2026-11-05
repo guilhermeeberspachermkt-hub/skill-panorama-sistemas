@@ -6,11 +6,11 @@ precisa. Adivinhar qualquer um deles é o jeito mais rápido de gravar no lugar 
 Panorama gravar no lugar errado não dá erro.
 
 O reconhecimento existe para isso. É **só leitura**, começa pelo site público (onde nada grava nada) e
-termina salvando o **perfil da loja** em `~/.claude/panorama-lojas/<slug-da-loja>.md`, a partir do modelo
+termina salvando o **perfil da loja** em `~/panorama-lojas/<slug-da-loja>.md`, a partir do modelo
 `assets/perfil-da-loja.md`. Nas próximas vezes você lê o perfil em vez de refazer tudo.
 
 Ele é o passo 3 da configuração inicial (`primeiro-uso.md`). Antes dele vêm a conferência do ambiente (em qual
-Claude você está, o navegador, Python e Node, a pasta do perfil, a rede) e as perguntas à pessoa; depois, o
+cliente você está, o navegador, Python e Node, a pasta do perfil, a rede) e as perguntas à pessoa; depois, o
 resumo do perfil para ela corrigir e a mensagem de "pronto".
 
 O perfil fica fora da pasta da skill de propósito: é particular de quem usa (não vai junto quando a skill
@@ -88,9 +88,9 @@ seletores vale, que ordem de cascata esperar no 2e e onde procurar a barra da ag
 ficam com estas letras porque outros arquivos os citam assim.
 
 Guarde os arquivos baixados numa pasta datada dentro da pasta do perfil (`primeiro-uso.md`, 1d), por padrão
-`~/.claude/panorama-lojas/<slug>/reconhecimento-AAAA-MM-DD/`, criada no começo do 2a. Eles viram também o
+`~/panorama-lojas/<slug>/reconhecimento-AAAA-MM-DD/`, criada no começo do 2a. Eles viram também o
 retrato do "antes" da primeira alteração. Os trechos deste passo gravam na pasta em que o terminal está
-(`home-pc.html`, `tema.txt`...), e no Claude Code ela costuma ser o projeto da pessoa: rode-os dentro da
+(`home-pc.html`, `tema.txt`...), e no Claude Code ou no Codex ela costuma ser o projeto da pessoa: rode-os dentro da
 pasta do reconhecimento. Se o seu terminal volta para a pasta do projeto entre uma chamada e outra (as
 variáveis também não ficam), comece cada trecho com o `cd` para o caminho inteiro.
 
@@ -103,7 +103,8 @@ nova para receber o que a origem entrega agora.
 ```bash
 # Bash (no Windows, o Git Bash). No PowerShell use curl.exe: lá, `curl` é outro comando.
 SLUG='slug-da-loja'                   # o slug do perfil (primeiro-uso.md, pergunta 3)
-R="$HOME/.claude/panorama-lojas/$SLUG/reconhecimento-$(date +%F)"   # ou a pasta combinada no 1d
+P="$HOME/panorama-lojas"; [ -d "$HOME/.claude/panorama-lojas" ] && P="$HOME/.claude/panorama-lojas"   # ou a pasta combinada no 1d
+R="$P/$SLUG/reconhecimento-$(date +%F)"
 mkdir -p "$R" && cd "$R" || exit 1  # sem a pasta, pare: nada se baixa no projeto da pessoa
 SITE='https://www.SUA-LOJA.com.br'    # o endereço que a pessoa confirmou, sem barra no fim
 UA_PC='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
@@ -117,7 +118,8 @@ ls -l home-pc.html home-cel.html      # tamanhos bem diferentes = HTML por apare
 ```powershell
 # PowerShell, o mesmo download
 $SLUG = 'slug-da-loja'
-$R = "$HOME\.claude\panorama-lojas\$SLUG\reconhecimento-$(Get-Date -Format yyyy-MM-dd)"
+$P = "$HOME\panorama-lojas"; if (Test-Path -LiteralPath "$HOME\.claude\panorama-lojas") { $P = "$HOME\.claude\panorama-lojas" }   # ou a pasta combinada no 1d
+$R = "$P\$SLUG\reconhecimento-$(Get-Date -Format yyyy-MM-dd)"
 New-Item -ItemType Directory -Force -Path $R -ErrorAction Stop | Out-Null; Set-Location -LiteralPath $R -ErrorAction Stop
 $SITE = 'https://www.SUA-LOJA.com.br'
 $UA_PC = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
@@ -545,8 +547,13 @@ tema, trate a barra da agenda como sem suporte nessa loja: não ponha `promotion
 numa barra sua, com CSS e JS próprios (`temas-sazonais.md`, seções 5 e 7). Não se mediu se uma função
 `countdown` própria evitaria o erro: não tente. No navegador, numa página da loja já carregada,
 `typeof window.countdown` responde direto: `"function"` (a função que o script do servidor chama existe) ou
-`"undefined"` (não existe). Anote no perfil "barra da agenda: funciona / não funciona nesta família", com a
-data e como mediu, **antes** de oferecer essa barra à pessoa.
+`"undefined"` (não existe). Isso só vale numa ferramenta que vê o código da página (`primeiro-uso.md`, 1b,
+chamada 4): noutra, `"undefined"` não prova nada (medido no Codex, 2026-11-04: `"undefined"` pelo
+`playwright.evaluate`, que roda numa cópia só de leitura, numa loja cujo JS define a função;
+`ferramentas-de-navegador.md`, 7). Aí, decida pela busca de `countdown` nos JS baixados, acima, e anote o
+porquê.
+Anote no perfil "barra da agenda: funciona / não funciona nesta família", com a data e como mediu,
+**antes** de oferecer essa barra à pessoa.
 
 Um JS que apaga `.promotionBar` ou captura o clique da `.header-top-bar` explica de antemão por que uma
 barra "não funciona". Anote no perfil, na seção de manias do tema.
@@ -782,8 +789,8 @@ lojas do admin; anote o da sua), e num dos admins os produtos também apareciam 
 
    Para cada arquivo em que a tarefa pode mexer, pergunte à pessoa de quem ele é (quem criou, quem cuida) e
    anote a resposta na coluna "Dono" da tabela de arquivos do perfil: nem o nome nem o comentário de
-   cabeçalho dizem isso. Um arquivo feito por uma sessão anterior do Claude para esta loja só conta como seu
-   se o perfil disser e a pessoa confirmar (`ajustes-visuais.md`, 2.2).
+   cabeçalho dizem isso. Um arquivo feito por uma sessão anterior de um assistente (Claude, Codex) para esta
+   loja só conta como seu se o perfil disser e a pessoa confirmar (`ajustes-visuais.md`, 2.2).
 3. **O campo Loja do diálogo `Alterar`** (só se a skill for gravar por script). `conferirDialogo()` confere
    a loja nesse campo, e só nele. Com a pessoa de acordo, marque só a linha da página de teste que ela
    indicou (ou de um Arquivo da loja), abra `Alterar`, rode o **snippet F** e saia por **Cancelar**. Anote no
@@ -940,17 +947,18 @@ Estes cruzamentos pegam, antes da primeira alteração, as causas mais comuns de
 ## Passo 5: salvar o perfil
 
 1. Grave na pasta que a configuração inicial testou e combinou (`primeiro-uso.md`, 1d): a padrão é
-   `~/.claude/panorama-lojas/` (no Windows, `C:\Users\<usuário>\.claude\panorama-lojas\`). Nunca dentro da
+   `~/panorama-lojas/` (no Windows, `C:\Users\<usuário>\panorama-lojas\`), ou a antiga,
+   `~/.claude/panorama-lojas/`, se ela já existe (`SKILL.md`, "A pasta antiga"). Nunca dentro da
    pasta da skill. **Se a pessoa restringiu onde você pode gravar** ("grave só nesta pasta"), o perfil, os
    backups e o trabalho vão para a pasta dela, e o caminho fica no comentário do topo do perfil.
-2. Copie `assets/perfil-da-loja.md` para `~/.claude/panorama-lojas/<slug>.md` e preencha. Ponha a data em
+2. Copie `assets/perfil-da-loja.md` para `~/panorama-lojas/<slug>.md` e preencha. Ponha a data em
    cada seção e escreva "não verificado" onde não conferiu, em vez de deixar em branco ou chutar.
    Escreva cada medida com a página e o aparelho onde foi medida ("na home, computador"). Antes de escrever
    "no site todo", meça em pelo menos dois tipos de página: a home costuma ser diferente (numa loja medida,
    o cabeçalho flutuante e uma classe própria no `<body>` só existiam nela).
-3. Crie as pastas de backups (padrão: `~/.claude/panorama-lojas/<slug>/backups/`) e de trabalho, que guarda
+3. Crie as pastas de backups (padrão: `~/panorama-lojas/<slug>/backups/`) e de trabalho, que guarda
    as seções de CSS, as versões `-v1`, `-v2`, os favoritos de prévia e os prints (padrão:
-   `~/.claude/panorama-lojas/<slug>/trabalho/`), e anote as duas no perfil. Com a restrição do item 1, as duas
+   `~/panorama-lojas/<slug>/trabalho/`), e anote as duas no perfil. Com a restrição do item 1, as duas
    ficam dentro da pasta dela. Três gravações ficam fora de qualquer pasta, e a
    pessoa precisa saber delas **antes**:
    - o pacote de funções no `localStorage` da aba do admin (`ferramentas-de-navegador.md`, seção 3);
@@ -990,7 +998,10 @@ Estes cruzamentos pegam, antes da primeira alteração, as causas mais comuns de
 ## Snippets
 
 Todos são de leitura. Rode cada um numa chamada separada: juntar clique, espera e leitura numa chamada só
-estoura o tempo limite da ferramenta e você fica sem saber onde parou.
+estoura o tempo limite da ferramenta e você fica sem saber onde parou. Cada um é uma expressão (há ferramenta
+que recusa um trecho terminado em `;`: `primeiro-uso.md`, 1b). Os que guardam o resultado em `window` para ler
+em pedaços dependem da chamada 2 do 1b; se ela falhou, devolva o objeto inteiro de uma vez, e só use os
+pedaços se a saída vier cortada.
 
 ### Auxiliar de saída (rode primeiro, no site e no admin)
 
@@ -998,7 +1009,10 @@ estoura o tempo limite da ferramenta e você fica sem saber onde parou.
 // Devolve um objeto em pedaços de 900 caracteres: fatia(obj, 0), fatia(obj, 1)...
 // Troca ? & = por espaço, porque o filtro de saída bloqueia o que parece query string.
 // Ao ler: "/arquivo.css v 3" quer dizer "/arquivo.css?v=3".
-window.fatia = (o, n) => JSON.stringify(o).replace(/[?&=]/g, ' ').slice(n * 900, (n + 1) * 900);
+(() => {
+  window.fatia = (o, n) => JSON.stringify(o).replace(/[?&=]/g, ' ').slice(n * 900, (n + 1) * 900);
+  return typeof window.fatia;
+})()
 ```
 
 ### Snippet A: site público, no console da página da loja
@@ -1048,8 +1062,17 @@ rolar, ficam de fora): é o 2j pelo navegador.
 
 ```js
 (() => {
-  const tabelas = [...document.querySelectorAll('table')].filter(t => t.offsetParent);
-  if (!tabelas.length) throw new Error('Nenhuma grade visível nesta tela.');
+  const todas = [...document.querySelectorAll('table')];
+  const tabelas = todas.filter(t => t.offsetParent);
+  if (!tabelas.length) {
+    // Três casos diferentes: não confunda "a ferramenta não vê o layout" com "não há grade"
+    const quadros = document.querySelectorAll('iframe').length;
+    throw new Error(todas.length
+      ? 'Há ' + todas.length + ' tabela(s), nenhuma com layout (offsetParent): a ferramenta pode não ver o '
+        + 'layout desta página (primeiro-uso.md, 1b, chamada 3). Não conte a seleção por aqui: leia pela tela.'
+      : 'Nenhuma tabela neste documento' + (quadros ? '; há ' + quadros + ' iframe(s): a tela pode estar '
+        + 'dentro de um.' : '.'));
+  }
   const txt = el => (el.innerText || '').replace(/\s+/g, ' ').trim();
   const linhas = tabelas.flatMap(t => [...t.querySelectorAll('tr')]
     .map(tr => [...tr.children].map(txt).join(' | ')).filter(l => l.replace(/[\s|]/g, '')));
@@ -1082,17 +1105,26 @@ qualquer botão.
 ### Snippet C: admin, opções dos filtros visíveis (tela Páginas)
 
 ```js
-[...document.querySelectorAll('select')].filter(s => {
-  // à vista, ou escondido atrás de um menu próprio (botão + lista) que está à vista
-  const w = s.offsetParent ? null : s.closest('.bootstrap-select, .btn-group, .dropdown');
-  return !!(s.offsetParent || (w && w.offsetParent));
-}).map(s =>
-  (s.getAttribute('ng-model') || 'select') + ': ' +
-  [...s.options].slice(0, 40).filter(o => o.text.trim())
-    .map(o => o.text.trim() + ' → ' + o.value.replace(/[?&=]/g, ' ')).join(' · '))
+(() => {
+  const todos = [...document.querySelectorAll('select')];
+  const visiveis = todos.filter(s => {
+    // à vista, ou escondido atrás de um menu próprio (botão + lista) que está à vista
+    const w = s.offsetParent ? null : s.closest('.bootstrap-select, .btn-group, .dropdown');
+    return !!(s.offsetParent || (w && w.offsetParent));
+  });
+  return { selects: todos.length, visiveis: visiveis.length,
+    iframes: document.querySelectorAll('iframe').length,
+    filtros: visiveis.map(s =>
+      (s.getAttribute('ng-model') || 'select') + ': ' +
+      [...s.options].slice(0, 40).filter(o => o.text.trim())
+        .map(o => o.text.trim() + ' → ' + o.value.replace(/[?&=]/g, ' ')).join(' · ')) };
+})()
 ```
 
-O texto antes da seta é o nome da opção; depois, o valor que o filtro manda. No filtro Loja, o valor da sua
+Com os filtros na tela e `visiveis` 0: se `selects` passa de 0, a ferramenta não vê o layout desta página;
+se é 0 e há `iframes`, a tela está dentro de um iframe (`primeiro-uso.md`, 1b, chamada 3). Nos dois casos,
+leia os filtros pela tela e não troque filtro por outro caminho. Em `filtros`, o texto antes da seta é o nome
+da opção; depois, o valor que o filtro manda. No filtro Loja, o valor da sua
 loja é o número dela (num `<select>` do AngularJS pode vir como `number:N` ou `string:N`; por exemplo, em
 `number:42` o número é o 42). Se vier `object:…` ou só a posição na lista (`0`, `1`, `2`), ele não serve:
 use a coluna `#` da grade de Lojas. Com muitas lojas a saída é cortada: guarde em `window` e leia com `fatia()`.

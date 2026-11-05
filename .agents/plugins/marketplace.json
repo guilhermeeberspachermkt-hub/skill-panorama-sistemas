@@ -1,0 +1,20 @@
+{
+  "name": "skill-panorama-sistemas",
+  "interface": {
+    "displayName": "Skill Panorama Sistemas"
+  },
+  "plugins": [
+    {
+      "name": "construtor-panorama",
+      "source": {
+        "source": "local",
+        "path": "./plugins/construtor-panorama"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

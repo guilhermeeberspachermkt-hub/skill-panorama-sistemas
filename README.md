@@ -1,8 +1,9 @@
-# construtor-panorama: skill do Claude para lojas da Panorama Sistemas
+# construtor-panorama: skill para lojas da Panorama Sistemas (Claude e Codex)
 
 Uma skill para o Claude ajudar quem cuida de uma loja na plataforma Panorama Sistemas a mudar o site pelo
 admin da própria loja, com segurança: o Claude mostra a mudança antes, grava só com o seu "sim" e guarda uma
-cópia do que estava no ar para poder voltar.
+cópia do que estava no ar para poder voltar. Ela também roda no [Codex](#instalar-no-codex), da OpenAI, que
+lê skills no mesmo formato; lá, onde este texto diz "o Claude", leia "o Codex".
 
 > Projeto independente: **não é um produto oficial da Panorama Sistemas**. Veja o [Aviso](#aviso).
 
@@ -42,7 +43,7 @@ cópia do que estava no ar para poder voltar.
 | **Claude Code + extensão do Claude para Chrome** (recomendado) | Completo: o Claude lê e grava no admin com o seu login, no seu Chrome, roda os scripts de conferência e guarda o perfil da loja no seu computador. Foi assim que a skill foi desenhada e testada. |
 | Claude Code sem a extensão | Modo guiado. |
 | Chat do Claude (claude.ai, ou o aplicativo fora da aba Code) | Modo guiado. A skill roda numa máquina na nuvem, sem acesso ao seu computador nem ao admin: o Claude explica, escreve o CSS e o JS, gera a prévia e guia você. Se a máquina da nuvem não alcançar o site, ele pode pedir que você mande o código da página (Ctrl+U no Chrome, copiar e colar). O chat junto com a extensão do Chrome não foi testado com esta skill. |
-| Codex (da OpenAI) | Formato compatível: o Codex lê skills no mesmo formato. Só modo guiado, a não ser que haja uma ferramenta de navegador conectada. Não testado. |
+| Codex (da OpenAI) | O Codex lê skills no mesmo formato, e este repositório tem o catálogo dele. Com a extensão do ChatGPT para Chrome, a skill lê o site e o admin pelo acesso de desenvolvedor (CDP) da extensão; na primeira vez, ela testa o que a ferramenta consegue fazer e diz. A leitura foi testada numa loja real, e uma gravação por script numa página que não aparece no site foi feita e conferida pelo sha. Sem a extensão, modo guiado. Veja [Instalar no Codex](#instalar-no-codex). |
 
 **Modo guiado:** o Claude prepara e confere cada mudança; você faz os cliques no admin, com a lista que ele
 passar, e cola para ele o que o admin mostra. As regras de segurança são as mesmas.
@@ -150,12 +151,46 @@ cp -r skill-panorama-sistemas/plugins/construtor-panorama/skills/construtor-pano
 Depois, abra uma conversa nova. Para atualizar, troque a pasta pela
 versão nova. Use um jeito só: o plugin ou a cópia manual.
 
-## Codex
+## Instalar no Codex
 
-Copie (ou crie um link para) a mesma pasta `construtor-panorama` em `~/.agents/skills/construtor-panorama/`.
-Chame a skill com `$construtor-panorama` no começo da mensagem ou pela lista de `/skills`. Ela funciona em
-modo guiado. Por padrão, o Codex bloqueia a internet e a gravação fora da pasta do projeto: ele vai pedir a
-sua permissão para ler o site da loja e para guardar o perfil. Não testado.
+O Codex, da OpenAI, lê skills no mesmo formato. Escolha um jeito só:
+
+- **Como plugin, pelo catálogo** (no aplicativo do ChatGPT para computador, onde o Codex roda). Cadastre o
+  catálogo pelo terminal:
+
+  ```bash
+  codex plugin marketplace add guilhermeeberspachermkt-hub/skill-panorama-sistemas
+  ```
+
+  Depois, feche e abra o aplicativo do ChatGPT, vá em **Plugins**, escolha o catálogo **Skill Panorama
+  Sistemas** e instale **Construtor Panorama**. Para atualizar:
+  `codex plugin marketplace upgrade skill-panorama-sistemas`.
+- **Pelo próprio Codex:** mande `$skill-installer` pedindo para instalar a skill da pasta
+  `https://github.com/guilhermeeberspachermkt-hub/skill-panorama-sistemas/tree/main/plugins/construtor-panorama/skills/construtor-panorama`.
+- **Copiando a pasta:** a mesma pasta da instalação manual (acima), em `~/.agents/skills/construtor-panorama/`
+  (no Windows, `C:\Users\<seu usuário>\.agents\skills\construtor-panorama\`), ou um link para ela.
+
+Chame a skill com `$construtor-panorama` no começo da mensagem ou pela lista de `/skills`. Se ela não
+aparecer, feche e abra o Codex.
+
+O que muda no Codex:
+
+- **O admin depende do navegador.** A skill grava no admin por funções que rodam dentro da página, com
+  travas. No Codex, isso pede uma ferramenta de navegador que rode JavaScript na página e devolva o
+  resultado, no Chrome em que você está logado no admin: a extensão do ChatGPT para Chrome (no aplicativo do
+  ChatGPT, em Configurações › Computer Use) ou um servidor MCP de navegador. Na primeira vez, a skill testa o
+  que a ferramenta consegue fazer e diz a você; sem isso, o admin vai pelo modo guiado. Com a extensão do
+  ChatGPT, ela usa o acesso de desenvolvedor (CDP) da extensão e avisa você antes; às vezes ele fica
+  indisponível por alguns segundos, e a skill espera e tenta de novo.
+- **Permissões.** Por padrão, o Codex bloqueia a internet e a gravação fora da pasta aberta: ele vai pedir a
+  sua permissão para ler o site da loja, para os scripts de prints e para guardar o perfil. Para pedir menos,
+  abra o Codex com a pasta `panorama-lojas` (veja [Privacidade](#privacidade)) como pasta do projeto. A skill
+  não pede para você desligar essa proteção.
+- **Testado numa loja real, em 2026-11-04:** a configuração inicial e as leituras do admin funcionaram no
+  Codex, e uma gravação por script numa página que não aparece no site foi feita e conferida pelo sha. Uma
+  gravação numa página que está no ar ainda não foi feita lá. Na primeira gravação, a skill propõe começar
+  por uma página que não aparece no site. Se usar no Codex, conte como foi (veja
+  [Problemas e sugestões](#problemas-e-sugestões)).
 
 ## Primeiro uso
 
@@ -163,7 +198,8 @@ Tenha à mão:
 
 - o endereço do site da loja;
 - o endereço do admin e o nome da loja do jeito que aparece no admin;
-- no Claude Code, o admin aberto e logado no Chrome da extensão;
+- no Claude Code, o admin aberto e logado no Chrome da extensão (no Codex, no Chrome da ferramenta de
+  navegador, se houver uma);
 - se souber: quem aprova as mudanças, quem limpa o cache no admin, uma página de teste e o que o Claude não
   deve tocar ("não sei" e "não tenho" valem).
 
@@ -180,9 +216,10 @@ botão de comprar verde"), ele faz essa configuração antes, do mesmo jeito.
 
 ## Privacidade
 
-- **O perfil da loja e os backups ficam só no seu computador**, em `~/.claude/panorama-lojas/` (no Windows,
-  `C:\Users\<seu usuário>\.claude\panorama-lojas\`) ou noutra pasta que você combinar, sempre fora da pasta da
-  skill. Eles não vão para este repositório nem se perdem nas atualizações.
+- **O perfil da loja e os backups ficam só no seu computador**, em `~/panorama-lojas/` (no Windows,
+  `C:\Users\<seu usuário>\panorama-lojas\`) ou noutra pasta que você combinar, sempre fora da pasta da
+  skill. Eles não vão para este repositório nem se perdem nas atualizações. Até a versão 1.2.0, a pasta padrão
+  era `~/.claude/panorama-lojas/`: se você já tem essa pasta, a skill continua usando ela.
 - **Os backups são o seu caminho de volta**, porque o admin não guarda versões anteriores, e eles existem só
   nesse computador. Deixe a pasta num lugar com cópia (OneDrive, Google Drive, um disco de backup) ou copie-a
   de vez em quando; se trocar de computador, leve a pasta junto.
@@ -208,7 +245,9 @@ botão de comprar verde"), ele faz essa configuração antes, do mesmo jeito.
 - **Cada loja é diferente:** o tema, os arquivos, as permissões do seu usuário no admin, se há ou não um CDN
   (como o Cloudflare) na frente do site. Por isso a skill mede antes de usar qualquer coisa, e cada mudança
   passa pela prévia e pela sua aprovação.
-- **Não testada** no chat do Claude (com ou sem a extensão do Chrome) nem no Codex.
+- **Não testada** no chat do Claude (com ou sem a extensão do Chrome). No Codex, numa loja real
+  (2026-11-04): a configuração inicial, as leituras do admin e uma gravação numa página que não aparece no
+  site, conferida pelo sha.
 - Os limites conhecidos estão no [README da skill](plugins/construtor-panorama/skills/construtor-panorama/README.md#limites-conhecidos).
 
 ## Aviso
@@ -228,9 +267,12 @@ que esperava. **Não cole** senhas, dados de clientes, o perfil da loja nem back
 
 ```text
 .claude-plugin/marketplace.json        o catálogo (marketplace) para o Claude Code
+.agents/plugins/marketplace.json       o mesmo catálogo, para o Codex
 plugins/construtor-panorama/
-  .claude-plugin/plugin.json           os dados do plugin: nome, versão, licença
-  skills/construtor-panorama/          a skill: SKILL.md, references/, scripts/, assets/
+  .claude-plugin/plugin.json           os dados do plugin para o Claude Code: nome, versão, licença
+  plugin.json                          os mesmos dados para o Codex, com o nome e o ícone que ele mostra
+  assets/icon.svg                      o ícone do plugin no Codex
+  skills/construtor-panorama/          a skill: SKILL.md, references/, scripts/, assets/, agents/openai.yaml
 CHANGELOG.md                           o que mudou em cada versão
 LICENSE                                a licença MIT
 ```
