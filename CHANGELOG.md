@@ -9,12 +9,15 @@ Code) e de `plugins/construtor-panorama/plugin.json` (Codex), os dois com o mesm
 instalou não recebe a atualização); depois do commit, confira com
 `claude plugin tag --dry-run plugins/construtor-panorama`.
 
-## [1.3.0] - ainda não publicada
+## [1.3.0] - 2026-11-05
 
 O Codex, da OpenAI, como segundo cliente. O formato da skill já era o que o Codex lê; esta versão acrescenta
 o catálogo e o manifesto do plugin para ele, tira da skill o que só fazia sentido no Claude e diz o que a
-skill precisa de uma ferramenta de navegador. O uso numa loja, no Codex, ainda não foi testado de ponta a
-ponta.
+skill precisa de uma ferramenta de navegador. Testada no Codex numa loja real, com a extensão do ChatGPT para
+Chrome: a configuração inicial, as leituras do admin, uma gravação por script num Arquivo despublicado
+(conferida pelo sha) e um pedido de propostas para as listas de produto, do rascunho à revisão profunda, sem
+gravar nada. Ainda não medidos no Codex: o clique em `Publicar` ou na criação por script, a limpeza de cache,
+a gravação do `<head>` e da configuração da loja, e uma gravação numa página que está no ar.
 
 ### O que mudou
 
