@@ -81,6 +81,19 @@ ponta.
   - na sexta e última rodada (a fase 2c), numa aba nova e com o reload pela API, o `verificarArquivoGravou`
     conferiu o conteúdo gravado pelo sha e achou o marcador: a gravação de um Arquivo por script ficou
     medida de ponta a ponta no Codex, numa página despublicada;
+  - **o teste real** (2026-11-04/05): um pedido de propostas para as listas de produto de uma loja, no Codex,
+    sem gravar nada. A skill fez o rascunho rápido (uma direção e um esboço), a opinião da pessoa e a revisão
+    profunda da direção escolhida, com os scripts de print e medida dela. Por causa dele:
+    - o `medir_cores.js` quebrava nas cópias salvas (`FontFaceSet.forEach`: "The provided callback is no
+      longer runnable"); agora lê as fontes com `Array.from`, conferido numa cópia de verdade;
+    - o `rodada.mjs --so` juntava pouco: apagava o `resumo.json` da rodada inteira; agora troca só os prints
+      refeitos;
+    - o catálogo da família `/dist` diz que o miolo das listas é `#area-body` (sem `#layout-main-content`),
+      onde fica a descrição da categoria, como a busca se comporta no endereço e que o clique de paginação
+      por script não navegou;
+    - a prévia avisa que as fontes de uma cópia salva podem não ser as do site, a gravação de um Arquivo diz
+      como o Python grava sem CRLF no Windows, e a seção 7 diz que o Codex não abre arquivo nem servidor
+      local (a pessoa abre a galeria);
   - `scripts/injetar.js` ganhou o `lerArquivoGzipB64`: leva o conteúdo de um Arquivo em gzip+base64 numa
     chamada, confere o sha dos bytes na página e o deixa pronto para o `injetarArquivo()`, para a
     ferramenta sem upload (ou com upload não medido, como no Codex). Testado no Node (sha errado, base64

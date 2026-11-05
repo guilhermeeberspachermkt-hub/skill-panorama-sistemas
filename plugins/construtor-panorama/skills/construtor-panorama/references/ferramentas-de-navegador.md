@@ -456,6 +456,10 @@ as mesmas chamadas.
   do menu (`a[role=option]`) e no `<option>` escondido. Um localizador por texto da API do Codex recusou
   por ambiguidade (modo estrito), sem clicar. Escolha o item do menu por um seletor dele e confira o
   filtro com `filtrosDaTela()` depois (seção 6).
+- **O Codex não abre arquivo local nem servidor local na aba.** O `cua.createBrowserTab` recusou `file://`
+  (só aceita HTTP e HTTPS), e um servidor local iniciado por `Start-Process` foi bloqueado pela política
+  (2026-11-04). A galeria HTML de comparação dos prints, quem abre é a pessoa: no Chrome dela, Ctrl+O e o
+  arquivo. Não procure outro caminho para abrir.
 - **A extensão precisa estar ligada a cada conversa.** Numa conversa nova, depois de reabrir o aplicativo, o
   Chrome não apareceu em `cua.getState()` até a pessoa abrir o Chrome e conferir a extensão. Se não aparecer,
   peça isso a ela; não siga por outro navegador.

@@ -129,7 +129,9 @@ rede, a mesma rodada leva segundos.
 **O que a cópia não tem**, e por isso vai para a confirmação no ar: os scripts da página não rodam nela (menu
 aberto por clique, contagem andando, um JS de tema seu; um `setTimeout` da página não dispara, então o que você
 roda na cópia é síncrono), o que chega depois da carga, e o que muda com a data. Ela é de um dia e de um
-aparelho: a cópia de computador não serve para o celular. O hover de CSS funciona; o Tab anda pelos links, mas
+aparelho: a cópia de computador não serve para o celular. As fontes da cópia podem não ser as do site: numa
+loja (2026-11-04), o print da cópia saiu com outra fonte, e a quebra de linha dos nomes mudou; tamanho de
+texto, quebra de linha e altura de card se confirmam no ar. O hover de CSS funciona; o Tab anda pelos links, mas
 um `<button>` ficou fora dele na cópia (medido num site de teste local, 2026-11-03): a revisão do foco de
 teclado (`rev.mjs` com `tab`) vale no ar. Print de cópia que for para a pessoa leva "cópia de AAAA-MM-DD" no
 nome e na legenda (`ferramentas-de-navegador.md`, seção 5).

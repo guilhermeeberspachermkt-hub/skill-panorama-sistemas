@@ -21,7 +21,8 @@
 //                do mínimo e a rolagem lateral; --mapa troca o mapa de seletores (ex.: scripts/mapas/familia-dist.json).
 //
 // Saída: pasta/prints/NOME.png, pasta/medidas/NOME.json e pasta/resumo.json (uma linha curta por print: ok ou
-// erro, rolagem lateral, textos abaixo do mínimo, mensagens de console). No terminal, uma linha por print.
+// erro, rolagem lateral, textos abaixo do mínimo, mensagens de console). Com --so, o resumo.json junta com o que
+// já estava na pasta (troca só os prints refeitos, listados em refeitosNestaRodada). No terminal, uma linha por print.
 // Códigos: 0 ok, 1 algum print com erro, 15 limite de pedidos (1015) duas vezes (a rodada para), 16 desafio do CDN.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -99,7 +100,19 @@ async function main() {
     });
     if (trocas.length && !resumo.some((x) => x.ok)) console.error('aviso: nenhum print terminou bem; confira se o --replace casou (medidas/*.json, "trocados")');
   }
-  fs.writeFileSync(path.join(g.saida, 'resumo.json'), JSON.stringify({ quando: new Date().toISOString(), modo: g.offline ? 'offline' : 'no ar', css: g.css || null, prints: resumo }, null, 1));
+  // Com --so, a rodada é parcial: junta com o resumo.json que já está na pasta (troca só os prints refeitos),
+  // em vez de apagar o dos outros (medido, 2026-11-04: uma rodada --so sobrescreveu o resumo da rodada inteira).
+  const arqResumo = path.join(g.saida, 'resumo.json');
+  let todos = resumo;
+  if (so && fs.existsSync(arqResumo)) {
+    try {
+      const antes = JSON.parse(fs.readFileSync(arqResumo, 'utf8'));
+      const refeitos = new Set(resumo.map((x) => x.nome));
+      todos = (antes.prints || []).filter((x) => !refeitos.has(x.nome)).concat(resumo)
+        .sort((a, b) => String(a.nome).localeCompare(String(b.nome)));
+    } catch (e) { console.error('aviso: resumo.json anterior ilegível; gravo só esta rodada (' + e.message + ')'); }
+  }
+  fs.writeFileSync(arqResumo, JSON.stringify({ quando: new Date().toISOString(), modo: g.offline ? 'offline' : 'no ar', css: g.css || null, ...(so ? { refeitosNestaRodada: resumo.map((x) => x.nome) } : {}), prints: todos }, null, 1));
   const ruins = resumo.filter((x) => !x.ok).length;
   console.log(`fim: ${resumo.length} prints, ${ruins} com erro ou bloqueio | ${path.join(g.saida, 'resumo.json')}`);
   if (parou === '1015') process.exitCode = C.BLOQUEIO_1015;

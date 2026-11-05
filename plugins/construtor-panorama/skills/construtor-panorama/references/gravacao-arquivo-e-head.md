@@ -141,7 +141,9 @@ cliques, para a pessoa, `ajustes-visuais.md`, seção 5.6).
    idêntico:
    - CSS: versão no ar + seção nova no fim, separada por uma quebra de linha. Confira que o começo da versão
      nova é **byte a byte** a versão no ar (`novo[:len(atual)] == atual`), que `{` e `}` fecham, e que não
-     entrou CR. Um script pronto está em `ajustes-visuais.md`, seção 5.2. Com `montar_tema.py --publicar`, o
+     entrou CR (no Windows, o Python em modo texto grava CRLF: abra o arquivo com `newline='
+'`, ou grave
+     bytes; o `montar_tema.py` recusa CR, medido). Um script pronto está em `ajustes-visuais.md`, seção 5.2. Com `montar_tema.py --publicar`, o
      que vai para o admin é a **versão de publicar** (a versão no ar, byte a byte, seguida das seções novas
      sem comentários, cada uma com a linha de cabeçalho dela): é dela o arquivo novo dos passos seguintes. A
      prévia da pessoa é a de acréscimo, só com as seções (o sha aprovado é o delas), e você confere 0

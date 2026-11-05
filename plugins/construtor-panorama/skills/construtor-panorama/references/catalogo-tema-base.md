@@ -158,6 +158,18 @@ uma cor medida na sua loja.
 
 *Família `/dist` (medido numa loja, confira):* `body.page-product-list`, `.product-list .product`.
 
+- **O miolo da lista é `#area-body`**: nas listas (categoria e busca) não existe `#layout-main-content`, que é
+  das páginas do construtor (medido numa loja, 2026-11). O texto da categoria fica em `.category-information`,
+  e a descrição longa, a que se abre por "ler mais", em `.read-more-content`: é ali que entra a cor colada pelo
+  admin, a da conferência de `previa.md` ("a cor colada no admin"), e o mapa `scripts/mapas/familia-dist.json`
+  já aponta para lá. Abra o "ler mais" antes de medir.
+- **Busca pelo endereço:** `/buscar/<termo>`. Numa loja (2026-11), `/buscar/mesa%20branca` virou a busca
+  "mesa 20branca", e `/buscar/sofa` levou à categoria Sofá. Para um print de busca, use uma palavra só, que não
+  seja nome de categoria, e confira no print o termo que a página mostra.
+- **Paginação por script:** o clique automatizado no número da página não navegou num Chrome de script, com e
+  sem a prévia (medido numa loja, 2026-11). Antes de concluir que a paginação quebrou, peça à pessoa que
+  confira no Chrome dela.
+
 - **No computador, o tema congela a altura de cada card** quando monta a lista (o evento
   `ProductList:instanciar` é da plataforma; o congelamento, com cards `.on-hover-details-started` e `style` de
   altura no `.product-container`, só foi achado na família `/dist`). No ar, o seu CSS já está lá quando o

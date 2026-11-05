@@ -71,7 +71,12 @@
   function fonteUsada(cs) {
     var fams = cs.fontFamily.split(',').map(function (f) { return f.trim().replace(/^["']|["']$/g, ''); });
     var faces = {};
-    if (document.fonts) document.fonts.forEach(function (ff) { var n = ff.family.replace(/["']/g, ''); faces[n] = faces[n] || ff.status === 'loaded'; });
+    /* Array.from, e não document.fonts.forEach: numa cópia salva (MHTML) aberta sem rede, o forEach do
+       FontFaceSet quebrou com "The provided callback is no longer runnable" (medido, 2026-11-04) */
+    if (document.fonts) {
+      try { Array.from(document.fonts).forEach(function (ff) { var n = ff.family.replace(/["']/g, ''); faces[n] = faces[n] || ff.status === 'loaded'; }); }
+      catch (x) { /* sem a lista de fontes: segue pelo document.fonts.check abaixo */ }
+    }
     for (var i = 0; i < fams.length; i++) {
       var f = fams[i];
       if (/^(serif|sans-serif|monospace|cursive|fantasy|system-ui|-apple-system|ui-sans-serif|ui-serif)$/.test(f)) return f + ' (genérica)';
