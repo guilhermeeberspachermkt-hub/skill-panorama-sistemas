@@ -358,18 +358,37 @@ lixo do AngularJS e **não** devem ser gerados. **Não foi verificado se a forma
 (`{vit_id, vit_nome}` / `{id, nome}`) basta para renderizar.** Enquanto ninguém testar: copie da
 origem o objeto sem as chaves `$hashKey`/`row_index_grid`, e confira renderizando.
 
-Onde cada cadastro vive: `Loja On-line → Vitrines` · `→ Banners` e `→ Tipo de Banners` · `→ Menus` ·
-`→ Vídeos`.
+Onde cada cadastro vive: `Loja On-line → Vitrines` · `→ Banners` · `→ Menus` · `→ Vídeos`; o Tipo de
+Banner, pela lupa do campo Tipo de Banner. (Em 2026-11-06, nem "Tipo de Banners" nem "Menus" estavam no menu
+Loja On-line de uma loja, que teve a lista inteira lida; na outra, os dois não apareceram na parte visível.
+Pode ser falta de permissão do usuário ou a tela estar em outro lugar: `mapa-do-admin.md`, seção 14. Para o
+tipo, o caminho que funcionou nas duas foi a lupa do campo. Os cadastros de imagem e de banner estão em
+`imagens-e-banners.md`.)
 
-**Banner — a VARIANTE da imagem não é ajustável no nativo (testado):** `banner_tipo` é a fonte da verdade;
-na entrega o servidor o resolve para uma `bannerlist` no **tamanho-base/master** do cadastro (ex.: 577×450)
-e o `src` de cada slide já vem pronto do payload (`src: e.midia`). Cuidado com a pegadinha: escrever
-`bannerlist` **à mão** (sem `banner_tipo`) parece certo — é o que se vê nas páginas prontas — mas o
-pipeline a devolve **vazia** (carrossel em branco). Só renderiza o que sai do `banner_tipo`. Logo, se você
-precisa de um recorte que o master não tem (medido: a original serve `...-1360x800.jpg` no mobile e a nova
-serve o `master`), o banner nativo **não alcança** — a saída é um bloco `code` com carrossel em CSS puro
-(sem `<script>`, que não roda em `code`). `loading="lazy"` também não tem saída por config: o componente
-nunca passa `loading` ao `<img>`. Detalhe e exemplo em `blocos.md` (seção banner).
+Para só **ler** qual tipo de banner ou qual mídia um lugar da página usa, fique no ponto 1: `lerBlocos()`
+no `Alterar` da página, com saída por `Cancelar`, não grava nada. O Tipo de Mídia de uma imagem também se
+lê no `src` servido (o código do tipo é um pedaço da URL, `imagens-e-banners.md`, 2), conferido na tela
+Único › Mídia › Tipos de Mídia. Não abra o construtor da página no ar só para ler: as grades das lupas dele
+têm `Incluir`, `Alterar` e `Excluir`, que gravam no cadastro sem esperar o `Confirmar` da página (medido
+com o `Incluir`, item 5).
+
+**Banner, no site novo (React/Next) — a VARIANTE da imagem não é ajustável no nativo (testado):**
+`banner_tipo` é a fonte da verdade; na entrega o servidor o resolve para uma `bannerlist` no
+**tamanho-base/master** do cadastro (ex.: 577×450) e o `src` de cada slide já vem pronto do payload
+(`src: e.midia`). Cuidado com a pegadinha: escrever `bannerlist` **à mão** (sem `banner_tipo`) parece certo —
+é o que se vê nas páginas prontas — mas o pipeline a devolve **vazia** (carrossel em branco). Só renderiza o
+que sai do `banner_tipo`. Logo, se você precisa de um recorte que o master não tem (medido: a original serve
+`...-1360x800.jpg` no mobile e a nova serve o `master`), o banner nativo **não alcança** — a saída é um bloco
+`code` com carrossel em CSS puro (sem `<script>`, que não roda em `code`). `loading="lazy"` também não tem
+saída por config: o componente nunca passa `loading` ao `<img>`. Detalhe e exemplo em `blocos.md` (seção
+banner).
+
+No site antigo (twig, sem `__NEXT_DATA__` no HTML), medido em 2026-11-06, é diferente. O arquivo servido é
+uma variante: com "Tamanho personalizado" desligado, vem o tamanho do cadastro Tamanhos dos Tipos de Mídia,
+com o encaixe dele (numa loja: `-1920x496-cover`); ligado, vem a Largura × Altura do bloco (na outra:
+`-606x230`, depois `-909x345`). Nas duas lojas, do 2º slide em diante vem `loading="lazy"`. Ali o banner
+nativo alcança o tamanho, e o bloco `code` não é necessário para isso (`blocos.md`, seção banner, aviso de
+2026-11-06; `imagens-e-banners.md`, 7).
 
 ⚠️ **Correção: `apply_aspect_ratio` NÃO é descartado — ele reserva o espaço do slide.** Uma versão
 anterior desta skill listava `apply_aspect_ratio` junto de `midia_size`/`owl` como campo jogado fora na
@@ -414,7 +433,10 @@ apareciam. Hoje é `device_show`.
 Custa uma sessão de trabalho perdida quando alguém descobre do jeito errado. `Aplicar` é client-side;
 `Confirmar` no diálogo `Alterar Página` é que grava. Detalhes em `gravacao-construtor.md`.
 
-O lado bom: `Aplicar` é seguro para experimentar à vontade.
+O lado bom: `Aplicar` é seguro para experimentar à vontade. Só ele: as grades das lupas do painel (Tipo de
+Banner, Mídia) têm `Incluir`, `Alterar` e `Excluir` do próprio cadastro, e você trata os três como
+gravação. Medido em 2026-11-06, numa loja: `Incluir` › `Confirmar` na lupa do Tipo de Banner criou o tipo
+na hora, antes de qualquer `Confirmar` da página (`imagens-e-banners.md`, 9).
 
 ## 6. `fetch()` mente sobre página despublicada
 
@@ -423,7 +445,7 @@ tamanho idêntico para páginas diferentes. Parece que a página está vazia.
 
 Navegue a aba de verdade e leia `window.__NEXT_DATA__`.
 
-## 6b. Página despublicada NÃO renderiza — e isso colide com a regra de não publicar
+## 6b. No site novo, página despublicada NÃO renderiza — e isso colide com a regra de não publicar
 
 ⚠️ **Correção de uma versão anterior desta skill**, que dizia "páginas despublicadas respondem na URL
 pública com conteúdo quando navegadas — servem bem como rascunho visível". **Não servem.**
@@ -439,7 +461,10 @@ loja; o seu fica no perfil), com par de controle:
 | `/prazos-v2` (depois) | Sim | renderiza |
 
 E o mais importante: **o preview dentro do próprio construtor passa pela mesma rota e mostra o mesmo
-404.** Não existe caminho de visualização que contorne isso.
+404.** No site novo, não existe caminho de visualização que contorne isso. No site antigo (twig), a URL
+pública de uma página despublicada não foi medida; numa loja servida por ele, em 2026-11-06, a prévia do
+construtor mostrou o conteúdo de um clone que não estava publicado, com a arte nova (`imagens-e-banners.md`,
+4).
 
 **A consequência é de processo, não técnica.** O `construtor.md` manda verificar renderizando (passos
 6 e 7) e a regra zero proíbe `Publicar` sem pedido explícito — e as duas coisas não cabem juntas numa
@@ -464,12 +489,14 @@ curl -sI https://www.SUA-LOJA.com.br/prazos     | grep -i x-robots   # nada
 ```
 
 O que protege de fato é o campo **`Robots` do cadastro da página**, visível como coluna na grade
-`Páginas`. Rascunho/clone costuma vir `noindex, nofollow`; página de produção vem `index, follow`.
+`Páginas`. Rascunho costuma vir `noindex, nofollow`, mas um clone feito pelo `Log` pode nascer publicado e
+`index, follow` (item 36): confira sempre. Página de produção vem `index, follow`.
 Some-se a coluna `Página no Sitemap`.
 
 Consequência prática: **antes de publicar um rascunho, confira a coluna `Robots` da linha.** Não
 assuma que estar no subdomínio novo basta — não basta. E se a linha disser `index, follow`, você está
-olhando para uma página de produção (ver item 10b).
+olhando para uma página de produção (ver item 10b) ou para um clone recém-criado que ainda não foi
+corrigido (item 36).
 
 ## 8. Duas pessoas no mesmo construtor se sobrescrevem
 
@@ -553,14 +580,17 @@ em ordem de confiabilidade:
 
 1. **o `#`** — único, não se repete. É por ele que você identifica (e `conferirAlvo(numero)` valida).
 2. **a coluna `Robots`** — a original de produção é `index, follow`; rascunho/clone costuma ser
-   `noindex, nofollow`. Boa checagem de sanidade: **se a linha diz `index, follow`, não grave nela.** Ela
-   serve para escolher o rascunho de uma migração. Quando a pessoa nomeou a página no ar como alvo (uma
-   edição pontual, `construtor.md` seção 7, ou a versão aprovada indo para a original, o passo 9 de lá),
-   o `#` que ela nomeou decide, e `index, follow` é o esperado.
+   `noindex, nofollow`, mas um clone feito pelo `Log` pode nascer `index, follow`, publicado e no sitemap
+   (item 36); até ele ser corrigido, Robots e Sitemap não separam os dois: use o `#`. Boa checagem de
+   sanidade: **se a linha diz `index, follow`, não grave nela.** Ela serve para escolher o rascunho de uma
+   migração. Quando a pessoa nomeou a página no ar como alvo (uma edição pontual, `construtor.md` seção 7,
+   ou a versão aprovada indo para a original, o passo 9 de lá), o `#` que ela nomeou decide, e
+   `index, follow` é o esperado.
 3. o nome (`… V2`) e a coluna `Página no Sitemap` (`Sim` na original).
 
-Note também que **estar `Publicada: Sim` não quer dizer que é a página real** — o clone também está
-publicado, só que fora do índice. Não use "Publicada" para decidir onde gravar.
+Note também que **estar `Publicada: Sim` não quer dizer que é a página real** — o clone pode estar
+publicado, fora do índice ou, recém-criado, dentro dele (item 36). Não use "Publicada" para decidir onde
+gravar.
 
 ## 11a. Metade do que você vê na página antiga é do TEMA, não da página
 
@@ -863,7 +893,7 @@ a lista cresceu em cada sessão que mediu de verdade:
 | **`margin: 0 -12px` do `.row` do tema** | **Não expande a linha.** A classe gerada aplica `max-width:100%`, que impede o transbordo: a `.row` fica com o content box do pai (1176 em vez de 1200) e **toda coluna encolhe 24px** | **TRÊS** receitas medidas em `blocos.md` (seção de grid). Para texto em coluna única, a terceira **dispensa a `.row`** e fecha em 0px com 1 regra de página. Com grid de verdade: se o `.container` do tema serve, zere o `padding` dele e a `margin` da `.row` por config e devolva o gutter no `padding` lateral das colunas; se a original **trava** a largura, mantenha o padding e devolva a margem negativa por regra de página (`max-width:none; margin:0 -gutter` na `.row`) — zerar a margem nesse caso perde 5px por coluna |
 | **a seção `LAYOUT` INTEIRA em bloco `editor`** | **Ignorada** — não é só o `padding`. O renderizador do `editor` faz `{...t, className: config.class}` e **sobrescreve** a classe gerada, aquela que carrega todo o CSS da config. Contado no HTML entregue: **0 de 29** blocos `editor` têm a classe de layout, contra **126** ocorrências dela na página. Logo `padding`, `margin`, `background`, `border`, `overflow`, `dimensions` e `display.type` não fazem nada ali. Em `code` aplicam | Espaçamento, fundo e borda de texto vão no bloco `block` que **envolve** o `editor`. Tabela `editor` × `code` em `blocos.md`, seção `editor · code` |
 | `padding` / `margin` numa `col-sm-*` | **Substitui** o do tema, não soma: preencher só `top`/`bottom` **apaga os 12px laterais** e o texto cola na borda. ⚠️ E esses 12px vêm de **`.row > *`**, não da classe `col-*` (o tema novo é Bootstrap 5) — logo coluna **fora** de uma `.row` já nasce sem padding nenhum, e você tem de pôr o gutter por config de todo jeito | Repita o lateral que você quer em `right`/`left` toda vez que ligar `padding.apply` |
-| `margin` em bloco **`imagem`** | ⚠️ **Pior que ignorada: aplicada no lugar errado.** Cai no `<img>` (não há wrapper) e, com `apply_aspect_ratio`, **distorce a imagem** | Nunca ponha `margin` em bloco `imagem`. Espaçamento de imagens empilhadas vai no `display.gap` da **coluna**. Ver item 14 |
+| `margin` em bloco **`imagem`** | ⚠️ **Pior que ignorada: aplicada no lugar errado.** Cai no `<img>` (no site novo não há wrapper; no twig não foi testado) e, com `apply_aspect_ratio`, **distorce a imagem** | Nunca ponha `margin` em bloco `imagem`. Espaçamento de imagens empilhadas vai no `display.gap` da **coluna**. Ver item 14 |
 | `flexBehavior` em bloco **`code`** | **Ignorado**, mesmo com `enable:true, flex_grow:1`: o wrapper sai com `flex-grow: 0`. Dentro de pai `flex; justify-content:center` o bloco **encolhe para o tamanho do conteúdo** — medido: faixa de **757px** num `.container` de **1200**, itens de 174 em vez de 280 | **Ponha o PAI em `display:block`.** Aí o wrapper do `code` é filho de bloco e ocupa 100% naturalmente — resultado medido: faixa 1180, itens 280, passo 300, os números da original. Ver item 22f |
 
 Isto reduz o alcance da regra "prefira configuração de bloco a CSS" (regra 2 do `construtor.md`): ela vale para
@@ -873,7 +903,14 @@ Sintoma clássico: a página renderiza com o conteúdo certo, mas tudo empilhado
 faixa de fundo parando antes da borda. Antes de reescrever o JSON, **inspecione a cadeia de pais no
 DOM** e compare `width`/`max-width`/`display` computados com o que você mandou.
 
-## 14. O bloco `imagem` não tem wrapper próprio — e isso causa três defeitos
+## 14. No site novo (React), o bloco `imagem` não tem wrapper próprio — e isso causa três defeitos
+
+Só no site novo (React/Next, com `__NEXT_DATA__` no HTML). No site antigo (twig), medido em 2026-11-06 em
+duas lojas, o bloco sai com o wrapper `.block-imagem-container`, a caixa de proporção `.ar`,
+`object-fit: cover` e `loading`/`width`/`height` no `<img>`. O `alt`/`title` saiu igual ao Nome do Bloco
+numa loja e vazio na outra, nunca como o id do bloco. Lá o defeito 3 não aparece; os defeitos 1 e 2 não
+foram testados. Detalhe em `blocos.md`, bloco `imagem`. Para saber qual é o seu caso, procure
+`__NEXT_DATA__` no HTML servido.
 
 Lido no bundle do tema (`_app.js`), o componente renderiza
 `<a class="pano-link-anchor"><img style="width:100%;height:100%">` — **sem criar `div` de wrapper**, e
@@ -1628,7 +1665,7 @@ da tag no cadastro), então qualquer tag nova podia ganhar estilo no CSS da loja
   font-size:10px!important; background:#fff; color:#000!important;
   border:1px solid #eaeaed; padding:6px 5px 5px 27px!important }
 .tag-tag-a:before{ position:absolute; content:""; width:16px; height:16px; left:5px;
-  background-image:url(".../img.panorama/imagem/NNNNNN/icone-da-tag.png");
+  background-image:url("https://storage.panoverse-cdn.com.br/PASTA-DA-LOJA/imagem/NNNNNN/icone-da-tag.png");
   background-size:100%; background-repeat:no-repeat; background-position:50% }
 ```
 
@@ -2067,3 +2104,66 @@ aplicada à comparação. O `scripts/conferir_troca.mjs` já faz isso:
 
 O que fica fora da conta não foi conferido. Se a lista de instáveis for grande, ou cair num bloco que importa
 para a mudança, pare esse bloco de outro jeito e rode de novo.
+
+## 36. O admin guarda versões das páginas do construtor: a tela "Logs das Páginas"
+
+Medido em duas lojas, em 2026-11-06 (uma da família `/dist`, outra da `modelo-1`). Na tela **Loja On-line ›
+Páginas**, com **uma** linha marcada, o botão **`Log`** (acima da grade) abre o diálogo **"Logs das
+Páginas"**: uma grade com Log #, Página #, Data e Hora e Usuário, com as versões gravadas da página (numa
+loja, a home tinha versões desde 2024; não se mediu se cada gravação gera exatamente uma linha: lá, as duas
+mais novas tinham o mesmo segundo), e dois botões próprios, **`Restaurar Versão`** e **`Criar nova
+página`**.
+
+Por que isto importa: a `SKILL.md` dizia, na regra zero, que o admin não guarda versões anteriores, e o
+cuidado todo com backup vinha daí. A frase estava **errada para páginas do construtor** (foi corrigida).
+
+**Clonar uma página pelo log** é o caminho que a pessoa da loja usa para mexer na home sem tocar nela:
+`Log` → marcar a versão mais recente → `Criar nova página`. Abre "Adicionar Página" já preenchida: Nome
+`<nome da página> (Log #NNNN)`, URL `/<slug>-log-NNNN` (item 10b; nas duas medições a página era a home, de
+URL `/`, e veio `/-log-NNNN`; o diálogo sugeria também uma URL feita do nome), Tipo Construtor, a mesma Loja.
+O `Confirmar` cria a cópia, com o mesmo conteúdo e **os mesmos ids de bloco** da original (medido) — então
+um CSS preso a `#block-…` continua valendo no clone.
+
+⚠️ **O clone pode nascer PUBLICADO e indexável.** Variou entre as duas lojas, e não se sabe do que depende:
+numa, o clone veio com Publicada = Não, e o diálogo de criação trazia "Registrar acessos" desmarcado; na
+outra o clone veio com **Publicada = Sim, `robots: index, follow` e dentro do sitemap**, e o diálogo já
+trazia "Registrar acessos" marcado (foi desmarcado antes do `Confirmar`). No segundo caso, no instante do
+`Confirmar` nasce uma **cópia pública da home**, que o Google pode indexar como conteúdo duplicado. Então,
+ao criar um clone:
+
+1. **Combine antes de criar.** Quem cria o clone é a pessoa, ou você com um pedido dela que nomeie
+   `Criar nova página` e a página (item 8 deste arquivo): criar página é gravar no admin. Antes, diga que o
+   clone pode nascer publicado, indexável e no sitemap (uma cópia pública da página, numa URL terminada em
+   `-log-NNNN`). Na mesma pergunta fechada, peça o "sim" para o conserto do item 4: "Se nascer publicado,
+   posso trocar na hora, só no clone, o Robots para `noindex, nofollow` e tirar do sitemap?".
+2. Antes do `Confirmar`, desmarque **Registrar acessos** (numa página de teste ele só suja as métricas).
+3. Logo depois, olhe na grade as colunas **Publicada**, **Robots** e **Página no Sitemap** da linha nova.
+4. Se vier publicado e indexável, e você tem o "sim" do item 1: marque a linha pelo `#` novo
+   (`conferirAlvo`). No `Alterar`, confira que a URL é a do clone e que a Loja é a do perfil
+   (`conferirDialogo`). Anote no histórico do perfil os valores atuais de Robots e Sitemap (é o backup
+   deles). Na aba **SEO**, troque só esses dois: Robots = `noindex, nofollow` e desmarcar "Incluir página
+   no Sitemap?". `Confirmar`, reabra e confira. Sem esse "sim", pare e pergunte já, antes de qualquer outro
+   passo. Lembre do cache (`imagens-e-banners.md`, 6, item 8): o HTML servido pode levar uns 2 minutos para
+   mostrar o `noindex`.
+5. `Despublicar` é da pessoa (`SKILL.md`, regra zero): não tem caminho por script, ela clica, e você confere
+   depois; `Excluir` nunca é da skill (`mapa-do-admin.md`, 12). O `noindex` só pede aos buscadores que não
+   indexem o clone: ele continua aberto a quem tiver o endereço, com os blocos do dia em que foi clonado.
+   Enquanto dura o trabalho, isso tem uma vantagem: dá para conferir no site de verdade, nos dois aparelhos,
+   em vez de só na prévia do construtor. No fim, lembre a pessoa de que o clone segue publicado e pergunte se
+   ela quer despublicá-lo; se quiser, ela clica, e você confere depois a coluna Publicada da linha.
+
+O que **não** muda:
+
+- **O backup local continua obrigatório.** Nada se mediu sobre quantas versões o log guarda, por quanto
+  tempo, o que exatamente `Restaurar Versão` restaura (só o `Blocos:`? também os campos da página?) e se há
+  log para Arquivos e para a configuração da loja — onde a regra zero segue valendo inteira. Um recurso que
+  você não mediu não é uma rede de segurança.
+- **`Restaurar Versão` é da pessoa, como o `Despublicar`:** não tem caminho por script; se ela quiser
+  voltar uma versão, ela clica, e você confere depois. Antes de ela clicar, guarde o backup do `Blocos:` da
+  página (`construtor.md`, seção 0, "Backup do `Blocos:`"). O que ele faz não foi medido, e ele pode mudar
+  a página no ar. Está na lista da regra zero, ao lado de `Excluir`, `Publicar` e `Despublicar`.
+
+O que fazer agora: ao montar ou migrar uma página, ofereça esse caminho para criar o rascunho, em vez de
+pedir à pessoa que crie uma página do zero (`construtor.md`, seção 4). Confira sempre, pelo `#` e pelo
+conteúdo, que o clone é o que você espera. O que falta medir por dentro (o que `Restaurar Versão` faz) vira
+seção em `mapa-do-admin.md` quando for medido.

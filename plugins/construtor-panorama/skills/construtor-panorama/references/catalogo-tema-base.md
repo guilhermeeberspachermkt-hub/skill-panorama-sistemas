@@ -348,8 +348,9 @@ o flex mexeria nele também.
   `modelo-1`) e `.with-nav-inside`; confira a classe do seu bloco. Medidas 35x50 com 30% de opacidade por cima
   da arte; 44x44, aparecendo com o mouse ou o foco, ficou melhor. Em aparelho sem mouse (iPad, que recebe o
   site de computador), deixe sempre visíveis.
-- **As imagens dos banners** vêm do cadastro de banners, que não foi mapeado (`mapa-do-admin.md`, seção 14):
-  trocar a arte é conteúdo, e é da pessoa. Por CSS, mexa só no que está em volta (setas, bolinhas, espaço).
+- **As imagens dos banners** vêm do cadastro de banners (`imagens-e-banners.md`): trocar a arte é conteúdo, e
+  é da pessoa; o caminho, o tamanho e o cache estão lá. Por CSS, mexa só no que está em volta (setas, bolinhas,
+  espaço).
 - **Logo**: SVG inline (Configurações › Visual › Logo e Ícone, `svgLogo`). Na loja medida, os caminhos tinham
   classes `.st0`/`.st1` e **nenhum `<g>`**: o tema do ano anterior mirava `.logo g path` e não pegava nada.
   Noutra loja, o SVG trazia um `<style>` próprio com classe genérica, que vale para o documento inteiro

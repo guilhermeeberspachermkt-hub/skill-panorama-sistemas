@@ -34,6 +34,9 @@ instalada não perder nada numa atualização.
   menu, cabeçalho e rodapé; banners; avisos de cookies; o visual no celular.
 - **Páginas do construtor:** criar, editar ou refazer uma página (seções, vitrines, banners, perguntas
   frequentes, grids), inclusive migrar uma página do site antigo para o novo.
+- **Imagens e banners:** subir ou trocar a arte de um banner e a imagem de um bloco, criar um tipo de banner,
+  hospedar uma imagem usada num CSS e conferir se ela sai nítida no computador e no celular. A arte, o texto,
+  o link e as datas são seus; o Claude conhece o caminho no admin e faz os passos quando você pede.
 - **Temas de época:** Black Friday, Natal, Esquenta, Dia das Mães; a agenda de skins; a barra promocional com
   contagem; a Barra do Topo.
 - **Telas de configuração da loja:** o código do `<head>`, o logo, o SCSS de Personalização, os arquivos CSS
@@ -155,18 +158,21 @@ Claude mostra antes 2 ou 3 direções, com prints de cada uma, e você escolhe.
 
 ## Segurança: o que a skill faz para proteger a sua loja
 
-O admin da Panorama é o site no ar. Não há ambiente de teste, e o admin não guarda versões anteriores. Por
-isso a skill segue algumas regras, mesmo quando você está com pressa:
+O admin da Panorama é o site no ar. Não há ambiente de teste, e a skill não conta com o admin para voltar
+atrás: as páginas do construtor têm um histórico de versões (o botão `Log`), mas o que ele guarda e restaura
+ainda não foi medido, e no resto do admin ela age como se não houvesse histórico nenhum. Por isso a skill
+segue algumas regras, mesmo quando você está com pressa:
 
 - **Nada é gravado sem o seu "sim"** sobre aquela mudança específica, depois de ver a prévia (numa página do
   construtor, a prévia é uma página de rascunho que vocês combinam antes; uma mudança que não aparece no site
   vai com a explicação do que muda e o seu "sim").
 - **Backup antes de toda gravação**, num arquivo no seu computador, com a data no nome. É o que permite
   voltar atrás.
-- **Excluir, Publicar e Despublicar** páginas, e as operações em massa do admin, só acontecem se você pedir,
-  nomeando o botão e a página. Um "aprovado" sobre a prévia não aperta botão nenhum. Com o seu pedido, o
-  Claude pode criar um arquivo novo e clicar em Publicar nele, um clique de cada vez, depois de conferir a
-  linha e a pergunta do admin; Excluir e Despublicar ficam com você.
+- **Publicar** páginas e as operações em massa do admin só acontecem se você pedir, nomeando o botão e a
+  página. Um "aprovado" sobre a prévia não aperta botão nenhum. Com o seu pedido, o Claude pode criar um
+  arquivo novo e clicar em Publicar nele, um clique de cada vez, depois de conferir a linha e a pergunta do
+  admin. **Excluir, Despublicar e Restaurar Versão** (no histórico de versões de uma página) ficam com você:
+  você clica, e o Claude confere depois.
 - **Só o que você nomeou.** Se não ficar claro em qual página ou arquivo mexer, o Claude pergunta em vez de
   escolher um "parecido". Ele identifica as páginas pelo número (`#`) e confere a loja, porque um mesmo admin
   pode ter várias lojas com páginas de nomes iguais.
@@ -212,6 +218,7 @@ O que vale a pena você saber:
 | `references/previa.md` | Como a prévia é feita e como você a liga no seu navegador. |
 | `references/construtor.md` | Páginas do construtor: regras e fluxo completo. |
 | `references/blocos.md`, `exemplo.md`, `armadilhas.md` | Catálogo de blocos, um exemplo completo e os problemas já encontrados. |
+| `references/imagens-e-banners.md` | Imagens e banners: os cadastros (Mídias, Tipos de Mídia, Tamanhos, Tipo de Banner, Banners), subir ou trocar uma arte, o endereço das imagens no CDN (para usar num CSS), testar num clone da página, o cache dos banners e a nitidez. |
 | `references/gravacao-construtor.md` | Como o Claude grava uma página do construtor e confere a gravação. |
 | `references/gravacao-arquivo-e-head.md` | Como o Claude grava os arquivos CSS/JS e a configuração da loja, e como você grava à mão. |
 | `references/ferramentas-de-navegador.md` | Limites da ferramenta de navegador, para o Claude não confundir com defeito do site. |
@@ -222,9 +229,12 @@ O que vale a pena você saber:
 Algumas coisas da plataforma ainda não foram medidas e estão marcadas assim nos arquivos: o fuso horário da
 agenda de skins, qual item vence quando dois temas se sobrepõem, e o que o campo `namespace` da agenda faz
 (a skill mede o fuso e o efeito do `namespace` com um teste que não muda o site, evita que dois temas se
-sobreponham e sugere perguntar ao suporte da Panorama). Também não foram mapeadas as telas de Banners e de
-Menus, nem a página do produto, medida só em parte (nas duas famílias, uma loja cada): nelas o Claude só lê
-e mede antes de propor. As telas de etiquetas (Tags) foram só lidas, não mapeadas campo a campo.
+sobreponham e sugere perguntar ao suporte da Panorama). Também não foram mapeadas a tela de Menus nem a
+página do produto, medida só em parte (nas duas famílias, uma loja cada): nelas o Claude só lê e mede antes
+de propor. As telas de Banners e Tipo de Banner foram mapeadas em 2026-11-06 em duas lojas, uma de cada
+família; as de Mídias (com Tipos e Tamanhos de Mídia), no mesmo dia, só na loja da família `/dist`. O que
+ficou de fora delas está no fim de `references/imagens-e-banners.md`. As telas de etiquetas (Tags) foram só
+lidas, não mapeadas campo a campo.
 
 A plataforma tem mais de uma família de tema, isto é, mais de um conjunto de arquivos que dá a aparência
 ao site. A skill foi medida em duas (a `/dist` e a `modelo-1`), cada uma numa loja. Elas diferem em coisas

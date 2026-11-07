@@ -41,7 +41,7 @@ Conferido em: AAAA-MM-DD
 | Campo Loja do diálogo Alterar (`ng-model`, o `campoLoja`) | _(snippet F; "não verificado" até a primeira gravação por script. Exemplo do que anotar, como se mediu numa loja da plataforma: "`data.loja`, um único campo, `DIV` sem `value`; `model` = objeto com `id`, `nome`, `url`, `icon`; `id` = número da loja; visto no Alterar de uma página Construtor e de uma Arquivo, AAAA-MM-DD")_ |
 | O que esse campo mostra (o `lojaNome`, se não for o número) | _(ex.: "o número, em `model.id`: `lojaNome` não é preciso para o Alterar", ou o nome exato, se só o nome aparecer). O `lojaNome` serve também à tela Administrador › Cache: quando o rótulo do filtro Loja não se lê, as funções do cache conferem o valor da opção junto com esse nome (reconhecimento, 3d). Anote o nome exatamente como a opção do filtro mostra_ |
 | Outras lojas no mesmo admin | _(nomes e números; cuidado com nomes de página repetidos)_ |
-| Front-end | _(twig / front-end novo em React; por endereço)_ |
+| Front-end | _(twig / front-end novo em React; por endereço, e o da home com a data. Como saber numa página servida: reconhecimento, 2c (`__NEXT_DATA__` com `#layout-main-content` = site novo; `id="area-body"` sem `__NEXT_DATA__` = site antigo, twig; `__NEXT_DATA__` sem `#layout-main-content` = rota de outro sistema, não o tema). Num bloco imagem, `block-imagem-container` = site antigo (twig): `blocos.md`, bloco imagem. "Antigo" não quer dizer fora do ar: nas duas lojas medidas em 2026-11-06, a home vinha do site antigo)_ |
 | Família do tema (reconhecimento, 2i) | _(`/dist` / `modelo-N` / front-end novo / desconhecida; data)_ |
 | Arquivos do tema, com o hash | _(ex.: `.../css/platform.<hash>.css`, `.../css/modelo-1.<hash>.css`, `.../js/modelo-1.<hash>.js`; ou `https://<site>/dist/css/loja.<hash>.css` e `/dist/js/bundle.<hash>.js`)_ |
 | Chave `modelo` e modelos de cabeçalho e menu (snippet D, só leitura) | _(ex., família modelo-1: `modelo` = `modelo-1`; `headerModel` N → `inner-body header-N`; `openMenuModel` N; `mobileMenuModel` N; classe `menu-N` no `<body>`. Ex., família /dist, numa loja medida (2026-10): `modelo` = `proprio`, o normal ali, sem contradizer o HTML; `headerModel` ausente; `mobileMenuModel` N → `menuModel-N` no celular. Anote o que o snippet D mostrar, mesmo "ausente"; a família vem do HTML, 2i)_ |
@@ -238,6 +238,18 @@ Conferido em: AAAA-MM-DD
 - Logo sobre a cor primária (`svgLogoContrast` / `svgIconContrast`): _(vazio / N chars)_
 - Regras de CSS que dependem dessas classes: _(arquivo e seção; revisar se o logo for trocado)_
 
+## Imagens e banners (`references/imagens-e-banners.md`)
+
+Conferido em: AAAA-MM-DD
+
+| Item | Valor |
+|---|---|
+| Pasta da loja no CDN de imagens | `https://storage.panoverse-cdn.com.br/PASTA-DA-LOJA/` _(lida numa URL de imagem do HTML servido, com a data; confira também o host; `imagens-e-banners.md`, 2)_ |
+| Tipos de Mídia usados | _(Nome / Código e para quê; a lista muda de loja para loja)_ |
+| Por lugar (topo do computador, topo do celular, mini banners…) | _(o bloco e, se houver, o bloco par do celular; o Tipo de Banner (`#` e código) e o Tipo de Mídia dele; "Tamanho personalizado" L×A ou o "Tamanho da Mídia" do cadastro. Só lendo: o bloco, o par, o tipo e o tamanho saem do `Blocos:` da página no ar (Páginas › marcar a linha › `Alterar` › aba `Configurações` › `lerBlocos()`, saindo por `Cancelar`); o Tipo de Mídia, do código dele no `src` servido (`imagens-e-banners.md`, 2), com a grade de Único › Mídia › Tipos de Mídia. Não abra o construtor da página no ar só para ler: as lupas dele têm `Incluir`, `Alterar` e `Excluir`, e o `Incluir` gravou na hora numa loja medida (`imagens-e-banners.md`, 9). `imagens-e-banners.md`, 3, passo 0, e 5; data)_ |
+| Pode criar Tipo de Mídia? | _(sim / não / não verificado, AAAA-MM-DD, e a fonte: dito pela pessoa, ou visto no admin sem gravar quando falta o botão ou a tela (provável falta de acesso; `mapa-do-admin.md`, 14). Ver o `Incluir` abrir não prova que o `Confirmar` grava: isso não foi medido (`imagens-e-banners.md`, 10), então "sim" só com a palavra da pessoa; nunca crie um tipo só para testar; se não, anote também em "Acessos deste usuário no admin")_ |
+| Clones de teste (`Log` › `Criar nova página`) | _(`#`, URL, Publicada, Robots, Página no Sitemap e Registrar acessos: como nasceu e como ficou; quem despublica ou exclui, e quando (é da pessoa: ela clica, e você confere depois; `Excluir` nunca é da skill); `armadilhas.md` 36)_ |
+
 ## Cache e CDN
 
 Conferido em: AAAA-MM-DD
@@ -247,6 +259,7 @@ Conferido em: AAAA-MM-DD
 | CDN identificado pelos cabeçalhos (reconhecimento, 2b) | _(sim: qual, por qual cabeçalho, ex.: `cf-cache-status` = Cloudflare / não identificado: ex.: só `server: Apache` e `cache-control: private`. Sem CDN, a parte da borda na linha do HTML e a linha "Queries no CDN" ficam "não se aplica")_ | |
 | Arquivos CSS/JS: `max-age` medido (reconhecimento, 2f) | `Cache-Control: max-age=...` _(medidos: 86400 numa loja, 1800 noutra)_; `stale-while-revalidate`, se houver; `Age` visto na borda, se houver CDN: ... | subir o cache-buster no `<head>` |
 | Configuração da loja | linha `loja_config` existe? último flush visto: ... _(com o filtro Loja = a sua e uma linha só; sem o filtro pode aparecer outra `loja_config`; valor da opção da loja no filtro: `string:N` ou `number:N`. O "Último flush" é indício: numa loja ele não mudou depois de uma limpeza que funcionou; a prova é o `<head>` servido com `?nc=`. As funções do cache funcionaram nesta tela? Se abortaram por não ler o rótulo do filtro, anote e passe `lojaNome`)_ | |
+| Banners (linha `banner`) | _(com o filtro Loja = a sua, uma linha só; o "Último flush" visto, que pode não mudar depois de uma limpeza que funcionou; quanto tempo o HTML servido, com `?nc=`, levou para mostrar a arte nova; `imagens-e-banners.md`, 6, itens 3 e 8)_ | _(quem limpa: a pessoa ou você, combinado em AAAA-MM-DD)_ |
 | Página | modal de confirmação apareceu? _(sim/não)_ | |
 | HTML das páginas (e a borda, se houver CDN) | home `max-age=...`; categorias `max-age=...`; `private`? _(só o navegador guarda)_; varia por User-Agent? _(com CDN: a cópia do celular atrasou depois de uma mudança? quanto, pelo `Age`; data)_ | |
 | Queries no CDN (só com CDN; reconhecimento, 2b; opcional) | _(`?nc=` / `utm_*` / `gclid` / `fbclid`: `MISS`, `BYPASS` ou `HIT`; data)_ | _(as regras são da TI)_ |

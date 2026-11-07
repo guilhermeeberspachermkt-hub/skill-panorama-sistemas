@@ -330,7 +330,7 @@ página. As duas tabelas estão em `blocos.md`, seção de grid.
 Siga `gravacao-construtor.md`. Nesta página, as referências saem da origem:
 
 - os **ícones**, se forem virar bloco `imagem`, precisam de id de mídia, e ele vem da URL da imagem
-  renderizada (`.../img.panorama/imagem/{ID}/...`);
+  renderizada (`.../PASTA-DA-LOJA/imagem/{ID}/...`; `imagens-e-banners.md`, 2);
 - o **banner de 12 imagens** precisa do `banner_tipo`, e ele vem do campo `Blocos:` da página original
   (`armadilhas.md` item 4: `Alterar` → aba `Configurações`, leia com `lerBlocos()`, saia por `Cancelar`).
 

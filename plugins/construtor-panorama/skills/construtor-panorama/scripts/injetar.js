@@ -283,14 +283,15 @@ function clicarMenu(rotulo) {
   return true;
 }
 
-// ⛔ NUNCA clique por script: `Excluir`, `Publicar`, `Despublicar`, `Ordenação`,
-// `Atualizar View de Acesso as Páginas`. Os três primeiros mudam o site no ar; os dois
+// ⛔ NUNCA clique por script: `Excluir`, `Publicar`, `Despublicar`, `Restaurar Versão` (no diálogo do `Log`),
+// `Ordenação`, `Atualizar View de Acesso as Páginas`. Os quatro primeiros mudam o site no ar; os dois
 // últimos são operações amplas, não da linha selecionada. Se a tarefa parecer exigir um
 // deles, **pare e pergunte** — nenhuma reprodução de página precisa disso.
 // A única exceção é `Publicar`, e só quando a pessoa pediu com uma frase que nomeia o botão e a
 // página: aí, pela seção 10b (`prepararPublicar` e `prepararOkDoPublicar`), que conferem a linha e o
 // modal e só ROTULAM o botão e o OK para um clique real da ferramenta em cada um. Um "aprovado" sobre
-// a prévia não é esse pedido. `Excluir`, `Despublicar`, `Ordenação` e `Atualizar View` não têm caminho.
+// a prévia não é esse pedido. `Excluir`, `Despublicar`, `Restaurar Versão`, `Ordenação` e `Atualizar View`
+// não têm caminho.
 //
 // ⚠️ E não clique por COORDENADA de screenshot: o screenshot volta em 1568px contra viewport
 // de 1707 (fator 1,089). Um clique no checkbox da linha caiu ~24px à esquerda e abriu outro

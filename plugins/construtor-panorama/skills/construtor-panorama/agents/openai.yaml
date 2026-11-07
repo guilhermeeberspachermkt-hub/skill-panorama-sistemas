@@ -2,7 +2,7 @@
 # Formato: https://learn.chatgpt.com/docs/build-skills ("agents/openai.yaml").
 interface:
   display_name: "Construtor Panorama"
-  short_description: "Visual, temas de época e páginas de uma loja da Panorama Sistemas, com prévia e aprovação antes de gravar"
+  short_description: "Visual, temas de época, páginas e banners de uma loja Panorama"
   brand_color: "#0F766E"
   default_prompt: "Use $construtor-panorama. Se ainda não há perfil desta loja, comece pela configuração inicial, só lendo, sem mudar nada no site nem no admin."
 

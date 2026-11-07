@@ -447,9 +447,11 @@ as mesmas chamadas.
   nas fases 2b e 2c, o mesmo `tab.close()` funcionou, e o Chrome da pessoa continuou aberto. Salve o
   relatório e tudo o que precisa guardar **antes** de fechar a aba, feche só a que você abriu, e depois
   pergunte à pessoa se o Chrome dela continua aberto.
-- **Ainda não medido:** o envio de arquivo (a API anuncia `waitForEvent('filechooser')` e `setFiles`). Não
-  faz falta: o transporte em gzip+base64 numa chamada de CDP funcionou (seção 4), e um Arquivo vai assim
-  pelo `lerArquivoGzipB64` (`gravacao-arquivo-e-head.md`, Passo B).
+- **Ainda não medido:** o envio de arquivo (a API anuncia `waitForEvent('filechooser')` e `setFiles`). Para
+  um Arquivo (CSS/JS), não faz falta: o transporte em gzip+base64 numa chamada de CDP funcionou (seção 4), e
+  um Arquivo vai assim pelo `lerArquivoGzipB64` (`gravacao-arquivo-e-head.md`, Passo B). Para a arte de um
+  banner ou uma mídia, que pedem o arquivo no `input` do diálogo, quem escolhe o arquivo é a pessoa
+  (`imagens-e-banners.md`, 9).
 - **O que funcionou também:** a aba abriu no Chrome dela, e o admin entrou logado (num dos testes, a aba nova
   caiu na tela de login, e a pessoa entrou nela). O clique num link por papel e nome navegou. O print voltou.
 - **Num filtro feito de menu (o bootstrap-select do filtro Loja), o mesmo nome aparece duas vezes:** no item

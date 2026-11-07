@@ -9,6 +9,209 @@ Code) e de `plugins/construtor-panorama/plugin.json` (Codex), os dois com o mesm
 instalou não recebe a atualização); depois do commit, confira com
 `claude plugin tag --dry-run plugins/construtor-panorama`.
 
+## [1.4.0] - 2026-11-07
+
+Imagens e banners. Até a 1.3.0 a skill sabia ligar um bloco a um tipo de banner que já existia, e mais nada:
+a tela Banners estava na lista de "não mapeadas", e ela não sabia onde a loja sobe um arquivo de imagem nem
+que endereço ele recebe. Esta versão mapeia esses cadastros em duas lojas reais, de duas famílias de tema, em
+2026-11-06: numa, acompanhando a pessoa da loja conduzir o admin; na outra, fazendo o caminho de um banner de
+ponta a ponta a pedido dela (tipo de banner novo, três artes, clone da home, cache, nitidez e conferência no
+HTML servido, no computador e no celular). A home real das duas lojas não foi tocada. A versão também corrige
+fatos que valiam só para o site novo (React) e a frase de que o admin não guarda versões anteriores, e acerta
+quem aperta `Despublicar`, `Restaurar Versão` e `Excluir`.
+
+### O que entrou
+
+- **`references/imagens-e-banners.md`**, novo:
+  - um aviso no começo: as duas homes medidas são servidas pelo site antigo (twig), e o que o arquivo diz do
+    HTML e do tamanho servido não foi medido no site novo (React/Next);
+  - de quem é cada decisão (a arte, o nome, o link e as datas são da pessoa), o que é o backup nestas telas,
+    onde quase nada é um campo de texto para copiar, e o pedido para criar: o "sim" da pessoa sobre a lista
+    escrita de cada registro (o tipo; cada arte com nome, link, ordem, datas e arquivo; cada mídia) é o
+    pedido para os `Incluir` desses cadastros, e criar página, como o clone, continua exigindo um pedido à
+    parte, que nomeie o botão e a página (seção 0);
+  - os cinco cadastros e como um alimenta o outro (Tipos de Mídia → Tamanhos dos Tipos de Mídia → Mídias;
+    Tipo de Banner → Banners), e onde cada um fica (seção 1);
+  - o caminho em cliques para subir um banner (feito de ponta a ponta numa loja) e para trocar a imagem de um
+    bloco imagem (telas lidas; a troca não foi gravada), nas seções 3 e 3b. O passo 0 da seção 3 acha, só
+    lendo, o bloco, o par dele no celular e o tipo, pelo `Blocos:` da página (`lerBlocos()`), de preferência
+    sem abrir o construtor;
+  - o atalho "Trocar só a arte", no tipo que a página já usa: ele grava direto no que está no ar, então a
+    pessoa escolhe entre ele e o caminho com clone, e ele vai com os dois aparelhos conferidos, o backup da
+    lista de artes, prévia, o "sim" e as artes novas cadastradas como `Pausado` (seção 3);
+  - como testar num clone da página, o que combinar com a pessoa antes de criá-lo e três caminhos para levar
+    o resultado à página real, nenhum deles feito numa página real (seção 4);
+  - qual Tipo de Mídia usar: ler o que a loja já usa, não escolher pelo nome (seção 5);
+  - nove armadilhas medidas e um relato da pessoa de uma das lojas, não reproduzido (seção 6);
+  - as datas de início e fim de cada arte (com hora; se a arte entra e sai sozinha não foi medido), na
+    seção 8;
+  - os passos por script (seção 9): o que funcionou, medido numa loja com a extensão do Claude para Chrome;
+    as travas de cada `Confirmar`, que num diálogo de criação é **um** clique real, nunca o composto; e o
+    construtor também pelo DOM, nunca por coordenada. E o que ainda não foi medido (seção 10).
+- **A URL das imagens**, que responde a pergunta que `mapa-do-admin.md` deixava em aberto, "onde hospedar
+  uma imagem usada num CSS" (`imagens-e-banners.md`, 2):
+  `https://storage.panoverse-cdn.com.br/<pasta-da-loja>/<código-do-tipo-de-mídia>/<id>/<arquivo>`,
+  com o nome normalizado na subida. A pasta muda de um admin para outro e vai no perfil; na página servida, a
+  imagem de um bloco ganha um sufixo de tamanho. A seção traz os passos para subir uma imagem usada num CSS,
+  com o pedido e o "sim" da pessoa.
+- **Nitidez** (`imagens-e-banners.md`, 7): o arquivo servido é uma variante no tamanho que o bloco pede, não
+  o que se enviou. Numa loja, artes de 1212×460 saíam como 606×230 e ficavam abaixo do necessário no
+  celular. A seção ensina a conta (largura em tela × `devicePixelRatio`) em três larguras, uma delas logo
+  abaixo do ponto em que o carrossel muda de itens por slide (1190 px nas duas lojas), a testar a variante
+  direto no CDN antes de mexer e a subir o tamanho do bloco mantendo a proporção, sem mexer no layout. Subir
+  o tamanho é uma proposta à pessoa, com o peso de cada opção.
+- **O cache `banner`** (`mapa-do-admin.md`, 5 e 13): outra linha na mesma tela do `loja_config`, com os
+  mesmos cuidados (filtro Loja = a sua, uma linha só, perguntar antes de limpar; a regra zero do `SKILL.md`
+  a põe ao lado do cache de configuração). Medido numa loja sem CDN: depois da limpeza, o HTML servido seguiu
+  antigo por 1 a 2 minutos, e o "Último flush" da linha não mudou. O roteiro de "mudei e não aparece"
+  (seção 13) passou a citar a arte do banner e essa linha.
+- **As lupas do construtor gravam** (`armadilhas.md` 5; `gravacao-construtor.md`, "O caminho pelo
+  construtor" e "Higiene"; `imagens-e-banners.md`, 9). O `Aplicar` continua sem gravar, mas as grades que as
+  lupas do painel abrem (Tipo de Banner, Mídia) têm `Incluir`, `Alterar` e `Excluir` do próprio cadastro.
+  Medido numa loja, em 2026-11-06: `Incluir` › `Confirmar` na lupa do Tipo de Banner criou o tipo na hora,
+  antes de qualquer `Confirmar` da página; o `Alterar` e o `Excluir` dali não foram medidos e contam como
+  gravação. Por isso, para só ler o tipo de banner ou o Tipo de Mídia de um lugar da página, o caminho é o
+  `Blocos:` pelo `Alterar` da página (aba `Configurações`, `lerBlocos()`, saída por `Cancelar`) e o `src`
+  servido, que traz o código do Tipo de Mídia, conferido na tela Único › Mídia › Tipos de Mídia. Abrir o
+  construtor da página no ar só para ler ficou desaconselhado (`armadilhas.md` 4, `blocos.md`,
+  `mapa-do-admin.md` 14 e o perfil da loja).
+- **`armadilhas.md` 36:** a tela "Logs das Páginas" (botão `Log` em Páginas), com `Restaurar Versão` e
+  `Criar nova página` — o caminho para clonar a home antes de mexer nela. ⚠️ Numa das lojas o clone nasceu
+  **publicado, com `index, follow` e no sitemap**: o item diz o que combinar antes de criar e o que conferir
+  e corrigir logo depois.
+- **O clone como rascunho** (`construtor.md`, seção 4, item 1): ao montar ou migrar uma página, o rascunho
+  pode nascer de um clone da original pelo `Log`, com o conteúdo e os ids de bloco dela. Clonar é criar
+  página: só a pessoa faz, ou pede com essas palavras. O mapa da tela Páginas (`mapa-do-admin.md`, 11)
+  ganhou o botão `Log` e os campos da aba SEO do `Alterar` (Título SEO, Descrição SEO, "Incluir página no
+  Sitemap?" e Robots). Em `mapa-do-admin.md`, 12, o caminho por script de "Criar um Arquivo novo" ficou só
+  para Tipo = Arquivo: as travas dele abortam no "Adicionar Página" de um Construtor, como o do clone, que
+  segue `imagens-e-banners.md`, 4, e `armadilhas.md` 36.
+- **Quem aperta `Despublicar`, `Restaurar Versão` e `Excluir`.** `Restaurar Versão` (no diálogo do `Log`)
+  entrou na lista de botões da regra zero (`SKILL.md`; `mapa-do-admin.md`, 11; o comentário de
+  `scripts/injetar.js`). E a regra de quem clica passou a ser, nos lugares listados abaixo, a que
+  `mapa-do-admin.md` 12, `gravacao-arquivo-e-head.md`, `ajustes-visuais.md`, `temas-sazonais.md` e
+  `scripts/injetar.js` já seguiam na 1.3.0: `Despublicar` e `Restaurar Versão` (ninguém mediu o que ele
+  restaura) são da pessoa, que clica, e a skill confere depois; `Excluir` nunca é da skill; `Publicar` segue
+  o caminho próprio, com um pedido que nomeie o botão e a página. Foram acertados a regra zero e o passo 9 de
+  "Página do construtor" (`SKILL.md`), o item 2 de "Antes de qualquer gravação" de `gravacao-construtor.md` e
+  de `gravacao-arquivo-e-head.md` (e a "Higiene" do primeiro, que pôs `Restaurar Versão` entre os botões que
+  gravam), `construtor.md` (a abertura, o backup do `Blocos:` e os passos 8 e 9), `mapa-do-admin.md` (4 e
+  11), `previa.md` ("Aprovação, gravação e conferência") e os dois README. O do repositório passou
+  `Excluir`, `Despublicar` e `Restaurar Versão` para "O que ela nunca faz"; o da pasta da skill diz que os
+  três ficam com a pessoa. A mensagem de "pronto" de `primeiro-uso.md` passou a
+  dizer que `Excluir`, `Despublicar` e `Restaurar Versão` ficam com a pessoa, e que só `Publicar` e as
+  operações em massa vão com um pedido que nomeie o botão e a página.
+- **O caminho comum** (`SKILL.md`), nos cadastros de imagem e banner: o "sim" sobre a lista escrita é o
+  pedido dos `Incluir` (passo 1); o backup é o estado que a gravação muda (passo 2); sem texto a transportar,
+  cada campo se confere pelo DOM antes de cada `Confirmar`, que num diálogo de criação é um clique real
+  (passo 4); a verificação relê a linha na grade (passo 5); e os caches são só os que a mudança toca, com a
+  linha `banner` uma vez, depois de todas as mudanças do cadastro (passo 6).
+- **Prévia e aprovação** (`previa.md`): em "Qual prévia para qual mudança", uma linha para a arte nova num
+  banner (a página num clone; sem clone, os arquivos novos ao lado das artes no ar, dizendo que não é a
+  página) e uma para a imagem de um bloco imagem (um favorito que troca o `src` na página no ar). Em
+  "Aprovação, gravação e conferência", o pedido à parte que nomeia o botão e a página ficou para a tela
+  Páginas (`Incluir` de página ou de Arquivo, inclusive o `Criar nova página` do `Log`, e `Publicar`); nos
+  cadastros Tipos de Banner, Banners e Mídias, o pedido de cada `Incluir` é o "sim" da pessoa sobre a lista
+  escrita do que vai ser criado (`imagens-e-banners.md`, seção 0).
+- **Temas de época** (`temas-sazonais.md`): as artes de banner entraram na tabela das peças de uma campanha
+  (o cadastro, as datas com hora e o cache), e o "Fim da campanha combinado" diz o que fazer com elas: a Data
+  Final alinhada com a saída do tema; uma arte para depois da campanha em cada tipo que a página usa,
+  `Ativo` e com Data Início nessa hora, para o bloco não ficar vazio, cadastrada pelo passo 0 e pelos
+  passos 0 a 4 do caminho direto de
+  `imagens-e-banners.md`, 3; como não se mediu se a Data Início a segura, a conferência no HTML servido e,
+  se ela já aparecer, a troca à mão na hora da saída; e quem confere no dia, quem faz a troca e quem pausa a
+  arte que continuar no ar.
+- **O perfil da loja** (`assets/perfil-da-loja.md`): a seção "Imagens e banners" (a pasta da loja no CDN, os
+  Tipos de Mídia usados, o tipo e o tamanho de cada lugar, se o usuário pode criar Tipo de Mídia e os clones
+  de teste), a linha `banner` na tabela de cache e, na linha Front-end, como saber pelo HTML servido se a
+  página é do site novo ou do antigo.
+- **Subir o arquivo da arte** (`imagens-e-banners.md`, 9; `ferramentas-de-navegador.md`, 7): a arte e a
+  mídia vão pela ação de upload da ferramenta, no `input` do diálogo, com o nome e o tamanho conferidos pelo
+  DOM antes do `Confirmar`; sem essa ação (o painel do aplicativo; no Codex, não medido), quem escolhe o
+  arquivo é a pessoa.
+- **O HTML do site antigo (twig)** nos blocos `imagem` e `banner` (`blocos.md`): um modelo de cada, com
+  marcadores, e o que muda o trabalho. No banner, `owl-desktop-N`/`owl-mobile-N` são os "Itens por slide",
+  e abaixo do ponto de troca lido no script da página (1190 px nas duas lojas) já vale o número do celular;
+  a Classe CSS do painel vai para o `<div>` interno; e uma imagem com `/imagem/` no caminho pode ser de um
+  banner. A classe da caixa de proporção (`.ar-…`) tem dois formatos e pode trocar ao regravar a página:
+  não se prende CSS nela.
+- `blocos.md`: os rótulos das seções GERAL e LAYOUT do painel (Nome do Bloco, Exibir em, Classe CSS,
+  Posicionamento, Alterar fundo) e "Slider infinito (loop)".
+- **A descrição da skill** (o cabeçalho de `SKILL.md`, que decide quando ela é chamada) ganhou imagens e
+  banners (subir ou trocar a arte, tipo de banner, mídias, tamanhos) e o pedido de exemplo "trocar o banner
+  da home". Saíram `block_list`, "banner" e "prateleira" da lista do construtor (o banner foi para "imagens e
+  banners") e o exemplo "refazer no site novo a página antiga" (a descrição ficou com 967 caracteres; na
+  1.3.0, 973). A migração continua em "migrar do twig para o React", e a prateleira, na tabela "Qual é o
+  pedido".
+- **Onde mais a novidade aparece:** a frase de abertura e as tabelas "Qual é o pedido" e Referências do
+  `SKILL.md`, os dois README e as descrições dos manifestos do plugin (Claude Code e Codex) e do
+  `.claude-plugin/marketplace.json` citam imagens e banners. No Codex, a descrição curta do plugin virou
+  "Visual, páginas e banners", e a da skill, em `agents/openai.yaml`, ficou mais curta e passou a citar
+  banners. Em "Testes e limites", o README do repositório conta as medições de 2026-11-06. Em "Limites
+  conhecidos", o README da pasta da skill tirou Banners das telas não mapeadas. Em `mapa-do-admin.md`, a
+  seção 0 ganhou o grupo Único › Mídia; na 14, Banners, Tipo de Banner e Mídias passaram a "Já mapeadas, em
+  arquivo próprio", "Onde hospedar uma imagem usada num CSS" saiu das pendências e entrou Único › Mídia ›
+  Propagação (aberta numa loja, sem o conteúdo lido). O catálogo da família `/dist` (`catalogo-tema-base.md`,
+  11) aponta para o arquivo novo.
+
+### O que estava errado
+
+- **"O admin não guarda versões anteriores"** (`SKILL.md`, regra zero) estava errado para as páginas do
+  construtor, que têm log de versões; para Arquivos, `<head>` e configuração da loja, não foi medido (não se
+  testou o `Log` com um Arquivo marcado, e os Arquivos são linhas da mesma tela Páginas). A frase foi
+  corrigida e diz isso; o backup local continua obrigatório, porque o log não foi medido por dentro. O mesmo
+  motivo foi acertado onde se repetia: `construtor.md` (backup do `Blocos:`), `gravacao-construtor.md`,
+  `gravacao-arquivo-e-head.md` (item 3 de "Antes de qualquer gravação"), `primeiro-uso.md` (1d) e os dois
+  README.
+- **"O clone nasce `noindex, nofollow`"** (`construtor.md`, seção 4; `armadilhas.md` 7 e 10b): numa das
+  lojas medidas ele nasceu publicado, `index, follow` e no sitemap. Agora os textos mandam conferir
+  Publicada, Robots e Página no Sitemap logo depois de criar, e separar o clone da página real pelo `#`, não
+  pelo Robots.
+- **"Página despublicada dá 404, até na prévia do construtor"** (`armadilhas.md` 6b; `construtor.md`, seção
+  4, item 2, e passo 9; `SKILL.md`, "Página do construtor"): foi medido no site novo (React/Next), e agora
+  os textos dizem isso. No site antigo (twig), a URL de uma página despublicada não foi medida, e numa loja,
+  em 2026-11-06, a prévia do construtor mostrou um clone que não estava publicado, com a arte nova. Essa
+  prévia não é a conferência no HTML servido.
+- **O bloco `imagem` "não tem wrapper próprio", o `alt` "está cravado no id do bloco" e o `object-fit` "é
+  `fill`"** (`blocos.md`; `armadilhas.md` 13 e 14; `construtor.md`, regra 2): isso vale para o site novo
+  (React/Next). Nas lojas cuja home é servida pelo site antigo (twig) — medido em duas, uma `/dist` e uma
+  `modelo-1` —, o bloco sai com wrapper e caixa de proporção, `object-fit: cover`, `loading="lazy"` e
+  `width`/`height`. O `alt` e o `title` saíram do **Nome do Bloco** do painel numa delas; na outra, o único
+  bloco imagem da home saiu com `alt=""`. O defeito do `alt` não aparece ali; os da âncora que colapsa e da
+  margem que distorce não foram testados.
+- **"O banner nativo não deixa escolher o tamanho da imagem"** (`blocos.md`; `armadilhas.md` 4;
+  `construtor.md`, regra 2; o aviso de `scripts/validar_pagina.py`): no site antigo (twig), o arquivo servido
+  é uma variante que você escolhe — pelo cadastro de Tamanhos (`-1920x496-cover`, que recorta) ou, com
+  "Tamanho personalizado" ligado, pela Largura × Altura do bloco. O bloco `code` com carrossel em CSS fica
+  como saída só do site novo. A medição de `loading` ("0 de 4 slides") também não vale no twig: do segundo
+  slide em diante ele existe.
+- **"Tipo de Banners" em Loja On-line** (`armadilhas.md`, `mapa-do-admin.md`, `blocos.md`): numa loja medida
+  o item não estava no menu (a lista inteira foi lida); na outra, não apareceu na parte visível. O caminho
+  que funcionou nas duas foi a lupa do campo Tipo de Banner. **Menus** também não estava na lista inteira;
+  os textos dizem que pode ser falta de permissão ou a tela estar em outro lugar.
+- **Os exemplos de URL de imagem** (`blocos.md`, `armadilhas.md`, `exemplo.md`) traziam o nome da pasta de
+  uma loja medida, como se fosse da plataforma. Agora usam `PASTA-DA-LOJA` (que entrou na lista de
+  marcadores do `SKILL.md`) e dizem que o trecho seguinte é o código do Tipo de Mídia, não o tipo do bloco.
+- **O código `newline='\n'`** de `gravacao-arquivo-e-head.md` (Passo A) tinha saído quebrado na 1.3.0, com
+  uma quebra de linha de verdade no lugar do `\n`. Voltou a ser `newline='\n'`.
+
+### O que ainda não foi medido
+
+- Levar o resultado de um clone para a página real: nenhum dos três caminhos de `imagens-e-banners.md`,
+  seção 4, foi feito numa página real.
+- Trocar a imagem de um bloco imagem até o fim, pelo `Blocos:` ou pela lupa do campo Mídia
+  (`imagens-e-banners.md`, 3b).
+- Pausar ou reativar uma arte pelo `Alterar`, e cadastrar uma arte já como `Pausado`: o atalho "Trocar só a
+  arte" e o desfazer de uma arte dependem disso (`imagens-e-banners.md`, 3).
+- Se a arte entra e sai sozinha pela Data Início e pela Data Final, em que fuso vale a hora e quanto os
+  caches atrasam a troca (`imagens-e-banners.md`, 8).
+- O que `Restaurar Versão` restaura, quantas versões o log guarda, se há log para Arquivos e para a
+  configuração da loja (`armadilhas.md` 36) e do que depende o clone nascer publicado ou não.
+- No site antigo (twig), o que a URL pública de uma página despublicada responde (`armadilhas.md` 6b).
+- O `Alterar` e o `Excluir` das lupas do construtor: só o `Incluir` foi medido gravando (`armadilhas.md` 5).
+- As telas Mídias, Tipos de Mídia e Tamanhos dos Tipos de Mídia foram lidas numa loja só, a da família
+  `/dist`. O resto está em `imagens-e-banners.md`, seção 10.
+
 ## [1.3.0] - 2026-11-05
 
 O Codex, da OpenAI, como segundo cliente. O formato da skill já era o que o Codex lê; esta versão acrescenta

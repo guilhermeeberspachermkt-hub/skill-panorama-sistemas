@@ -631,7 +631,8 @@ Use `.format()`, f-string ou concatenação para blocos com `@keyframes`. E para
 { "orientation": "horizontal", "columns": 1, "justify": "space-between",
   "variation": "dropdown_list", "menu": { "id": "", "nome": "" } }
 ```
-`menu` referencia um menu cadastrado em `Loja On-line → Menus`. Sem id válido não renderiza.
+`menu` referencia um menu cadastrado em `Loja On-line → Menus` (numa loja medida em 2026-11-06, o item não
+estava nesse menu: `mapa-do-admin.md`, seção 14). Sem id válido não renderiza.
 
 ### `video`
 ```jsonc
@@ -659,7 +660,8 @@ Três detalhes lidos no bundle, porque cada um custa uma rodada de teste:
 - **`dimensions.enable` VENCE `use_custom_size`**: o tamanho sai de `dimensions.width/height` quando o
   grupo está ligado, e só cai em `width`/`height` da raiz da config quando não está. Este é o **único**
   bloco do catálogo que lê `use_custom_size` no cliente (no `imagem` quem age é o servidor; no `banner`
-  o campo não faz nada).
+  do site novo o campo não faz nada; no `banner` do site antigo (twig), ligado, ele decide o tamanho do
+  arquivo servido — `imagens-e-banners.md`, 7).
 
 ### `imagem`
 ```jsonc
@@ -667,26 +669,81 @@ Três detalhes lidos no bundle, porque cada um custa uma rodada de teste:
   "midia": { "id": "", "nomeArquivo": "" }, "link": "",
   "midia_size": { "id": "", "codigo": "" } }
 ```
+
+#### ⚠️ Antes de tudo: há dois renderizadores, e o HTML do mesmo bloco muda
+
+O que esta seção diz sobre wrapper, `alt`, `object-fit` e `loading` (inclusive o `fill` e o "sem
+dimensões" dos avisos de `use_custom_size` logo abaixo) foi lido no **bundle React** ou medido no **site
+novo** (Next.js, com `__NEXT_DATA__` no HTML), numa loja medida em agosto de 2026 (a data do começo deste
+arquivo). Em **2026-11-06**, em duas lojas cuja home é servida pelo **site antigo** (twig, sem
+`__NEXT_DATA__`, carrosséis `owl-carousel`) — uma da família `/dist`, outra da `modelo-1` —, o HTML do
+mesmo bloco é outro, e melhor:
+
+```html
+<style>
+  #block-XXXX-container img{ object-fit: cover; width:100%; height:100% }
+  #block-XXXX-container .ar.ar-LARGpx-ALTpx{ padding-top: calc((ALT/LARG) * 100%) }
+</style>
+<!-- SUA-CLASSE-CSS só aparece com a Classe CSS do painel preenchida; vazia, fica só block-imagem-container -->
+<div id="block-XXXX-container" class="block-imagem-container SUA-CLASSE-CSS">
+  <!-- ar-LARGpx-ALTpx ou ar-LARG-ALT: os dois formatos convivem na mesma página -->
+  <div class="ar ar-LARGpx-ALTpx"><div class="ar-content">
+    <!-- o <a> só vem quando o bloco tem Link; sem Link, o <img> fica direto aqui -->
+    <a href="/sua/url" class="item">
+      <img alt="NOME DO BLOCO" title="NOME DO BLOCO" loading="lazy" width="LARG" height="ALT"
+           src="https://storage.panoverse-cdn.com.br/PASTA-DA-LOJA/imagem/ID/arquivo-LARGxALT.png">
+    </a>
+  </div></div>
+</div>
+```
+
+As quatro diferenças que mudam o seu trabalho:
+
+- **Tem wrapper**: `.block-imagem-container` mais uma caixa de proporção `.ar` com `padding-top` percentual,
+  gerada inline e escopada pelo id do bloco. O defeito 3 descrito mais abaixo (`alt` = id do bloco) **não**
+  aparece aí (medido; ver o próximo item). Os defeitos 1 (âncora que colapsa) e 2 (margem que distorce) vêm
+  da falta de wrapper, mas **não foram testados** no site antigo: antes de pôr margem no bloco ou de usá-lo
+  numa linha flex, confira na prévia.
+- **`alt` e `title` saem do "Nome do Bloco"** do painel (seção GERAL), não do id do bloco — medido numa das
+  lojas; na outra o único bloco imagem tinha o nome vazio e saiu `alt=""`. Então o Nome do Bloco é conteúdo
+  de SEO e de acessibilidade, não um rótulo interno: diga isso à pessoa.
+- **`object-fit` é `cover`**: a imagem **recorta**, não estica.
+- **`loading="lazy"`, `width` e `height`** já vêm postos, e o arquivo servido é a variante no Largura ×
+  Altura do bloco (`imagens-e-banners.md`, 7).
+
+⚠️ A classe `.ar-…` tem dois formatos, `ar-LARG-ALT` e `ar-LARGpx-ALTpx`, e os dois convivem na mesma
+página (medido na loja da família `/dist`). Regravar a página pelo construtor pode trocar um pelo outro
+(`ar-606-230` virou `ar-606px-230px`, medido na da `modelo-1`). Não prenda CSS nela. Prenda no
+`#block-XXXX-container`: no bloco imagem **não existe** elemento `#block-XXXX` sem o `-container`, ao
+contrário do banner. Ou prenda na Classe CSS do painel, que no bloco imagem fica **no próprio `-container`**
+(`block-imagem-container SUA-CLASSE`, visto na loja `modelo-1`; com a Classe CSS vazia, lida no painel da
+loja `/dist`, sai só `block-imagem-container`), e não num `<div>` interno como no banner. Sem Link, o bloco
+sai sem o `<a>` (visto na loja `modelo-1`): não escreva CSS ou script que dependa dele.
+
+Antes de usar qualquer fato desta seção, veja qual é o seu caso: baixe o HTML da página servida e procure
+`__NEXT_DATA__` (site novo) e `block-imagem-container` (site antigo, twig). Anote no perfil, com a data.
+
 ⚠️ `midia` é **referência a mídia cadastrada**, não URL. Páginas legadas trazem URL em string; não
 replique. Sem id de mídia válido a imagem não aparece — se você não tem o id, entregue o JSON com
 `midia` vazio e avise que alguém precisa selecionar a imagem no painel.
 
 O id da mídia **sai da URL da imagem renderizada** na página antiga:
-`.../img.panorama/imagem/{ID}/{arquivo}` — o `{ID}` (um número de 6 dígitos na loja medida) é o
-`midia.id`.
+`https://storage.panoverse-cdn.com.br/PASTA-DA-LOJA/<código-do-tipo-de-mídia>/{ID}/{arquivo}` — o `{ID}`
+(um número) é o `midia.id`. A pasta é de cada loja, e o trecho depois dela é o código do Tipo de Mídia
+(por exemplo `imagem`), não o tipo do bloco: `imagens-e-banners.md`, 2.
 
 ✅ **`use_custom_size: true` + `width`/`height` funciona, e você quase sempre quer.** Testado: o
 servidor resolve a mídia para a variante no tamanho pedido (`…/nome-do-arquivo-580x580.png`) e emite
-`width` e `height` no `<img>`. **Sem ele a imagem sai só com `loading="lazy"`, sem dimensões** — ou
-seja, o ganho de performance do bloco nativo descrito na regra 2 do `construtor.md` só vem completo
-com este campo ligado. Meça a imagem na original e passe o tamanho.
+`width` e `height` no `<img>`. **Sem ele, no site novo, a imagem sai só com `loading="lazy"`, sem
+dimensões** — ou seja, o ganho de performance do bloco nativo descrito na regra 2 do `construtor.md` só
+vem completo com este campo ligado. Meça a imagem na original e passe o tamanho.
 
 ⚠️ **Ligou `use_custom_size`? Ligue `apply_aspect_ratio: true` junto.** Sozinho, o `use_custom_size`
 trava a **altura** no valor que você passou enquanto a largura continua encolhendo com a coluna — a
-imagem **distorce**, e o `object-fit` do tema é `fill`, então ela estica mesmo. Medido: pedindo
-580×580 numa coluna de 564px, o `<img>` saiu **564×580** (proporção 0,972) no desktop; no mobile, onde
-a coluna é bem mais estreita, o esticamento fica gritante. Com `apply_aspect_ratio: true` foi para
-564×564, proporção 1,000 — sem uma linha de CSS.
+imagem **distorce**, e, no site novo, o `object-fit` do tema é `fill`, então ela estica mesmo (no site
+antigo, twig, é `cover`, e recorta). Medido: pedindo 580×580 numa coluna de 564px, o `<img>` saiu
+**564×580** (proporção 0,972) no desktop; no mobile, onde a coluna é bem mais estreita, o esticamento
+fica gritante. Com `apply_aspect_ratio: true` foi para 564×564, proporção 1,000 — sem uma linha de CSS.
 
 Corolário para a paridade: com a proporção correta, a imagem passa a caber na largura **real** da
 coluna. Se a original tinha gutter diferente do tema (10px contra 12px), a seção fica alguns pixels
@@ -696,7 +753,8 @@ mais baixa. É o preço certo a pagar — imagem distorcida é pior que 16px de 
 
 #### ⚠️ O bloco `imagem` NÃO tem wrapper próprio — e isso causa três defeitos
 
-Implementação lida do bundle do tema (`_app.js`):
+**Só no site novo (React/Next)** (ver o aviso acima). Implementação lida do bundle do tema
+(`_app.js`):
 
 ```js
 imagem: ({builderItem: e, ...t}) => {
@@ -734,7 +792,7 @@ Detalhes do mesmo componente, todos verificados:
 - **O renderizador slugifica o `nomeArquivo`**: gravei `"Banner Exemplo.jpg"` e saiu
   `banner-exemplo-600x348.jpg`. Não normalize à mão.
 - **Resolve a mídia por id em qualquer tabela**: uma mídia que vive na tabela de *banner* foi
-  referenciada num bloco `imagem` e ele emitiu `/img.panorama/banner/NNNNNN/…` sozinho.
+  referenciada num bloco `imagem` e ele emitiu `/PASTA-DA-LOJA/banner/NNNNNN/…` sozinho.
 - **Retina: peça 2× o tamanho CSS** — 116×116 para exibir em 58×58.
 
 ### `storerating` (Avaliações da Loja)
@@ -875,7 +933,8 @@ classe estável é a mesma para todas as tags — ver `armadilhas.md` 26 e 26a.
 
 ### `banner`
 ```jsonc
-{ "banner_tipo": { "id": "", "nome": "" },     // tipo cadastrado em Tipo de Banners
+{ "banner_tipo": { "id": "", "nome": "" },     // tipo de banner, escolhido pela lupa do campo
+                                               // Tipo de Banner (imagens-e-banners.md)
   "limit": 1,
   "modelo": "slider",
   "owl": { "desktop": "", "mobile": "" },
@@ -889,12 +948,70 @@ classe estável é a mesma para todas as tags — ver `armadilhas.md` 26 e 26a.
   "slider_nav": "none" }
 ```
 
-As imagens não ficam no bloco: vêm do **tipo de banner** referenciado em `banner_tipo`, cadastrado em
-`Loja On-line → Banners` e `Tipo de Banners`. `limit` controla quantas entram.
+As imagens não ficam no bloco: vêm das artes cadastradas em `Loja On-line → Banners` para o **tipo de
+banner** referenciado em `banner_tipo`. O tipo se cria e se escolhe pela lupa do campo Tipo de Banner (em
+2026-11-06 o item "Tipo de Banners" não estava no menu Loja On-line de uma loja, que teve a lista inteira
+lida, e não apareceu na parte visível do menu da outra; `imagens-e-banners.md`, 1 e 6, item 7). `limit`
+controla quantas entram.
 
 `owl` é herança de nome do Owl Carousel do site twig.
 
-#### Como o renderizador ATUAL consome o banner (testado ponta a ponta — grave e verifique)
+#### ⚠️ No site antigo (twig), o banner sai diferente (medido 2026-11-06, em duas lojas)
+
+Vale aqui o mesmo aviso da seção do bloco `imagem`: o que vem depois foi lido no bundle React do site novo.
+Nas duas lojas de 2026-11-06, cuja home é servida pelo site antigo (twig), a página entrega:
+
+```html
+<div id="block-XXXX-container" class="builder-block block-banner-container">
+  <div id="block-XXXX" class="SUA-CLASSE-CSS with-slider owl-carousel owl-desktop-N owl-mobile-N
+                               [with-dots] [with-nav with-nav-inside | with-nav with-nav-outside]">
+    <!-- with-dots e with-nav*: conforme Paginação e Setas (medido: Setas "Por dentro" = with-nav with-nav-inside;
+         Paginação desligada = sem with-dots). with-nav with-nav-outside saiu noutro banner da mesma loja, cujo
+         painel não foi aberto: que venha de Setas "Por fora" não foi conferido. Um bloco medido não tinha
+         nenhuma das duas. -->
+    <!-- caixa de proporção, nem sempre: <div class="ar ar-LARG-ALT"><div class="ar-content">, ou ar-LARGpx-ALTpx
+         depois de regravar pelo construtor (imagens-e-banners.md, 6, item 9). Veio com "Tamanho personalizado" e
+         "Manter proporção" ligados, e não veio com os dois desligados; não se isolou qual dos dois a gera. -->
+    <a data-t="NOME DO BANNER" href="/link-do-banner" class="item">
+      <!-- style="aspect-ratio": em todos os banners de uma das lojas; na outra, ausente na home e presente só
+           no bloco editado e regravado num clone -->
+      <img [style="aspect-ratio: LARG / ALT;"] alt="NOME DO BANNER" title="NOME DO BANNER"
+           src="https://storage.panoverse-cdn.com.br/PASTA-DA-LOJA/CODIGO-DO-TIPO/ID/arquivo-LARGxALT[-cover].png" />
+    </a>
+```
+
+- **O arquivo servido é uma variante, não o master — e você escolhe o tamanho.** Com "Tamanho
+  personalizado" desligado, vem o tamanho da linha do cadastro **Único › Mídia › Tamanhos dos Tipos de
+  Mídia** que o campo **Tamanho da Mídia** do painel aponta, com o encaixe dela (medido uma vez: o campo
+  mostrava o `#` e o código dessa linha, e o servido foi `-1920x496-cover`, Cover, Crop Sim: **recorta**.
+  Não se testou trocar o campo). Com ele ligado, vem a Largura × Altura do bloco (medido: `-606x230`,
+  depois `-909x345`), dentro de uma caixa `.ar` de proporção. A regra de decisão mais abaixo ("se o master
+  não serve, é bloco `code`") vale só para o site novo. Detalhe e a conta de nitidez em
+  `imagens-e-banners.md`, 7.
+- **`loading="lazy"` existe**, do segundo slide em diante (o primeiro vem sem, que é o certo para o LCP).
+  A medição de "0 de 4 slides" vale para o site novo.
+- **`alt` e `title` saem do Nome do banner no cadastro**, e o link vai no `<a class="item">`, com o nome
+  repetido em `data-t`. Medido na loja da família `modelo-1` (os nomes gravados saíram assim); na da
+  `/dist`, `alt`, `title` e `data-t` vinham iguais entre si, sem comparar com o cadastro.
+- **`owl-desktop-N` / `owl-mobile-N` são os "Itens por slide" do painel.** Um bloco com `owl-desktop-3
+  owl-mobile-1` mostra três artes lado a lado no computador e uma por vez no celular. O ponto de troca está
+  no script do carrossel, logo depois das artes no HTML servido: nas duas lojas de 2026-11-06,
+  `responsive:{0:{items:<celular>,…},1190:{items:<computador>,…}}`. Ou seja, **abaixo de 1190 px de largura
+  de janela já vale o número do celular**: uma por vez, com a imagem bem maior (medido na loja da família
+  `modelo-1` em 1024 px: 994 px de largura; logo abaixo de 1190 fica maior ainda). Leia o número no script
+  da página, não suponha. Detalhe em `imagens-e-banners.md`, 7.
+- **A Classe CSS do painel (seção LAYOUT) vai para o `<div>` interno**, junto com as classes do carrossel —
+  não para o `-container`. É nela que o seu CSS se segura; leia a classe no HTML servido ou no `config.class`
+  do bloco, pelo caminho só de leitura (Páginas › marcar a linha › `Alterar` › aba `Configurações` ›
+  `lerBlocos()`, saindo por `Cancelar`; `armadilhas.md` 4), nunca suponha (ela é texto livre, escrito por
+  quem montou a página). Não abra o construtor da página no ar só para ler: as lupas do painel têm
+  `Incluir`, `Alterar` e `Excluir`, e numa loja medida em 2026-11-06 o `Incluir` gravou na hora
+  (`armadilhas.md` 5).
+- **Imagens com o caminho `/imagem/` podem ser de um banner.** Se o tipo de banner usa o Tipo de Mídia
+  "Imagem", as artes dele saem em `…/imagem/ID/…`, como as do bloco imagem: identifique o bloco pelo HTML
+  (`data-t` e `owl-carousel`), não pela URL.
+
+#### Como o renderizador do site novo (React) consome o banner (testado ponta a ponta — grave e verifique)
 
 Confirmado gravando pelo campo `Blocos:` e lendo `__NEXT_DATA__` na URL pública. **Importante, porque o
 formato ENTREGUE engana:**
@@ -998,18 +1115,29 @@ Seção **MODELO**:
 | Numeração (ex: 2/5) | `slider_page_info` | bool |
 | Avançar slides automaticamente | `slider_autoplay` | bool |
 | Avançar a cada N segundos | `slider_autoplay_speed` | número |
-| (loop) | `slider_loop` | bool |
+| Slider infinito (loop) | `slider_loop` | bool (o rótulo foi lido no painel em 2026-11-06) |
 
-Seções **GERAL** e **LAYOUT**: iguais a todo bloco (`name`, `device_show`, e a config base).
+Seções **GERAL** e **LAYOUT**: iguais a todo bloco (`name`, `device_show`, e a config base). Rótulos lidos
+no painel em 2026-11-06: GERAL = **Nome do Bloco** (vira o `alt`/`title` no bloco `imagem` do site antigo,
+twig) e **Exibir em** (Computador · Celular · Ambos · Nenhum; um bloco que não vale para a vista escolhida
+aparece apagado na lista de componentes); LAYOUT = **Ajustar padding & margin**, **Classe CSS** (texto
+livre), **Posicionamento** (Padrão · Absoluto · Fixo · Relativo) e **Alterar fundo**.
 `grid_row_gap`, `list_show_title`, `show_item_title` aparecem conforme o `modelo` (grid/listagem).
 
-#### ⚠️ Tamanho da imagem do banner: você **não** controla no nativo
+#### ⚠️ Tamanho da imagem do banner no site novo (React): você **não** controla no nativo
 
-Fecha a conclusão da seção acima, com a distinção que importa: o **arquivo** exibido é sempre o master
-do `banner_tipo` — `midia_size` e `use_size_via_css` não chegam ao componente e não existe campo que
-troque a resolução. O que você controla é o **espaço que o slide ocupa**, por `apply_aspect_ratio` +
-`width`/`height` (ver acima) — e para isso a proporção certa é a **do master**, porque proporção
-diferente deforma. Se o próprio arquivo não serve, é bloco `code`, não ajuste de config.
+No site novo, fecha a conclusão da seção acima, com a distinção que importa: o **arquivo** exibido é
+sempre o master do `banner_tipo` — `midia_size` e `use_size_via_css` não chegam ao componente e não existe
+campo que troque a resolução. O que você controla é o **espaço que o slide ocupa**, por
+`apply_aspect_ratio` + `width`/`height` (ver acima) — e para isso a proporção certa é a **do master**,
+porque proporção diferente deforma. Se o próprio arquivo não serve, é bloco `code`, não ajuste de config.
+
+No site antigo (twig) foi o contrário, medido em duas lojas em 2026-11-06: o arquivo servido era uma
+variante, não o master. Com "Tamanho personalizado" desligado, vinha o tamanho do cadastro Tamanhos dos
+Tipos de Mídia, com o encaixe dele (`-1920x496-cover`, o tamanho que o campo Tamanho da Mídia do bloco
+mostrava). Com ele ligado, vinha a Largura × Altura do bloco (`-606x230`, depois `-909x345`). Ver o aviso
+"No site antigo (twig), o banner sai diferente", acima, e `imagens-e-banners.md`, 7. Antes de seguir esta
+seção, confira qual é o seu caso pelo `__NEXT_DATA__` no HTML servido.
 
 A largura do *container* é assunto separado: no site novo `.container` é estreito (Bootstrap, ~720px numa
 viewport de ~950px), diferente do `.container` largo do site antigo (~100% até 1320px, na página onde
@@ -1316,8 +1444,10 @@ tema; espaçamento e arranjo interno → config nativa.**
 
 Duas fontes diferentes, e nenhuma das duas é "peça para o usuário":
 
-- **Id de mídia individual → da URL renderizada.** `.../img.panorama/{banner|imagem}/{ID}/{arquivo}`.
-  Para uma imagem solta (fundo de hero, ilustração de seção) basta ler a página pública.
+- **Id de mídia individual → da URL renderizada.** `.../PASTA-DA-LOJA/<código-do-tipo-de-mídia>/{ID}/{arquivo}`
+  (a pasta é de cada loja; o trecho depois dela é o código do Tipo de Mídia, como `imagem` ou `banner`:
+  `imagens-e-banners.md`, 2). Para uma imagem solta (fundo de hero, ilustração de seção) basta ler a
+  página pública.
 - **Id de tipo de banner e de vitrine → do campo `Blocos:` da página de origem.** Esses **não**
   aparecem na página renderizada, porque o servidor resolve o agrupamento e entrega só a lista pronta
   (renomeada para `bannerlist`). Mas eles estão guardados no JSON do admin: `config.vitrine.vit_id` e

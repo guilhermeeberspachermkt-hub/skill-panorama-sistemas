@@ -1,16 +1,16 @@
 ---
 name: construtor-panorama
-description: Mexe no site de uma loja da plataforma Panorama Sistemas pelo admin dela, com segurança. Cobre páginas do construtor (criar, migrar do twig para o React, editar, syncData, JSON de blocos, block_list, Box, vitrine, banner, grid, prateleira, Expansível), ajustes visuais (cores, fontes, botões, menu, cards, selo de desconto, estilizar o layout ou deixar mais agressivo), temas de época (Black Friday, Natal, Esquenta, agenda de skins/Skin Json Input, barra promocional com contagem, Barra do Topo) e telas de configuração da loja (código no head, logo, arquivos CSS/JS, qual é a home). Use sempre que a pessoa falar do admin da Panorama, de uma página do site ou da aparência da loja, mesmo sem citar a plataforma ("quero o botão verde", "a barra sumiu", "refazer no site novo a página antiga", "mudei e não aparece"), e em dúvidas de cache (CDN, Cloudflare). Na primeira vez com uma loja, faz a configuração inicial, sem mudar nada na loja, e guarda um perfil privado dela.
+description: Mexe no site de uma loja da Panorama Sistemas pelo admin, com segurança. Cobre páginas do construtor (criar, migrar do twig para o React, editar, syncData, JSON de blocos, Box, vitrine, grid, Expansível), ajustes visuais (cores, fontes, botões, menu, cards, selo de desconto, estilizar o layout ou deixar mais agressivo), temas de época (Black Friday, Natal, Esquenta, agenda de skins/Skin Json Input, barra promocional com contagem, Barra do Topo), imagens e banners (subir ou trocar a arte, tipo de banner, mídias, tamanhos) e telas de configuração da loja (código no head, logo, arquivos CSS/JS, qual é a home). Use sempre que a pessoa falar do admin da Panorama, de uma página ou da aparência do site, mesmo sem citar a plataforma ("quero o botão verde", "a barra sumiu", "trocar o banner da home", "mudei e não aparece"), e em dúvidas de cache (CDN, Cloudflare). Na primeira vez com uma loja, faz a configuração inicial sem mudar nada e guarda um perfil privado.
 ---
 
 # Lojas na Panorama Sistemas: páginas, visual e configuração
 
 Esta skill ajuda a mudar o site de uma loja que roda na plataforma Panorama Sistemas, pelo admin da própria
-loja: montar páginas no construtor, ajustar o visual por CSS, ligar temas de época e mexer nas telas de
-configuração. Ela foi escrita a partir de trabalho real em lojas da plataforma. Os números citados nos
-arquivos (tamanhos, contagens, tempos) são medições; os identificadores de cada loja (número da loja, `#` das
-páginas, nomes de arquivo, domínio) não estão aqui, porque cada cliente cria os seus. Eles ficam no perfil da
-loja.
+loja: montar páginas no construtor, ajustar o visual por CSS, ligar temas de época, subir e trocar imagens e
+banners e mexer nas telas de configuração. Ela foi escrita a partir de trabalho real em lojas da plataforma.
+Os números citados nos arquivos (tamanhos, contagens, tempos) são medições; os identificadores de cada loja
+(número da loja, `#` das páginas, nomes de arquivo, domínio) não estão aqui, porque cada cliente cria os
+seus. Eles ficam no perfil da loja.
 
 A pessoa pode chamar as coisas pelo nome da tela ou por nomes técnicos: syncData, twig e React (o site
 antigo e o novo), Skin Json Input (a agenda de skins), SCSS de Personalização, `customCodeOnHead`,
@@ -23,9 +23,12 @@ português simples.
 
 ## Regra zero: o admin é produção, e boa parte dele não é sua
 
-Não existe ambiente de teste no admin: cada `Confirmar` vale na hora para todo visitante, o admin não guarda
-versões anteriores, várias pessoas trabalham na mesma grade sem aviso de edição concorrente, e quase nenhum
-erro aparece como erro. Por isso:
+Não existe ambiente de teste no admin: cada `Confirmar` vale na hora para todo visitante, várias pessoas
+trabalham na mesma grade sem aviso de edição concorrente, e quase nenhum erro aparece como erro. Fora das
+páginas do construtor (um Arquivo, o `<head>`, a agenda), conte que o admin **não guarda versões
+anteriores** do que você gravar e que o que havia ali se perde no `Confirmar`: não se mediu se há algum
+histórico de versões ali. As páginas do construtor têm um log de versões (`armadilhas.md` 36), não medido
+por dentro — ele não substitui o seu backup. Por isso:
 
 - **Trabalhe só no que a pessoa nomeou.** Se ela não disse em qual página, arquivo ou campo gravar,
   pergunte. Não escolha uma página "parecida", não crie página nova por conta própria, não reaproveite uma
@@ -50,23 +53,30 @@ erro aparece como erro. Por isso:
   outra pessoa mexeu, e você conversa antes de sobrescrever.
 - **Mostre antes de gravar.** Mudança visual vai primeiro como prévia, no navegador, sem gravar nada
   (`references/previa.md`). Diga em uma frase o que muda, onde, quem vê e como desfazer, e grave só depois de
-  um "sim" claro sobre aquela prévia. Pular a prévia só se a pessoa pedir com essas palavras.
+  um "sim" claro sobre aquela prévia. Pular a prévia só se a pessoa pedir com essas palavras. Num banner, a
+  prévia na página é um clone ligado a um tipo novo, e montá-la já grava no admin (o tipo, as artes, o
+  clone): cada registro com o "sim" sobre a lista escrita (`imagens-e-banners.md`, seção 0), e o clone com o
+  pedido à parte que nomeia `Criar nova página` (`previa.md`, tabela).
 - **O estado da pessoa no site é dela.** Sacola, login e aceite de cookies: pôr um produto na sacola para
   testar não é compra, mas muda o carrinho dela (com a extensão, a sua aba usa a sessão dela no site e no
   admin). Antes, prefira um render local ou uma simulação na sua aba, uma sessão que não é a dela (nela,
   peça antes também: pôr na sacola ali pode contar nas medições da loja), ou um print que ela mesma tire.
   Mexer no estado dela só com o OK dela para aquela ação, nunca além da sacola (sem checkout, pagamento ou
   dados de conta), tirando depois o que pôs (`references/previa.md`).
-- **Nunca, sem pedido explícito e específico:** `Excluir` · `Publicar` · `Despublicar` · `Ordenação` ·
-  `Atualizar View de Acesso as Páginas`. Os três primeiros mudam o site no ar; os dois últimos agem sobre o
-  admin inteiro, não sobre a linha selecionada. Se a tarefa parecer exigir um deles, pare e pergunte. Um
-  "aprovado" sobre a prévia não é pedido de nenhum deles: o pedido nomeia o botão e a página (`previa.md`).
+- **Nunca, sem pedido explícito e específico:** `Excluir` · `Publicar` · `Despublicar` · `Restaurar Versão`
+  · `Ordenação` · `Atualizar View de Acesso as Páginas`. Os quatro primeiros mudam o site no ar; os dois
+  últimos agem sobre o admin inteiro, não sobre a linha selecionada. Se a tarefa parecer exigir um deles,
+  pare e pergunte. Um "aprovado" sobre a prévia não é pedido de nenhum deles: o pedido nomeia o botão e a
+  página (`previa.md`).
   Com o pedido, o `Publicar` por script tem caminho próprio, que confere a linha e o modal e só aponta o
   botão para um clique seu (`gravacao-arquivo-e-head.md`, "Publicar, quando a pessoa pede"); os outros
-  quatro não têm caminho por script.
-  `Limpar cache` é aceitável na linha que você acabou de gravar; o cache de configuração da loja, pergunte
-  antes (ou faça, se a pessoa pediu; em muitas lojas é ela quem limpa). Nesta skill, **pôr no ar** é o
-  processo (gravar, número novo no `<head>`, caches, conferir); **`Publicar`** é só o botão da tela Páginas.
+  cinco não têm caminho por script. `Despublicar` e `Restaurar Versão` (no diálogo do `Log`, `armadilhas.md`
+  36; ninguém mediu o que ele restaura) são da pessoa: ela clica, e você confere depois; `Excluir` nunca é
+  da skill.
+  `Limpar cache` é aceitável na linha que você acabou de gravar; o cache de configuração da loja e a linha
+  `banner` (a dos banners da loja inteira: `imagens-e-banners.md`, seção 3, passo 5), pergunte antes (ou
+  faça, se a pessoa pediu; em muitas lojas é ela quem limpa). Nesta skill, **pôr no ar** é o processo
+  (gravar, número novo no `<head>`, caches, conferir); **`Publicar`** é só o botão da tela Páginas.
 - **Configuração da loja é o site inteiro.** `<head>`, agenda de skins, Barra do Topo, logo e SCSS de
   Personalização valem para todas as páginas. Antes de gravar ali, pergunte se alguém (a pessoa ou outra
   pessoa da loja) está com o diálogo Configurações aberto, em outra aba ou em outro computador, e peça para
@@ -137,8 +147,8 @@ combinada com a pessoa.
    histórico (data, o que mudou, onde, backup, como desfazer) e as manias do tema que você descobriu.
 
 Nos arquivos da skill, `#NNNNNN`, `loja N`, `admin.SUA-LOJA.com.br`, `www.SUA-LOJA.com.br`, `/seu-tema.css`,
-`.SEU-BODY-CLASS`, `sua-classe`, `skin-...` e `#RRGGBB` são marcadores. Os valores reais saem do perfil; nunca
-reaproveite um número de exemplo.
+`.SEU-BODY-CLASS`, `sua-classe`, `PASTA-DA-LOJA` (a pasta da loja no CDN de imagens), `block-XXXX`, `skin-...`
+e `#RRGGBB` são marcadores. Os valores reais saem do perfil; nunca reaproveite um número de exemplo.
 
 ### Família do tema: onde cada fato foi medido
 
@@ -171,6 +181,7 @@ são outro sistema; se uma chave da configuração existe; e se o logo SVG traz 
 | A pessoa quer... | É trabalho de | Leia |
 |---|---|---|
 | criar, migrar, refazer ou editar uma página montada no construtor (seções, vitrine, banner, FAQ, grid, prateleira) | **página do construtor** | `references/construtor.md`, depois `blocos.md` e `exemplo.md` |
+| trocar a arte de um banner ou a imagem de um bloco imagem, subir uma imagem nova, criar um tipo de banner, imagem borrada ou pesada, hospedar uma imagem para usar num CSS | **imagens e banners** | `references/imagens-e-banners.md` |
 | mudar cor, fonte, tamanho, espaço, botão, card de produto, selo, menu, cabeçalho, rodapé ou aviso, em uma ou em várias páginas | **ajuste visual por CSS** | `references/ajustes-visuais.md`, e o catálogo da família do tema para o seletor (`catalogo-tema-base.md` ou `catalogo-modelo-1.md`) |
 | mudar a cara do site, estilizar o layout, algo "mais agressivo" ou "mais moderno" (uma linguagem visual nova, não um ajuste pontual) | **proposta de estilo** | `references/criterios-de-design.md`, seção 4; depois `ajustes-visuais.md` (e `temas-sazonais.md`, se for de época) |
 | um tema de data (Black Friday, Natal, Esquenta, Dia das Mães), barra promocional com contagem, selo de campanha | **tema sazonal** | `references/temas-sazonais.md` |
@@ -216,10 +227,12 @@ escrever ferramenta nova de print ou de medida.
 ### Página do construtor
 
 Antes de tudo, combine três coisas: o `#` da página de rascunho (se a loja não tem, quem cria é a pessoa:
-roteiro em `references/construtor.md`, seção 4), a autorização para publicar esse rascunho (página
-despublicada dá 404, então sem publicar não há verificação) e uma página de controle que você não vai tocar.
-Os passos abaixo seguem a numeração de `references/construtor.md`, que os outros arquivos citam como
-"passo N":
+roteiro em `references/construtor.md`, seção 4), a autorização para publicar esse rascunho e uma página de
+controle que você não vai tocar. No site novo (React/Next), página despublicada dá 404, até na prévia do
+construtor, então ali sem publicar não há verificação (`armadilhas.md` 6b); no site antigo (twig), a URL
+dela não foi medida, e numa loja (2026-11-06) a prévia do construtor mostrou um clone despublicado
+(`imagens-e-banners.md`, seção 4). Os passos abaixo seguem a numeração de `references/construtor.md`, que
+os outros arquivos citam como "passo N":
 
 1. Baixe a original e a de controle (computador e celular); leia a árvore pelo HTML (`#area-body
    [id^=block-]`), separando o que é página do que é tema.
@@ -239,9 +252,10 @@ Os passos abaixo seguem a numeração de `references/construtor.md`, que os outr
    migração), não. Mande o endereço do rascunho e os prints lado a lado com a original (computador e
    celular), e espere o "aprovado" sobre essa versão. Qualquer ajuste depois pede nova rodada.
 9. **Levar para a página real** é outra gravação no site no ar (`construtor.md`, passo 9). A pessoa escolhe
-   o caminho, e cada botão (`Publicar`, `Despublicar`, troca de URL) só com um pedido que o nomeie: o
-   "aprovado" sobre o rascunho aprova o conteúdo, não aperta botão (se a resposta vier com "publicar",
-   separe as duas coisas antes: `previa.md`, "Aprovação, gravação e conferência").
+   o caminho; o `Publicar` e a troca de URL, só com um pedido que os nomeie, e o `Despublicar` é dela (ela
+   clica, e você confere depois). O "aprovado" sobre o rascunho aprova o conteúdo, não aperta botão (se a
+   resposta vier com "publicar", separe as duas coisas antes: `previa.md`, "Aprovação, gravação e
+   conferência").
 
 **Edição pontual numa página que já está no ar** (duas perguntas a mais no FAQ, um texto trocado): o alvo é a
 página que a pessoa nomeou, e o caminho curto está em `references/construtor.md`, seção 7: perguntar se
@@ -335,17 +349,26 @@ perguntas deixadas para depois sem anotação nunca foram feitas (`primeiro-uso.
    explicação do que muda. **Nunca espere a resposta da pessoa com um diálogo do admin aberto:** peça o
    "sim" com o diálogo fechado (saia por `Cancelar` antes de perguntar) e, depois dele, abra de novo e faça
    o passo 3 logo antes de gravar. Medido no Codex, 2026-11-04: o diálogo aberto antes da pergunta tinha
-   sumido quando o "sim" chegou, e a trava parou a gravação.
-2. **Backup** do valor atual, num arquivo local com data.
+   sumido quando o "sim" chegou, e a trava parou a gravação. Nos cadastros de imagem e banner (Tipo de
+   Banner, Banners, Mídias), o "sim" sobre a lista escrita de cada registro a criar é também o pedido desses
+   `Incluir` (`references/imagens-e-banners.md`, seção 0). Para criar página (inclusive o clone pelo `Log`),
+   continua valendo o pedido à parte que nomeia o botão (`previa.md`).
+2. **Backup** do valor atual, num arquivo local com data (num cadastro de imagem ou banner, o estado que a
+   gravação muda: `imagens-e-banners.md`, seção 0).
 3. **Comparação**: o valor no admin ainda é o do backup, conferida no mesmo diálogo que vai receber a
    gravação, sem espera entre ela e o passo 4.
 4. **Gravar só o alvo**, com o texto transportado e conferido por sha256 dentro da página
    (`references/gravacao-construtor.md` para páginas do construtor; `references/gravacao-arquivo-e-head.md`
-   para Arquivos e configuração da loja).
-5. **Verificar na fonte**: fechar, reabrir e comparar o campo.
-6. **Caches, na ordem** (`references/mapa-do-admin.md`, seção 5): arquivo (cache-buster novo no `<head>`),
-   configuração da loja, página e a borda do CDN, onde houver (o Cloudflare, numa loja medida; o perfil diz
-   se a sua tem).
+   para Arquivos e configuração da loja). Nos cadastros de imagem e banner não há texto a transportar nem
+   função que grave: confira cada campo pelo DOM antes de cada `Confirmar` (o de um diálogo de criação é
+   **um** clique real: `imagens-e-banners.md`, seção 9).
+5. **Verificar na fonte**: fechar, reabrir e comparar o campo (num cadastro, reler a linha na grade; por
+   script, `angular.element(tr).scope().row`: `imagens-e-banners.md`, seção 9).
+6. **Caches, na ordem** (`references/mapa-do-admin.md`, seção 5), só os que a mudança toca: arquivo
+   (cache-buster novo no `<head>`), configuração da loja, página e a borda do CDN, onde houver (o Cloudflare,
+   numa loja medida; o perfil diz se a sua tem). Numa arte de banner, a linha `banner` de Administrador ›
+   Cache, uma vez, depois de todas as mudanças do cadastro (`imagens-e-banners.md`, seção 3, passo 5). A de
+   configuração e a `banner`: pergunte antes (regra zero).
 7. **Conferir no ar**, computador e celular, com uma query nova (`?nc=...`), contra a prévia aprovada.
 8. **Atualizar o perfil**: histórico, backup e como desfazer.
 
@@ -456,6 +479,7 @@ na conferência:
 | `assets/plano-revisao.mjs` | Modelo comentado de plano do `rev.mjs` para a revisão profunda da versão escolhida. |
 | `references/construtor.md` | Página do construtor: as duas raízes, as quatro regras, o fluxo em nove passos (do backup do `Blocos:` à aprovação e à página real), a verificação e a edição pontual numa página que já está no ar. |
 | `references/blocos.md` | Sempre que for gerar JSON: os 13 tipos (+ `accordion`), config base e específica, dicionário interface ↔ JSON, receitas de grid, tipos de página. |
+| `references/imagens-e-banners.md` | Subir ou trocar a arte de um banner, trocar a imagem de um bloco imagem, hospedar uma imagem para um CSS: os cinco cadastros (Tipos de Mídia, Tamanhos, Mídias, Tipo de Banner, Banners), a URL das imagens no CDN, o caminho inteiro em cliques, testar num clone da página, o cache `banner`, a nitidez (o tamanho que o bloco pede contra a tela), as datas de início e fim, os passos por script e as armadilhas medidas. |
 | `references/exemplo.md` | Ao migrar uma página do site antigo: caso completo, do HTML antigo ao JSON novo, e o script que lê a árvore. |
 | `references/armadilhas.md` | Antes de estimar prazo ou prometer paridade; quando algo não bate. Itens numerados, citados pelos outros arquivos. |
 | `references/ajustes-visuais.md` | Ajuste visual por CSS (e JS quando precisa): os dois modos, de onde vem um estilo, onde pôr, prévia, teste, pôr no ar, desfazer, a primeira vez sem arquivo próprio; na 2.6, levar um elemento do tema para outro lugar por JS (f), a mudança em duas peças com aperto de mão e reserva de espaço (g) e o `defer` (h). |

@@ -29,13 +29,16 @@ em silêncio. E aqui o alcance é o site inteiro, em todas as páginas e nos doi
 1. **Leia o perfil da loja.** Ele traz o número da loja, o endereço do admin, o domínio como aparece na
    grade de Lojas e a tabela de arquivos com o número de versão atual de cada um.
 2. **Grave só o que a pessoa pediu, no lugar que ela indicou** (a regra zero do `SKILL.md`). Diga antes, em
-   português simples, o que vai mudar e onde, e espere a resposta. `Excluir`, `Publicar` e `Despublicar`
-   só com um pedido à parte que nomeie o botão e a página: um "aprovado" sobre a prévia não é esse pedido
-   (`previa.md`, "Aprovação, gravação e conferência"). Com esse pedido, o `Publicar` por script segue
-   "Publicar, quando a pessoa pede" (e criar um Arquivo, "Criar um Arquivo novo"), no fim deste arquivo;
-   `Excluir` e `Despublicar` não têm caminho por script.
+   português simples, o que vai mudar e onde, e espere a resposta. `Publicar`, e criar um Arquivo, só com um
+   pedido à parte que nomeie o botão e a página: um "aprovado" sobre a prévia não é esse pedido (`previa.md`,
+   "Aprovação, gravação e conferência"). Com esse pedido, siga "Publicar, quando a pessoa pede" e "Criar um
+   Arquivo novo", no fim deste arquivo. `Despublicar` e `Restaurar Versão` (no diálogo do `Log`; ninguém
+   mediu o que ele faz, `armadilhas.md` 36) são da pessoa: ela clica, e você confere depois. `Excluir` nunca
+   é da skill.
 3. **Guarde o valor atual num arquivo local antes de trocar**, com a data no nome, na pasta de backups do
-   perfil. O admin não guarda versões anteriores: sem esse arquivo não há como voltar.
+   perfil. Conte que o admin não guarda versões anteriores de um Arquivo nem da configuração da loja: não se
+   mediu se há histórico ali (um Arquivo é uma linha da tela Páginas, mas o `Log` dessa tela só foi medido
+   com páginas do construtor, `armadilhas.md` 36). Sem esse arquivo, não há volta garantida.
 4. **Mostre a prévia antes**, quando a mudança é visual (`previa.md`), e grave exatamente o que foi
    aprovado.
 5. **Pergunte se alguém (a pessoa ou outra pessoa da loja, em outra aba ou em outro computador) está com o
@@ -141,16 +144,15 @@ cliques, para a pessoa, `ajustes-visuais.md`, seção 5.6).
    idêntico:
    - CSS: versão no ar + seção nova no fim, separada por uma quebra de linha. Confira que o começo da versão
      nova é **byte a byte** a versão no ar (`novo[:len(atual)] == atual`), que `{` e `}` fecham, e que não
-     entrou CR (no Windows, o Python em modo texto grava CRLF: abra o arquivo com `newline='
-'`, ou grave
-     bytes; o `montar_tema.py` recusa CR, medido). Um script pronto está em `ajustes-visuais.md`, seção 5.2. Com `montar_tema.py --publicar`, o
-     que vai para o admin é a **versão de publicar** (a versão no ar, byte a byte, seguida das seções novas
-     sem comentários, cada uma com a linha de cabeçalho dela): é dela o arquivo novo dos passos seguintes. A
-     prévia da pessoa é a de acréscimo, só com as seções (o sha aprovado é o delas), e você confere 0
-     diferenças entre ela e o arquivo inteiro (`previa.md`, "Favorito grande"). A versão de trabalho,
-     comentada, fica na pasta `trabalho/` do perfil; os três sha (seções, versão de publicar e versão de
-     trabalho) vão para o histórico. Com a versão comentada guardada no admin (`ajustes-visuais.md`, 5.2, "A
-     versão comentada no admin"), é diferente:
+     entrou CR (no Windows, o Python em modo texto grava CRLF: abra o arquivo com `newline='\n'`, ou grave
+     bytes; o `montar_tema.py` recusa CR, medido). Um script pronto está em `ajustes-visuais.md`, seção 5.2.
+     Com `montar_tema.py --publicar`, o que vai para o admin é a **versão de publicar** (a versão no ar, byte
+     a byte, seguida das seções novas sem comentários, cada uma com a linha de cabeçalho dela): é dela o
+     arquivo novo dos passos seguintes. A prévia da pessoa é a de acréscimo, só com as seções (o sha aprovado
+     é o delas), e você confere 0 diferenças entre ela e o arquivo inteiro (`previa.md`, "Favorito grande").
+     A versão de trabalho, comentada, fica na pasta `trabalho/` do perfil; os três sha (seções, versão de
+     publicar e versão de trabalho) vão para o histórico. Com a versão comentada guardada no admin
+     (`ajustes-visuais.md`, 5.2, "A versão comentada no admin"), é diferente:
      - a base é a comentada. A página dela é despublicada, e o `?nc=` do item 1 dá 404: o backup é a cópia
        local de `trabalho/`, provada igual à do admin pelo `conferirArquivoAtual` no Passo C;
      - o que vai para o Arquivo do site é a enxuta do `enxugar_tema.py`;
@@ -643,7 +645,7 @@ O passo 1 sozinho só é seguro com o aperto de mão: a origem responde a qualqu
 (`armadilhas.md` 33), então, sem ele, gravar o CSS já põe a parte dele no ar para quem não tem cópia guardada,
 antes de o número subir. Com ele, uma cópia velha também não faz estrago: numa loja medida, com CDN na frente,
 minutos depois da limpeza, uma cópia do HTML do celular na borda dele ainda trazia o número antigo; quem a
-recebeu via o site antigo inteiro, não meia mudança (por dedução: o HTML antigo não carrega o JS, e o CSS novo
+recebeu via o site como estava, não meia mudança (por dedução: o HTML antigo não carrega o JS, e o CSS novo
 sem o JS não age). Num tema de época cuja classe já está no ar, o passo 1 é o lançamento da parte do CSS que
 não depende do JS: grave só o que foi aprovado (`temas-sazonais.md`, 3, "Quando a classe do tema já está no
 ar").

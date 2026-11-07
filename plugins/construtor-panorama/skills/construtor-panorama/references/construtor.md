@@ -16,8 +16,8 @@ Se a sua loja só tem um front-end, o reconhecimento (`reconhecimento-da-loja.md
 partes sobre migração twig → React valem só para quem migra; o formato do JSON, as duas raízes, as quatro
 regras e a verificação valem para qualquer página do construtor.
 
-A regra zero do `SKILL.md` (em qual página gravar, backup, nunca `Excluir`/`Publicar` sem pedido) vale
-inteira aqui. Esta página trata do que é próprio do construtor.
+A regra zero do `SKILL.md` (em qual página gravar, backup, `Publicar` só com pedido, `Excluir` nunca pela
+skill) vale inteira aqui. Esta página trata do que é próprio do construtor.
 
 ## Sumário
 
@@ -115,11 +115,13 @@ repete. A busca por URL, aliás, não acha slug com hífen (ver `gravacao-constr
 
 ### Backup do `Blocos:` num arquivo local, e a comparação antes de gravar
 
-Antes de sobrescrever qualquer coisa, guarde o conteúdo atual do campo `Blocos:` num arquivo local: o admin
-não guarda versões anteriores, e sem backup não há como voltar. O `window.__BACKUP_BLOCOS` que `injetar()`
-guarda **não é backup**: ele é tirado na hora de escrever, e o `location.reload()` da verificação o apaga. E a
-saída da ferramenta de navegador é cortada perto de 1.000 caracteres (`ferramentas-de-navegador.md`), então
-o campo não sai inteiro numa leitura só. A receita:
+Antes de sobrescrever qualquer coisa, guarde o conteúdo atual do campo `Blocos:` num arquivo local: a página
+tem um log de versões (`armadilhas.md` 36), mas ninguém mediu o que `Restaurar Versão` faz, e esse botão é da
+pessoa: ela clica, e você confere depois (`SKILL.md`, regra zero). Então o log não substitui esse arquivo, e
+sem ele não há volta garantida. O `window.__BACKUP_BLOCOS` que `injetar()` guarda **não é backup**: ele é
+tirado na hora de escrever, e o `location.reload()` da verificação o apaga. E a saída da ferramenta de
+navegador é cortada perto de 1.000 caracteres (`ferramentas-de-navegador.md`), então o campo não sai inteiro
+numa leitura só. A receita:
 
 1. **Leia e anote o sha.** Diálogo recém-aberto da página, aba `Configurações`, nada escrito:
 
@@ -325,10 +327,14 @@ na original); aí o servidor resolve a mídia para a variante naquele tamanho. N
 é a maior alavanca de performance disponível, e as dimensões evitam layout shift (Core Web Vitals). HTML cru
 não recebe nenhum dos dois.
 
-⚠️ **Isto é do bloco `imagem`, não do `banner`:** o componente de banner **nunca passa `loading`** (medido:
-**0 de 4** slides, nos dois devices). O que o banner tem contra layout shift é `apply_aspect_ratio: true`
-**mais** `width`/`height` numéricos, que emitem `aspect-ratio:W/H` em cada slide, e um `alt` de verdade,
-tirado do cadastro, que o `imagem` não tem (ele crava o id do bloco). Ver `blocos.md`, seção banner.
+⚠️ **Isto é do bloco `imagem`, não do `banner`, no site novo (React):** o componente de banner **nunca passa
+`loading`** (medido: **0 de 4** slides, nos dois devices). O que o banner tem contra layout shift é
+`apply_aspect_ratio: true` **mais** `width`/`height` numéricos, que emitem `aspect-ratio:W/H` em cada slide, e
+um `alt` de verdade, tirado do cadastro, que o `imagem` não tem (ele crava o id do bloco). Ver `blocos.md`,
+seção banner. No site antigo (twig) é outro, medido em 2026-11-06 em duas lojas: o banner traz
+`loading="lazy"` do 2º slide em diante (o 1º vem sem), e o `imagem` sai com wrapper e com `alt`/`title`
+tirados do Nome do Bloco (isso foi medido numa das lojas; na outra, o único bloco `imagem` saiu com
+`alt=""`). Ver os avisos de 2026-11-06 em `blocos.md`, nas seções `imagem` e `banner`.
 
 O ganho é **decisivo** onde o componente encapsula comportamento que não se reproduz à mão (`vitrine`,
 `banner`, `newsletter`, `menu`, `video`, `storerating`, `modal`) e **marginal** em invólucro fino como
@@ -403,21 +409,29 @@ perguntas a mais no FAQ, um texto trocado), o caminho curto é a seção 7.
 ⚠️ **Combine três coisas com a pessoa antes de começar**, porque as três travam a entrega no fim:
 
 1. **Em qual página gravar** (o `#`), como diz a regra zero. Se a loja não tem rascunho, quem cria é a
-   pessoa (o clique composto em `Incluir` já criou página em dobro, `mapa-do-admin.md`, seção 12). Em
-   cliques: Loja On-line › Páginas › `Incluir` › Loja = a do perfil (confira no diálogo: o padrão pode ser
-   outra loja); Nome = "<nome da original> - rascunho"; URL = "/<url-da-original>-v2"; Tipo =
-   **Construtor**; Robots = `noindex, nofollow` e Página no Sitemap = Não (a tela não foi mapeada campo a
-   campo: se ela não achar esses campos, peça que diga o que aparece) › `Confirmar` **uma vez**. Ela confere
-   na grade que nasceu **uma** linha e diz o `#` (se nasceram duas, pare e siga `mapa-do-admin.md`, seção
-   12: qual fica é decisão dela). Outra saída é ela clonar a original: o clone nasce com URL
-   `<slug>-log-<número>` e `noindex, nofollow` (`armadilhas.md` 10b), e com o conteúdo da original. O
-   rascunho criado por `Incluir` nasce vazio, e vazio pede um esqueleto antes do default vivo (passo 3).
-2. **Autorização para publicar esse rascunho.** Página despublicada responde **404** na URL pública e no
-   preview do construtor (medido, `armadilhas.md` 6b), então **sem publicar não há verificação nenhuma**, e
-   verificar é o passo 7. Publicar está na lista do que só se faz com pedido explícito, então tem de ser
-   pedido, e o momento certo de pedir é agora, não depois de gravar. Leve os fatos: publicar afeta só o
-   domínio do campo `URL:` da página; confira antes as colunas `Robots` e `Página no Sitemap`. Muitas vezes
-   quem publica é a própria pessoa.
+   pessoa (o clique composto em `Incluir` já criou página em dobro, `mapa-do-admin.md`, seção 12). Atalho
+   medido em 2026-11: clonar a original pelo botão `Log` da tela Páginas (`armadilhas.md` 36), que traz o
+   conteúdo e os ids de bloco dela, com URL `/<url-da-original>-log-<número>` (da home, `/-log-<número>`;
+   `armadilhas.md` 10b). Clonar cria página nova em produção: só a pessoa faz, ou pede com essas palavras.
+   Publicada, Robots e Sitemap do clone **variam**: numa loja medida ele veio despublicado; noutra,
+   publicado, `index, follow` e no sitemap. Combine o item 2 abaixo **antes** de criá-lo, e também o que
+   fazer se ele nascer público (`armadilhas.md` 36, itens 1 e 4); logo depois, confira na grade Publicada,
+   Robots e Página no Sitemap da linha nova. Do zero, em cliques: Loja On-line › Páginas › `Incluir` › Loja =
+   a do perfil (confira no diálogo: o padrão pode ser outra loja); Nome = "<nome da original> - rascunho";
+   URL = "/<url-da-original>-v2"; Tipo = **Construtor**; na aba **SEO**, Robots = `noindex, nofollow` e
+   "Incluir página no Sitemap?" desmarcado (lidos numa loja em 2026-11; se ela não achar esses campos, peça
+   que diga o que aparece) › `Confirmar` **uma vez**. Ela confere na grade que nasceu **uma** linha e diz o
+   `#` (se nasceram duas, pare e siga `mapa-do-admin.md`, seção 12: qual fica é decisão dela). O rascunho
+   criado por `Incluir` nasce vazio, e vazio pede um esqueleto antes do default vivo (passo 3).
+2. **Autorização para publicar esse rascunho.** No site novo (React), página despublicada responde **404** na
+   URL pública e no preview do construtor (medido, `armadilhas.md` 6b), então ali **sem publicar não há
+   verificação nenhuma**, e verificar é o passo 7. No site antigo (twig), a URL de uma página do construtor
+   despublicada não foi medida; numa loja (2026-11-06), a prévia do construtor de um clone despublicado
+   mostrou a página (`imagens-e-banners.md`, 4). Essa prévia não é o passo 7, que lê o HTML servido.
+   Publicar está na lista do que só se faz com pedido explícito, então tem de ser pedido, e o momento certo
+   de pedir é agora, não depois de gravar. Leve os fatos: publicar afeta só o domínio do campo `URL:` da
+   página; confira antes as colunas `Robots` e `Página no Sitemap`. Muitas vezes quem publica é a própria
+   pessoa.
 3. **Qual página serve de controle.** O passo 7 não roda sem ela: é o que separa "o tema é assim" de "eu
    quebrei o tema" (regra 4). Peça uma que já esteja publicada e que **você não vai tocar**. Se o perfil da
    loja já tem uma página de controle anotada, confirme que ela continua publicada.
@@ -842,8 +856,9 @@ perfil o sha256 do arquivo local aprovado: é ele, e só ele, que vai para a pá
 
 ⚠️ "Aprovado" ou "pode subir" sobre o rascunho aprovam o **conteúdo**. Nenhuma frase de aprovação é pedido
 para apertar `Publicar` ou `Despublicar`, nem para trocar a URL de uma página: cada um desses só com um
-pedido que nomeie o botão e a página. Se a resposta vier com "publicar", separe as duas coisas antes de
-qualquer gravação, como em `previa.md` ("Aprovação, gravação e conferência").
+pedido que nomeie o botão e a página, e o `Despublicar` é dela: ela clica, e você confere depois. Se a
+resposta vier com "publicar", separe as duas coisas antes de qualquer gravação, como em `previa.md`
+("Aprovação, gravação e conferência").
 
 ### Passo 9. Leve a versão aprovada para a página real, pelo caminho que a pessoa escolher
 
@@ -856,11 +871,12 @@ twig é `#area-body`). Para mostrar como vai ficar, abra o rascunho no endereço
 responde lá também.
 
 **(b) Trocar URL, publicar o rascunho ou despublicar a original.** Cada botão, e cada troca de URL, só com um
-pedido que o nomeie. Leve os fatos antes: o rascunho nasceu com `Robots` `noindex, nofollow` e fora do
-sitemap, então, se ele virar a página real, esses dois campos mudam junto, ou a página sai do Google; e página
-despublicada responde 404 (`armadilhas.md` 6b). A troca de URL não foi medida: se ela escolher esse caminho,
-ela faz (ou pede botão a botão) e você confere cada passo na grade. Numa página nova, sem original, este é o
-único caminho.
+pedido que o nomeie; o `Despublicar` é dela: ela clica, e você confere depois. Leve os fatos antes: o
+rascunho está com `Robots` `noindex, nofollow` e fora do sitemap (confira na grade: um clone pode ter nascido
+indexável, item 1 do começo da seção 4), então, se ele virar a página real, esses dois campos mudam junto, ou
+a página sai do Google; e página despublicada responde 404 (medido no site novo, `armadilhas.md` 6b). A troca
+de URL não foi medida: se ela escolher esse caminho, ela faz (ou pede botão a botão, fora o `Despublicar`) e
+você confere cada passo na grade. Numa página nova, sem original, este é o único caminho.
 
 No caminho (a), antes de gravar na original:
 
@@ -874,8 +890,8 @@ No caminho (a), antes de gravar na original:
 
 A regra "se a linha diz `index, follow`, não grave nela" (`armadilhas.md` 10b) serve para escolher o
 rascunho; aqui, a original é a página que a pessoa nomeou para receber a versão aprovada. No fim, lembre a
-pessoa de que o rascunho continua publicado (e responde nos dois endereços, seção 1); despublicar é decisão
-dela.
+pessoa de que o rascunho continua publicado (e responde nos dois endereços, seção 1); despublicar é dela:
+ela clica, e você confere depois.
 
 Depois de terminar, anote no perfil da loja o `#` das páginas, o que foi feito, onde está o backup do
 `Blocos:` anterior e como desfazer (colar o backup e gravar de novo).
@@ -922,7 +938,8 @@ está no ar.
    computador, e peça para sair por `Cancelar`. O `Confirmar` de lá envia o que o diálogo carregou na
    abertura e desfaz a sua gravação, sem aviso (`armadilhas.md` 8).
 2. **Backup e "antes":** o `Blocos:` num arquivo local (seção 0, "Backup do `Blocos:`") e o HTML da página no
-   ar, no endereço que você vai verificar depois (o do site novo), computador e celular (os `curl` do começo
+   ar, no endereço que você vai verificar depois (o do site novo, numa loja que tem os dois; senão, o do
+   site antigo (twig), como as homes medidas em 2026-11-06), computador e celular (os `curl` do começo
    da seção 4): é o "antes" da verificação. Baixe também a página de controle, nos dois aparelhos (o terceiro
    combinado da seção 4: peça uma, se o perfil não tiver).
 3. **Peça o texto exato** do que entra (perguntas e respostas, palavra por palavra). Conteúdo é decisão dela.
@@ -945,7 +962,7 @@ está no ar.
    Para uma troca curta de texto, `editarBlocos(doc => …)` faz o mesmo sem transportar o documento inteiro,
    desde que a troca seja exatamente a do arquivo validado e aprovado.
 8. **Verificação inteira** (passo 7), com `--original` no HTML de "antes" do item 2 e `--miolo-original
-   "#layout-main-content"` (o "antes" é do site novo, e o default do script é o miolo do site antigo,
-   `#area-body`): o texto de antes tem de aparecer 100% na nova, e o `<header>` continuar igual ao controle.
+   "#layout-main-content"` quando o "antes" é do site novo (o default do script é o miolo do site antigo,
+   `#area-body`); numa página do site antigo (twig), `--miolo "#area-body"` e o `--miolo-original` padrão: o texto de antes tem de aparecer 100% na nova, e o `<header>` continuar igual ao controle.
    Confira no ar contra os prints da prévia e anote no perfil o que mudou, onde está o backup e como desfazer
    (colar o backup e gravar de novo).

@@ -64,6 +64,7 @@ atrás:
 | Classe por página | construtor › Estilo CSS/SCSS › **Classe no `<body>`** (`body_class`) | põe a classe numa página só | Limpar cache da página |
 | Barra do Topo | Configurações › Visual › Cabeçalho › **Mostrar Barra do Topo?** / **Texto na Barra do Topo** (`headerTopBarShow` / `textoHeaderTopbar`) | faixa de HTML fixo acima do cabeçalho, sem datas | cache de configuração |
 | Etiquetas de produto | Loja On-line › **Tags** (o cadastro; `mapa-do-admin.md`, seção 16) | selo de campanha nos cards e na página do produto. **Sem datas**: liga e desliga à mão (`Ativo`), e uma regra de época presa a ela só age dentro da janela da agenda (seção 4, "Etiqueta como gatilho, agenda como interruptor") | não medido |
+| Artes de banner | Loja On-line › **Banners** (o cadastro; `imagens-e-banners.md`) | as artes da campanha nos blocos banner. Cada arte tem Data Início e Data Final **com hora** e Situação (`Ativo`/`Pausado`); que ela entra e sai sozinha pelas datas não foi medido | linha `banner` em Administrador › Cache (filtro Loja = a sua) e, se a página foi regravada, a linha dela (`imagens-e-banners.md`, 3, passo 5) |
 
 Caminhos, botões e as camadas de cache em detalhe: `mapa-do-admin.md`, seções 1, 3 e 5 (as etiquetas, 16).
 
@@ -1025,9 +1026,28 @@ celular. Até lá, diga à pessoa que o que foi gravado ainda não aparece no si
 - [ ] Prints de antes e depois guardados.
 - [ ] Perfil da loja atualizado: o que mudou, onde estão os backups, como voltar.
 - [ ] Fim da campanha combinado: o que some sozinho (agenda, fases da barra) e o que alguém precisa
-  desligar à mão (Barra do Topo, banners, etiquetas). Cada etiqueta com data, hora (alinhada com a hora em
-  que a classe sai de fato, no fuso medido: seção 2) e quem desliga, anotados no perfil (seção 4, "Etiqueta
-  como gatilho, agenda como interruptor").
+  desligar à mão (Barra do Topo, etiquetas, artes de banner). Cada etiqueta com data, hora (alinhada com a
+  hora em que a classe sai de fato, no fuso medido: seção 2) e quem desliga, anotados no perfil (seção 4,
+  "Etiqueta como gatilho, agenda como interruptor"). As artes de banner têm Data Final com hora
+  (`imagens-e-banners.md`, 8), mas que elas saem sozinhas não foi medido: alinhe a Data Final com a hora em
+  que a classe sai e deixe em cada tipo que a página usa uma arte para depois da campanha, a que a pessoa
+  escolher, `Ativo`
+  e com Data Início nessa hora, para o bloco não ficar vazio (na prévia do construtor de uma loja da família
+  `/dist`, em novembro de 2026, um tipo sem arte fez o bloco sumir e a página subir: `imagens-e-banners.md`,
+  6, item 2). Cadastrá-la é gravar no tipo que está no ar: siga o passo 0 do caminho inteiro e os passos 0
+  a 4 do caminho direto de `imagens-e-banners.md`, 3, "Trocar só a arte" (o bloco, o par do celular e o
+  tipo de cada um, só lendo; se o par usa outro tipo, uma arte de depois em cada tipo; backup da lista de
+  artes do tipo, prévia, as quatro coisas
+  e o "sim" sobre a lista escrita: nome, link, ordem, datas, Situação e arquivo), com uma diferença: lá a
+  arte nova vai `Pausado`, aqui vai `Ativo`. O passo 5 de lá (pausar as antigas) não se faz agora: a arte
+  de campanha fica no ar. Que ela espera a Data Início também não foi medido: diga à pessoa, antes do
+  "sim", que, se a data não segurar, ela entra no ar logo, ao lado da de campanha; depois do cache
+  `banner`, confira no HTML servido, com `?nc=`, nos dois User-Agents, que ela ainda não aparece. Se
+  aparecer, pause-a e limpe o cache `banner`, com o "sim" da pessoa (`imagens-e-banners.md`, 8), e combine
+  a troca à mão: na hora da saída, os passos 5 e 6 de lá (conferir que a grade é a que ficou depois de
+  pausá-la; ativar a de depois e pausar a de campanha, uma logo depois da outra; depois o cache `banner` e
+  a conferência no HTML servido). Anote no perfil quem confere no dia, quem faz a troca e quem pausa a arte
+  de campanha que continuar no ar.
 
 ## 10. Checklist de volta atrás
 

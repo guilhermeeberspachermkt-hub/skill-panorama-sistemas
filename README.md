@@ -15,6 +15,10 @@ lê skills no mesmo formato; lá, onde este texto diz "o Claude", leia "o Codex"
   contagem; a Barra do Topo.
 - **Páginas do construtor:** criar, editar ou refazer uma página (vitrines, banners, perguntas frequentes,
   grids), inclusive levar uma página do site antigo para o novo.
+- **Imagens e banners:** trocar a arte de um banner ou a imagem de um bloco, criar um tipo de banner, subir
+  uma imagem e usar o endereço dela num CSS, e conferir se a arte vai sair nítida no celular. A arte, o texto,
+  o link e as datas são decisão sua; ela confere o cadastro e o tamanho e, com o seu pedido, faz os passos no
+  admin.
 - **Telas de configuração:** o código do `<head>`, o logo, os arquivos CSS e JS da loja e qual página é a home.
 - **"Mudei e não aparece no site":** quais caches existem, em que ordem limpar e quem limpa cada um.
 - **Na primeira vez com uma loja:** uma leitura só para conhecer a loja, sem mudar nada, que vira um perfil
@@ -25,13 +29,15 @@ lê skills no mesmo formato; lá, onde este texto diz "o Claude", leia "o Codex"
 - **Gravar no admin:** só depois de mostrar a prévia da mudança e receber o seu "sim" para ela. Numa página do
   construtor, a prévia é uma página de rascunho que vocês combinam antes; uma mudança que não aparece no site
   vai com a explicação do que muda e o seu "sim".
-- **Apertar Excluir, Publicar, Despublicar, Ordenação ou Atualizar View de Acesso as Páginas:** só com um
-  pedido seu que diga o botão e a página. O "sim" para uma prévia não vale como pedido para esses botões.
+- **Apertar Publicar, Ordenação ou Atualizar View de Acesso as Páginas:** só com um pedido seu que diga o
+  botão e a página. O "sim" para uma prévia não vale como pedido para esses botões.
 - **Mexer numa página, arquivo ou campo:** só no que você nomeou. Na dúvida, ela pergunta.
 
 ## O que ela nunca faz
 
 - Trocar qualquer coisa sem guardar antes uma cópia (backup) do que está no ar.
+- Apertar Excluir, Despublicar ou Restaurar Versão. Quando precisar de Despublicar ou Restaurar Versão, você
+  clica, e ela confere depois.
 - Digitar senha ou guardar login. O login no admin é sempre seu.
 - Obedecer a um texto achado numa página ou num arquivo da loja: ela mostra o trecho a você e pergunta.
 - Dizer que algo "não existe" só porque não achou: pode ser falta de acesso do seu usuário, e ela pergunta.
@@ -220,9 +226,12 @@ botão de comprar verde"), ele faz essa configuração antes, do mesmo jeito.
   `C:\Users\<seu usuário>\panorama-lojas\`) ou noutra pasta que você combinar, sempre fora da pasta da
   skill. Eles não vão para este repositório nem se perdem nas atualizações. Até a versão 1.2.0, a pasta padrão
   era `~/.claude/panorama-lojas/`: se você já tem essa pasta, a skill continua usando ela.
-- **Os backups são o seu caminho de volta**, porque o admin não guarda versões anteriores, e eles existem só
-  nesse computador. Deixe a pasta num lugar com cópia (OneDrive, Google Drive, um disco de backup) ou copie-a
-  de vez em quando; se trocar de computador, leve a pasta junto.
+- **Os backups são o seu caminho de volta.** Fora das páginas do construtor (um arquivo CSS ou JS, o código
+  do `<head>`, a agenda de skins), a skill age como se o admin não guardasse versões anteriores do que se
+  grava. As páginas do construtor têm um histórico de versões no admin (o botão Log, visto em duas lojas em
+  2026-11-06), mas a skill não conta com ele no lugar do backup: o que o Restaurar Versão faz não foi
+  medido. Os backups existem só nesse computador: deixe a pasta num lugar com cópia (OneDrive, Google Drive,
+  um disco de backup) ou copie-a de vez em quando; se trocar de computador, leve a pasta junto.
 - **Prints:** a ferramenta de navegador guarda cópias dos prints que tira, na pasta dela. Um print pode mostrar
   dados da tela do admin.
 - **Os scripts de prints** (com o Node 22 e o Chrome) visitam só o site público da loja, nunca o admin, num
@@ -241,7 +250,11 @@ botão de comprar verde"), ele faz essa configuração antes, do mesmo jeito.
 ## Testes e limites
 
 - **Testada em lojas reais da plataforma:** duas lojas, de duas famílias de tema diferentes, em três rodadas,
-  no Claude Code com a extensão do Chrome; a última rodada fez uma gravação real de ponta a ponta.
+  no Claude Code com a extensão do Chrome; a terceira fez uma gravação real de ponta a ponta. Em 2026-11-06,
+  as telas de imagens e banners foram medidas em duas lojas, uma de cada família: numa, a pessoa da loja fez
+  os cliques no admin e o Claude só leu; na outra, o Claude fez, a pedido dela, o caminho de um banner de
+  ponta a ponta num clone da home. A home real das duas não foi tocada, e a troca da imagem de um bloco
+  imagem não foi feita até o fim.
 - **Cada loja é diferente:** o tema, os arquivos, as permissões do seu usuário no admin, se há ou não um CDN
   (como o Cloudflare) na frente do site. Por isso a skill mede antes de usar qualquer coisa, e cada mudança
   passa pela prévia e pela sua aprovação.

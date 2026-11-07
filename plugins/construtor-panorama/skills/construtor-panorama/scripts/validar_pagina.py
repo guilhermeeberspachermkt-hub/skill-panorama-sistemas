@@ -104,8 +104,10 @@ GRUPOS_BASE = ["padding", "margin", "display", "background", "dimensions", "bord
 # uma página pronta — mas escrevê-la à mão NÃO funciona: o pipeline devolve `bannerlist: []` e o
 # carrossel sai vazio. "bannerlist" fica fora de LEGADO_CHAVES só porque não é erro de esquema:
 # quem trata o caso é a checagem específica de banner mais abaixo (bannerlist sem banner_tipo
-# vira AVISO). Se o master do tipo não tem o tamanho que você precisa, a saída é bloco `code`
-# com carrossel em CSS. Ver blocos.md (seção banner) e armadilhas.md item 4.
+# vira AVISO). Se o master do tipo não tem o tamanho que você precisa: no site novo (React), a
+# saída é bloco `code` com carrossel em CSS; numa página servida pelo site em twig, ligue
+# "Tamanho personalizado" no bloco (use_custom_size + width/height), que escolhe a variante
+# servida (imagens-e-banners.md, 7). Ver blocos.md (seção banner) e armadilhas.md item 4.
 LEGADO_CHAVES = ["use_slider", "use_grid", "itemsPerGridRow",
                  "parentId", "only_desktop", "only_mobile"]
 
@@ -474,8 +476,10 @@ def validar(doc):
             if tem_lista and not tem_tipo:
                 aviso(f"banner '{b.get('id')}': tem bannerlist mas NÃO tem banner_tipo. O pipeline de "
                       f"entrega ignora bannerlist escrito à mão e o carrossel sai VAZIO. Use banner_tipo "
-                      f"(o servidor resolve as imagens), ou, se precisa de um tamanho que o master do tipo "
-                      f"não tem, faça o carrossel num bloco 'code' em CSS (ver blocos.md).")
+                      f"(o servidor resolve as imagens). Precisa de um tamanho que o master do tipo não "
+                      f"tem? No site novo (React), faça o carrossel num bloco 'code' em CSS; numa página "
+                      f"servida pelo site em twig, ligue 'Tamanho personalizado' no bloco (use_custom_size "
+                      f"+ width/height). Ver blocos.md (seção banner) e imagens-e-banners.md, 7.")
             elif not tem_tipo:
                 info(f"banner '{b.get('id')}': 'banner_tipo' sem id — tire da página de origem (campo "
                      f"Blocos:, armadilhas.md item 4); só se não existir lá, diga à pessoa qual tipo "

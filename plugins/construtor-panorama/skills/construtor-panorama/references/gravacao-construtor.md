@@ -22,16 +22,19 @@ desenvolvedor e não tem como conferir o que foi feito:
 1. **Leia o perfil da loja.** Ele traz o número da loja, o endereço do admin e o domínio do site. Num admin
    com várias lojas, a mesma grade mostra páginas de todas, e nome de página se repete entre elas.
 2. **Grave só o que a pessoa pediu, no lugar que ela indicou** (a regra zero do `SKILL.md`). Diga antes,
-   em português simples, o que vai mudar e onde, e espere a resposta. `Excluir`, `Publicar` e
-   `Despublicar` só com um pedido à parte que nomeie o botão e a página: um "aprovado" sobre a prévia não
-   é esse pedido (`previa.md`, "Aprovação, gravação e conferência"). Com esse pedido, o `Publicar` por
-   script segue `gravacao-arquivo-e-head.md`, "Publicar, quando a pessoa pede"; `Excluir` e `Despublicar`
-   não têm caminho por script.
-3. **Guarde o valor atual num arquivo local antes de trocar**, com a data no nome. O admin não guarda
-   versões anteriores: sem esse arquivo não há como voltar. Para o `Blocos:`, a receita (como tirar o campo
-   inteiro apesar da saída cortada da ferramenta, e a comparação com o backup logo antes de `injetar`) está
-   em `construtor.md`, seção 0, "Backup do `Blocos:`". O `window.__BACKUP_BLOCOS` que `injetar()` guarda
-   não serve de backup: o reload da verificação o apaga.
+   em português simples, o que vai mudar e onde, e espere a resposta. `Publicar` só com um pedido à parte
+   que nomeie o botão e a página: um "aprovado" sobre a prévia não é esse pedido (`previa.md`, "Aprovação,
+   gravação e conferência"); com esse pedido, o `Publicar` por script segue `gravacao-arquivo-e-head.md`,
+   "Publicar, quando a pessoa pede". `Despublicar` e `Restaurar Versão` (no diálogo do `Log`,
+   `armadilhas.md` 36; ninguém mediu o que ele restaura) são da pessoa: ela clica, e você confere depois.
+   `Excluir` nunca é da skill. Nenhum dos três tem caminho por script.
+3. **Guarde o valor atual num arquivo local antes de trocar**, com a data no nome. Fora das páginas do
+   construtor, conte que o admin não guarda versões anteriores (não se mediu se há histórico ali); as
+   páginas do construtor têm um log de versões (`armadilhas.md` 36), mas ele não foi medido por dentro e
+   não substitui o backup: sem esse arquivo, não há volta garantida. Para o `Blocos:`, a receita (como
+   tirar o campo inteiro apesar da saída cortada da ferramenta, e a comparação com o backup logo antes de
+   `injetar`) está em `construtor.md`, seção 0, "Backup do `Blocos:`". O `window.__BACKUP_BLOCOS` que
+   `injetar()` guarda não serve de backup: o reload da verificação o apaga.
 4. **Mostre a prévia antes e espere o "aprovado"** (`previa.md`). Para blocos e layout, a prévia é a página
    de rascunho que a pessoa indicou (`construtor.md`, passo 8); para o CSS da página, o favorito com
    `--depois-de "#builder-custom-css"`. Na página que vai ao ar, grave só o JSON aprovado (`construtor.md`,
@@ -727,6 +730,13 @@ traz `body_class` nem `config`. Quem grava é `Confirmar`.
 O lado bom: `Aplicar` é seguro para experimentar à vontade. Sair sem `Confirmar` deixa a página intacta;
 `Cancelar` descarta.
 
+Isso vale para o `Aplicar`, não para as lupas do painel. As grades que elas abrem (Tipo de Banner, Mídia)
+têm `Incluir`, `Alterar` e `Excluir` próprios, e o `Incluir` › `Confirmar` da lupa do Tipo de Banner criou o
+tipo no cadastro na hora, antes de qualquer `Confirmar` da página (medido em 2026-11-06, numa loja;
+`imagens-e-banners.md`, seção 9). Trate os três como gravação, e `Excluir` nunca é da skill. Por isso, para
+só ler o tipo ou a mídia que um bloco usa, prefira o caminho só de leitura a abrir o construtor da página no
+ar: `Alterar` › aba `Configurações` › `lerBlocos()` › `Cancelar` (`imagens-e-banners.md`, seção 3, passo 0).
+
 O editor de CSS da página e o campo `Classe no <body>` ficam no ícone `</>` no topo do painel do construtor.
 A engrenagem ao lado guarda as flags de header e footer.
 
@@ -739,9 +749,12 @@ Não há validação de schema conhecida. O campo aceita JSON malformado e o sin
 ordem de verificação é a do passo 5: **fonte, `Limpar cache`, e só então a URL** — medir a URL primeiro pode
 devolver o passado com bytes idênticos.
 
-**Pré-requisito: a página precisa estar publicada.** Despublicada, a URL responde "Página não mapeada" e o
-preview do construtor também — não há como verificar renderizando. Ver `armadilhas.md` item 6b, e combine
-a publicação com a pessoa no começo da tarefa, não depois de gravar.
+**Pré-requisito no site novo (React/Next): a página precisa estar publicada.** Ali, despublicada, a URL
+responde "Página não mapeada" e o preview do construtor também (`armadilhas.md` 6b): combine a publicação
+com a pessoa no começo da tarefa, não depois de gravar. No site antigo (twig), a URL de uma página
+despublicada não foi medida; numa loja (2026-11-06), a prévia do construtor de um clone despublicado mostrou
+a página (`imagens-e-banners.md`, seção 4), mas essa prévia não substitui a verificação, que lê o HTML
+servido.
 
 ### Passo obrigatório: `scripts/verificar_paridade.py`
 
@@ -820,7 +833,7 @@ tamanho idêntico para páginas diferentes. Navegue a aba de verdade.
 
 **4. Se mexeu em página que já tinha conteúdo, compare antes e depois.** O backup é o arquivo local do
 `Blocos:` (`construtor.md`, seção 0, "Backup do `Blocos:`"); o `window.__BACKUP_BLOCOS` que `injetar()`
-guarda some no reload. Sem backup não há como voltar.
+guarda some no reload. Sem backup não há volta garantida.
 
 **5. Para aparência computada, meça no navegador — arquivo estático subdetermina.** Uma regra pode existir
 na página e em nenhuma das folhas que você baixou (`armadilhas.md` item 23), animação **não avança em aba
@@ -836,10 +849,11 @@ A tela `Páginas` tem `Limpar cache`, que só tem efeito em página publicada. A
 verificação e a perda de seleção estão no **passo 5**; os caches de Arquivo e de configuração da loja, nos
 Passos E a G de `gravacao-arquivo-e-head.md`.
 
-**Página despublicada não responde com conteúdo** — devolve "Página não mapeada - @todo: 404" e
-`pageParams` vazio, e o preview do construtor mostra o mesmo (medido com par de controle; `armadilhas.md`
-item 6b). Na prática: **verificar renderizando exige a página publicada**, então combine isso com a pessoa no
-início da tarefa, não depois de gravar.
+**No site novo (React/Next), página despublicada não responde com conteúdo** — devolve "Página não
+mapeada - @todo: 404" e `pageParams` vazio, e o preview do construtor mostra o mesmo (medido com par de
+controle; `armadilhas.md` item 6b). Na prática: **ali, verificar renderizando exige a página publicada**,
+então combine isso com a pessoa no início da tarefa, não depois de gravar. No site antigo (twig), não
+medido (`imagens-e-banners.md`, seção 4).
 
 Antes de suspeitar da gravação, **prove de que lado está o problema** — é o passo 5: reabra o diálogo e leia
 `data.config.builder`. Se o conteúdo novo está lá, gravou; o resto é cache ou cascata (o roteiro
@@ -853,8 +867,10 @@ preview** — medido. Ver `armadilhas.md` item 7.
 
 ## Higiene ao trabalhar em produção
 
-- experimente na página de teste que a pessoa indicar; criar ou publicar uma página só com pedido dela;
-- `Aplicar` é seguro. `Confirmar`, `Publicar`, `Despublicar` e `Excluir` gravam;
+- experimente na página de teste que a pessoa indicar; criar ou publicar uma página só com um pedido dela que
+  nomeie o botão e a página;
+- `Aplicar` é seguro. `Confirmar`, `Publicar`, `Despublicar`, `Restaurar Versão` e `Excluir` gravam, e o
+  `Incluir`, o `Alterar` e o `Excluir` das lupas do construtor também ("O caminho pelo construtor");
 - antes de mexer em página do fluxo de alguém, pergunte: não há trava nem aviso de edição concorrente — e na
   configuração da loja isso vale em dobro (`gravacao-arquivo-e-head.md`, Passo F);
 - clonar uma página gera novo id de página mas copia os ids de bloco intactos, e é um bom jeito de a pessoa

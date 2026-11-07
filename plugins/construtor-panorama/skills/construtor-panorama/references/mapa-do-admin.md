@@ -35,13 +35,16 @@ antes de gravar em `previa.md`; o transporte de texto grande e a verificação e
 ## 0. Como o admin é organizado
 
 - **Sistemas.** O botão ao lado do logo, no topo, troca de sistema. Os que importam aqui: **Único**
-  (cadastros gerais, inclusive **Lojas**), **Loja On-line** (Páginas, Vitrines, Banners, Menus, Vídeos e as
+  (cadastros gerais, inclusive **Lojas** e o grupo **Mídia**: Mídias, Tipos de Mídia e Tamanhos dos Tipos de
+  Mídia, em `imagens-e-banners.md`), **Loja On-line** (Páginas, Vitrines, Banners, Menus, Vídeos e as
   telas de etiquetas: Tags, Tags de Produtos e Automação de Tags, seção 16) e **Administrador** (inclusive
-  **Cache**). Cada sistema tem o seu menu lateral. Por script, a troca de sistema funcionou com
-  `angular.element(a).triggerHandler('click')` no `a[ng-click="main.onClickSystem(menu, $index)"]` cujo texto
-  é o nome do sistema, e o item do menu lateral com clique simples (`clicarMenu()`) (medido numa loja). O
-  admin lembra o último sistema depois de recarregar: confira em qual sistema você está antes de procurar uma
-  tela.
+  **Cache**). Em 2026-11-06, a lista inteira do menu Loja On-line, lida numa loja da família `modelo-1`, não
+  tinha **Menus** nem **Tipo de Banners**. Pode ser falta de permissão do usuário ou a tela estar em outro
+  lugar: se não achar, siga o início da seção 14. Cada sistema tem o seu menu lateral. Por script, a troca
+  de sistema funcionou com `angular.element(a).triggerHandler('click')` no
+  `a[ng-click="main.onClickSystem(menu, $index)"]` cujo texto é o nome do sistema, e o item do menu lateral
+  com clique simples (`clicarMenu()`) (medido numa loja). O admin lembra o último sistema depois de
+  recarregar: confira em qual sistema você está antes de procurar uma tela.
 - **Busca do menu.** O campo "O que você está procurando?", no topo do menu lateral, acha a tela pelo nome
   ("cache", "lojas", "páginas"). É o caminho mais curto para a pessoa quando ela não sabe em qual sistema a
   tela mora. Por script, num admin medido, escrever no campo (`value` + evento `input`) não filtrou:
@@ -276,7 +279,8 @@ reconhecimento e anote no perfil. A do ar é **a única com Publicada = Sim**.
   que ainda não migrou para o construtor, a home pode ser justamente a do tipo Página Inicial: se nenhuma
   Construtor com URL `/` estiver publicada, procure sem o filtro Tipo.
 - Trocar a home é publicar uma e despublicar a outra. Isso muda o site no ar: só com pedido explícito, e
-  normalmente quem faz é a pessoa.
+  normalmente quem faz é a pessoa. O `Despublicar` é sempre dela: ela clica, e você confere depois; o
+  `Publicar` só pelo caminho da seção 11.
 - A home pode mudar sem aviso: numa loja medida, com uma home por mês ou por campanha, a do ar foi trocada no
   meio de um trabalho no tema. Mesmo numa loja com uma home só, antes de mexer em algo da home, confira de
   novo qual está publicada; não confie no perfil para isso.
@@ -334,8 +338,23 @@ pelo reconhecimento, 2b); sem ele, são três camadas, e cada passo abaixo vale 
    novo, e uma cópia do celular ainda vinha velha (`Age` de 551 s). Diga à pessoa que o celular pode mostrar o
    antigo por mais alguns minutos, e não prometa um prazo fixo: confira de novo, com e sem query, nos dois
    User-Agents. Numa mudança em duas peças com aperto de mão (`ajustes-visuais.md`, 2.6), a cópia velha mostra
-   o site antigo inteiro, não meia mudança. Quem limpa o CDN costuma ser a TI da loja; com o cache-buster
+   o site como estava, inteiro, não meia mudança. Quem limpa o CDN costuma ser a TI da loja; com o cache-buster
    subido, em geral não precisa. A regra de subir o cache-buster vale com CDN ou sem.
+
+**Há outras linhas de cache na mesma tela, por assunto.** A de **banners** (código `banner`) é a que mais
+aparece no dia a dia: depois de cadastrar ou trocar a arte de um banner, pode ser preciso limpá-la. Não se
+mediu se é necessário. Numa loja da família `/dist` (2026-11-06), a prévia do construtor mostrou a arte nova
+depois da limpeza. Noutra, da família `modelo-1` (mesma data), o filtro Loja = a sua deixou **uma** linha
+`banner`, e o "Último flush" dela não mudou depois do `Limpar cache`. Nessa loja foram limpas a linha
+`banner` e a da página regravada, e o HTML servido com `?nc=` novo seguiu antigo por 1 a 2 minutos,
+inclusive o Robots da página, virando sozinho depois (`imagens-e-banners.md`, 6, item 8). Nessa loja a tela
+não tinha o botão "Limpar todo o cache". É uma linha da loja inteira: como a do `loja_config`, pergunte
+antes (ou faça, se a pessoa pediu) e anote no perfil quem limpa. O caminho é igual ao do `loja_config`:
+filtro **Loja = a sua**, Nome **Contém** `banner`, marcar **só** a linha de código `banner`, `Limpar cache`.
+Nunca use "Limpar todo o cache" nem "Limpar cache do CDN".
+⚠️ Na loja da família `/dist`, com o filtro Loja vazio, a grade mostrou **três** linhas "Banners" (pelo
+jeito, uma por loja do admin), com datas de "Último flush" diferentes: conte as linhas antes de clicar. O
+caminho inteiro de um banner está em `references/imagens-e-banners.md`.
 
 Uma quinta coisa que parece cache e é: numa loja medida, os produtos das vitrines chegam depois, por uma
 requisição própria (`/?operation=loadVitrine`), com cache de 600 s (medido numa loja; onde há CDN, a borda
@@ -493,9 +512,15 @@ O mínimo:
 - **Colunas** úteis: `#` (o único identificador que não se repete), Nome, URL, Publicada, `Robots` e
   `Página no Sitemap`.
 - **Diálogo `Alterar`:** abas Geral, SEO e Configurações (no Arquivo, também Conteúdo). Ele reabre na aba
-  Geral e recarrega do que está salvo.
-- **Botões que mudam o site no ar ou agem em massa** e só se usam com pedido explícito e específico da
-  pessoa: `Excluir`, `Publicar`, `Despublicar`, `Ordenação`, `Atualizar View de Acesso as Páginas`.
+  Geral e recarrega do que está salvo. A aba SEO tem Título SEO, Descrição SEO, "Incluir página no Sitemap?"
+  e Robots (`index, follow` · `noindex, nofollow`).
+- **Botão `Log`** (com uma linha marcada): o histórico de versões da página, com `Restaurar Versão` e
+  `Criar nova página` — o jeito de clonar uma página para testar (`armadilhas.md` 36).
+- **Botões que mudam o site no ar ou agem em massa:** `Excluir`, `Publicar`, `Despublicar`,
+  `Restaurar Versão` (no diálogo do `Log`), `Ordenação`, `Atualizar View de Acesso as Páginas`.
+  `Despublicar` e `Restaurar Versão` são da pessoa: ela clica, e você confere depois (o que o
+  `Restaurar Versão` restaura não foi medido: `armadilhas.md` 36). `Excluir` nunca é da skill.
+  `Ordenação` e `Atualizar View de Acesso as Páginas`, só com pedido explícito e específico da pessoa.
   `Limpar cache` é aceitável na linha que você acabou de gravar. `Publicar` por script, só depois de um
   pedido que nomeie o botão e a página, e só pelo caminho de `prepararPublicar` e `prepararOkDoPublicar`
   (`gravacao-arquivo-e-head.md`, "Publicar, quando a pessoa pede"): eles conferem a linha e o modal e marcam
@@ -531,7 +556,10 @@ Sobre criar página (`Incluir`): o composto cria em dobro, e um clique real, pel
 em `Confirmar` na criação. Se ela pedir que você crie, nomeando os botões e a página, siga o caminho por
 script de `gravacao-arquivo-e-head.md`, "Criar um Arquivo novo": as travas conferem o diálogo, e
 `prepararConfirmarCriacao` não clica, só marca o `Confirmar` para **um** clique real seu, pela referência do
-elemento. Nunca repita o clique; confira a grade antes de qualquer outro passo (`conferirCriacao`). Se nascer
+elemento. Esse caminho é só para Tipo = Arquivo: `conferirArquivoNovo` exige a aba Conteúdo e o campo
+`data.body`, que só aparecem com Tipo = Arquivo (medido), e aborta no "Adicionar Página" de um Construtor,
+como o do clone pelo `Log`. Aí não force a trava: siga `imagens-e-banners.md`, 4, e `armadilhas.md` 36.
+Nunca repita o clique; confira a grade antes de qualquer outro passo (`conferirCriacao`). Se nascer
 duplicata, pare: mostre as duas linhas (`#`, URL, Publicada) à pessoa e pergunte qual fica. Despublicar a
 sobra é da pessoa: ela clica, e você confere depois; `Excluir` nunca é da skill. (As duas linhas têm a
 mesma URL: despublicar a errada, num Arquivo que está no `<head>`, pode deixar no ar a cópia sem o conteúdo
@@ -550,14 +578,19 @@ e pare no primeiro passo que explicar o que a pessoa vê. Pergunte antes de limp
    Configurações aberto (em outra aba ou em outro computador) gravou por cima (seção 1).
 3. **O servido contém a mudança?** Baixe com uma query nova (`?nc=…`), com User-Agent de computador e de
    celular, e procure um trecho que só existe na versão nova: no arquivo (a URL do Arquivo), no `<style>`
-   inline (SCSS de Personalização) ou no `<style id="builder-custom-css">` (CSS de página do construtor).
+   inline (SCSS de Personalização), no `<style id="builder-custom-css">` (CSS de página do construtor) ou,
+   numa troca de arte de banner, no `src`, no `alt` e no `href` das imagens (`imagens-e-banners.md`, 3,
+   passo 6).
 4. **O `<head>` servido pede o número novo do arquivo?** Se pede o antigo, falta o cache-buster ou o cache de
    configuração (seção 5, camadas 1 e 2). Se o arquivo editado **nem aparece** no `<head>`, ele não está
    ligado no site: é um Arquivo antigo, ou outro com nome parecido (seção 3).
-5. **As camadas 2 a 4 de cache** (seção 5): configuração da loja, página, CDN (se a loja tiver um). Numa
-   loja com CDN, a query nova do passo 3 já pula a borda: se a origem tem a mudança e a URL sem query não, é
-   só esperar a borda. Sem CDN (o perfil diz), não há borda a esperar: com a origem certa, siga para o passo
-   6 e, no fim, o 8.
+5. **As camadas 2 a 4 de cache** (seção 5): configuração da loja, página, CDN (se a loja tiver um). Se a
+   mudança foi no cadastro de Banners, também a linha `banner` da mesma tela (seção 5, "Há outras linhas de
+   cache"). Medido numa loja sem CDN (2026-11-06): depois de limpar a linha `banner` e a da página, o HTML
+   servido levou de 1 a 2 minutos para virar, e o "Último flush" da linha `banner` não mudou
+   (`imagens-e-banners.md`, 6, item 8). Numa loja com CDN, a query nova do passo 3 já pula a borda: se a
+   origem tem a mudança e a URL sem query não, é só esperar a borda. Sem CDN (o perfil diz), não há borda a
+   esperar: com a origem certa, siga para o passo 6 e, no fim, o 8.
 6. **A regra vence?** Se o CSS novo está no servido e a tela não muda, é cascata. Comece pela ordem do
    perfil (seção 10): na família `/dist` o SCSS de Personalização vem depois dos arquivos e ganha empate, e o
    `loja.css` tem `!important` em componentes (medido numa loja); na família `modelo-1` o SCSS vem antes,
@@ -588,20 +621,27 @@ aquilo. Não procure outro caminho até a tela escondida (`SKILL.md`, regra zero
 Estas telas existem e a skill não as mapeou. Use só para **ler**, e com a regra de sempre: abrir para ler é
 permitido, a saída é por `Cancelar`, e nada se grava sem o pedido da pessoa e um backup.
 
-- **Loja On-line › Banners.** As artes e os links dos banners. Trocar uma arte, um link ou a ordem é
-  **conteúdo**, e é da pessoa; a skill pode ajustar por CSS o que está em volta (setas, bolinhas, espaço: o
-  catálogo da família da loja, `catalogo-tema-base.md` ou `catalogo-modelo-1.md`, seções 7 e 11). Para ler:
-  filtro Loja = a sua, e anote no perfil os tipos de banner que a home usa.
 - **Loja On-line › Menus.** Os itens e a ordem do menu. Mudar o que o menu contém é conteúdo; destacar um
-  item por CSS é ajuste (o catálogo da família, seção 2).
+  item por CSS é ajuste (o catálogo da família, seção 2). Em 2026-11-06, o item não estava na lista inteira
+  do menu Loja On-line, lida numa loja. Pode ser permissão ou outro lugar: veja o início desta seção.
 - **Loja On-line › Tags, Tags de Produtos e Automação de Tags** (as etiquetas dos produtos). Lidas em parte,
   só a grade de Tags: seção 16.
-- **Onde hospedar uma imagem usada num CSS** (um fundo de Natal, um ícone de selo). Não foi medido onde a
-  loja pode subir um arquivo de imagem e qual URL ele recebe. Antes de escrever `background-image`,
-  pergunte à pessoa onde as imagens da loja ficam (o cadastro de banners e de mídias tem URLs no CDN de
-  imagens da plataforma) e use uma URL que ela confirmar. Não aponte para imagem de outro site.
+- **Único › Mídia › Propagação** ("Propagação de Mídia"). A tela existe no menu e chegou a ser aberta numa
+  loja, em 2026-11-06 (o título da aba é esse), mas o que ela mostra não foi lido nem registrado.
 
-Quando uma dessas telas for mapeada, a seção nova entra no fim deste arquivo.
+Quando uma dessas telas for mapeada, ela ganha uma seção nova no fim deste arquivo ou um arquivo próprio,
+como as de banners e mídias (abaixo).
+
+**Já mapeadas, em arquivo próprio:** Loja On-line › **Banners**; o cadastro **Tipo de Banner** (pela lupa do
+campo Tipo de Banner: em 2026-11-06, o item "Tipo de Banners" não estava no menu Loja On-line de uma loja e
+não apareceu na parte visível da outra); e Único › Mídia › **Mídias**, **Tipos de Mídia** e **Tamanhos dos
+Tipos de Mídia** — com o caminho inteiro de subir ou trocar a arte de um banner, a URL das imagens no CDN
+(que responde "onde hospedar uma imagem usada num CSS") e o cache `banner`:
+`references/imagens-e-banners.md`. Para só ler qual Tipo de Banner e qual Tipo de Mídia um lugar da página
+usa, não abra o construtor da página no ar: as lupas dele têm `Incluir`, `Alterar` e `Excluir`, e numa loja
+medida o `Incluir` de uma lupa criou o registro na hora. Leia o `Blocos:` pelo `Alterar` da página (aba
+Configurações, `lerBlocos()`, saída por `Cancelar`) e o `src` servido, que traz o código do Tipo de Mídia,
+conferido na tela Único › Mídia › Tipos de Mídia (`imagens-e-banners.md`, 2, 3 passo 0, e 5).
 
 ## 15. Páginas que são outro sistema (Next.js)
 

@@ -1,6 +1,6 @@
 {
   "name": "skill-panorama-sistemas",
-  "description": "Skill do Claude para lojas da plataforma Panorama Sistemas: ajustes visuais, temas de época, páginas do construtor e telas de configuração pelo admin da loja, com prévia e aprovação antes de gravar.",
+  "description": "Skill do Claude para lojas da plataforma Panorama Sistemas: ajustes visuais, temas de época, páginas do construtor, imagens e banners e telas de configuração pelo admin da loja, com prévia e aprovação antes de gravar.",
   "owner": {
     "name": "Profit Brand Digital",
     "url": "https://github.com/guilhermeeberspachermkt-hub"
@@ -9,7 +9,7 @@
     {
       "name": "construtor-panorama",
       "source": "./plugins/construtor-panorama",
-      "description": "Ajustes visuais, temas de época, páginas do construtor e telas de configuração de uma loja da Panorama Sistemas, pelo admin da própria loja: prévia no site e o seu \"sim\" antes de cada gravação, backup antes de trocar e um perfil privado da loja no seu computador.",
+      "description": "Ajustes visuais, temas de época, páginas do construtor, imagens e banners e telas de configuração de uma loja da Panorama Sistemas, pelo admin da própria loja: prévia no site e o seu \"sim\" antes de cada gravação, backup antes de trocar e um perfil privado da loja no seu computador.",
       "category": "e-commerce",
       "tags": [
         "panorama-sistemas",
